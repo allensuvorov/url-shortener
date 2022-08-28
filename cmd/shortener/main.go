@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -19,6 +20,9 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		// устанавливаем статус-код 201
+		w.WriteHeader(http.StatusCreated)
+		// пишем тело ответа
 		w.Write(b)
 	} else {
 		w.Write([]byte("<h1>Hello, World</h1>"))
@@ -29,5 +33,5 @@ func main() {
 	// маршрутизация запросов обработчику
 	http.HandleFunc("/", HelloWorld)
 	// запуск сервера с адресом localhost, порт 8080
-	http.ListenAndServe(":8080", nil)
+	log.Fatal(http.ListenAndServe(":8080", nil)) // log.Fatal will print errors if server crashes
 }
