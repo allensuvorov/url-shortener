@@ -4,6 +4,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path"
 )
 
 // map to store short urls and full urls
@@ -17,8 +18,21 @@ func Shorten(s string) string {
 // CreateShortURL — обработчик запроса.
 func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		http.Error(w, "404 not found.", http.StatusNotFound)
-		return
+		if r.Method == "GET" {
+
+			base := path.Base(r.URL.Path)
+			//http.Error(w, "404 not found.", http.StatusNotFound)
+
+			// устанавливаем статус-код 307
+			w.WriteHeader(http.StatusTemporaryRedirect)
+
+			// set header location
+			// ...
+
+			w.Write([]byte(urls[base]))
+
+			return
+		}
 	}
 	if r.Method == "POST" {
 		// читаем Body
@@ -37,6 +51,7 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		// пишем тело ответа
 		w.Write([]byte(Shorten(bs)))
 	}
+
 }
 
 func main() {
