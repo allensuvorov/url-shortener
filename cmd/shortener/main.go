@@ -6,8 +6,10 @@ import (
 	"net/http"
 )
 
-// HelloWorld — обработчик запроса.
-func HelloWorld(w http.ResponseWriter, r *http.Request) {
+var urls map[string]string = make(map[string]string)
+
+// CreateShortURL — обработчик запроса.
+func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		http.Error(w, "404 not found.", http.StatusNotFound)
 		return
@@ -20,6 +22,8 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		// add url to the map
+		urls[b] = b
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
@@ -31,7 +35,7 @@ func HelloWorld(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// маршрутизация запросов обработчику
-	http.HandleFunc("/", HelloWorld)
+	http.HandleFunc("/", CreateShortURL)
 	// запуск сервера с адресом localhost, порт 8080
 	log.Fatal(http.ListenAndServe(":8080", nil)) // log.Fatal will print errors if server crashes
 }
