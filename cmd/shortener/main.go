@@ -6,7 +6,13 @@ import (
 	"net/http"
 )
 
+// map to store short urls and full urls
 var urls map[string]string = make(map[string]string)
+
+// mock shortner
+func Shorten(s string) string {
+	return "abc" + s[0:1]
+}
 
 // CreateShortURL — обработчик запроса.
 func CreateShortURL(w http.ResponseWriter, r *http.Request) {
@@ -23,12 +29,13 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		bs := string(b) // body string
+
 		// add url to the map
-		urls[bs] = bs
+		urls[Shorten(bs)] = bs
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
-		w.Write(b)
+		w.Write([]byte(Shorten(bs)))
 	} else {
 		w.Write([]byte("<h1>Hello, World</h1>"))
 	}
