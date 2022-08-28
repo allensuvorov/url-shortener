@@ -11,7 +11,7 @@ var urls map[string]string = make(map[string]string)
 
 // mock shortner
 func Shorten(s string) string {
-	return "abc" + s[0:1]
+	return "shortURL:" + s[0:5]
 }
 
 // CreateShortURL — обработчик запроса.
@@ -36,8 +36,6 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
 		w.Write([]byte(Shorten(bs)))
-	} else {
-		w.Write([]byte("<h1>Hello, World</h1>"))
 	}
 }
 
