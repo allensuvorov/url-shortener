@@ -22,8 +22,9 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		bs := string(b) // body string
 		// add url to the map
-		urls[b] = b
+		urls[bs] = bs
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
