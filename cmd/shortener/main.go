@@ -20,14 +20,14 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		if r.Method == "GET" {
 
+			//
 			base := path.Base(r.URL.Path)
-			//http.Error(w, "404 not found.", http.StatusNotFound)
+			log.Println(base)
+			// set header location
+			w.Header().Set("Location", "http:/localhost:8080/"+urls[base])
 
 			// устанавливаем статус-код 307
 			w.WriteHeader(http.StatusTemporaryRedirect)
-
-			// set header location
-			// ...
 
 			w.Write([]byte(urls[base]))
 
@@ -49,7 +49,7 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
-		w.Write([]byte(Shorten(bs)))
+		w.Write([]byte("http:/localhost:8080/" + Shorten(bs)))
 	}
 
 }
