@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/sha256"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -10,9 +12,13 @@ import (
 // map to store short urls and full urls
 var urls map[string]string = make(map[string]string)
 
-// mock shortner
+// sha256 to generate the hash value
 func Shorten(s string) string {
-	return "shortURL:" + s[0:5]
+	h := sha256.New()
+	h.Write([]byte(s))
+	// log.Println(fmt.Sprintf("%x", h.Sum(nil)))
+	shortURL := fmt.Sprintf("%x", h.Sum(nil))[0:8]
+	return shortURL
 }
 
 // CreateShortURL — обработчик запроса.
@@ -23,7 +29,8 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			//
 			base := path.Base(r.URL.Path)
 			log.Println(base)
-			// set header location
+
+			// set header Location
 			w.Header().Set("Location", "http:/localhost:8080/"+urls[base])
 
 			// устанавливаем статус-код 307
@@ -42,14 +49,15 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
-		bs := string(b) // body string
+
+		shortURL := Shorten(string(b)) // shortened URL
 
 		// add url to the map
-		urls[Shorten(bs)] = bs
+		urls[shortURL] = string(b)
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 		// пишем тело ответа
-		w.Write([]byte("http:/localhost:8080/" + Shorten(bs)))
+		w.Write([]byte("http:/localhost:8080/" + shortURL))
 	}
 
 }
