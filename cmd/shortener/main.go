@@ -60,6 +60,11 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		// check if long URL is empty string
+		if len(b) == 0 {
+			http.Error(w, "empty URL", 400)
+			return
+		}
 
 		// check if long url is already in the map
 		var urlIsNew bool = true
