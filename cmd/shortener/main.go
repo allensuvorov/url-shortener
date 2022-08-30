@@ -38,9 +38,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		if r.Method == "GET" {
 
-			//
+			// get part after last slash
 			base := path.Base(r.URL.Path)
 			log.Println("after last slash", base)
+
+			if _, ok := urls[base]; !ok {
+				http.Error(w, "URL does not exist", 400)
+				return
+			}
 
 			// set header Location
 			w.Header().Set("Location", urls[base])
@@ -76,7 +81,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// check if long url is already in the map
-		var urlIsNew bool = true
+		var urlIsNew = true
 		var shortURL string
 		for k, v := range urls {
 			if v == string(b) {
