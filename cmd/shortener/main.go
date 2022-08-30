@@ -20,26 +20,26 @@ func Shorten(s string) string {
 
 	hash := fmt.Sprintf("%x", h.Sum(nil))
 	var shortURL string
+
 	// check if short URL is already in the map for a different long url, expand hash slice till unique
 	for i := 8; i < len(hash); i++ {
 		shortURL = hash[0:i]
-		// log.Println(hash, i)
 		if v, ok := urls[shortURL]; !(ok && v != s) {
 			break
 		}
 	}
-
+	log.Println("created new shortURL", shortURL)
 	return shortURL
 }
 
 // CreateShortURL — обработчик запроса.
-func CreateShortURL(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		if r.Method == "GET" {
 
 			//
 			base := path.Base(r.URL.Path)
-			log.Println(base)
+			log.Println("after last slash", base)
 
 			// set header Location
 			w.Header().Set("Location", urls[base])
@@ -62,17 +62,23 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// check if long url is already in the map
-		// for _, v := range urls {
-		// 	if v == string(b) {
-		// 		//...
-		// 	}
-		// }
+		var urlIsNew bool = true
+		var shortURL string
+		for k, v := range urls {
+			if v == string(b) {
+				urlIsNew = false
+				shortURL = k
+			}
+		}
 
-		// get shortened URL
-		shortURL := Shorten(string(b))
+		if urlIsNew {
 
-		// add url to the map
-		urls[shortURL] = string(b)
+			// get shortened URL
+			shortURL = Shorten(string(b))
+
+			// add url to the map
+			urls[shortURL] = string(b)
+		}
 
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
@@ -85,7 +91,7 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	// маршрутизация запросов обработчику
-	http.HandleFunc("/", CreateShortURL)
+	http.HandleFunc("/", Handler)
 	// запуск сервера с адресом localhost, порт 8080
 	log.Fatal(http.ListenAndServe(":8080", nil)) // log.Fatal will print errors if server crashes
 }
