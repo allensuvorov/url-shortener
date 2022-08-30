@@ -17,7 +17,18 @@ func Shorten(s string) string {
 	h := sha256.New()
 	h.Write([]byte(s))
 	// log.Println(fmt.Sprintf("%x", h.Sum(nil)))
-	shortURL := fmt.Sprintf("%x", h.Sum(nil))[0:8]
+
+	hash := fmt.Sprintf("%x", h.Sum(nil))
+	var shortURL string
+	// check if short URL is already in the map for a different long url, expand hash slice till unique
+	for i := 8; i < len(hash); i++ {
+		shortURL = hash[0:i]
+		// log.Println(hash, i)
+		if v, ok := urls[shortURL]; !(ok && v != s) {
+			break
+		}
+	}
+
 	return shortURL
 }
 
@@ -31,7 +42,7 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			log.Println(base)
 
 			// set header Location
-			w.Header().Set("Location", "http:/localhost:8080/"+urls[base])
+			w.Header().Set("Location", urls[base])
 
 			// устанавливаем статус-код 307
 			w.WriteHeader(http.StatusTemporaryRedirect)
@@ -50,14 +61,24 @@ func CreateShortURL(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		shortURL := Shorten(string(b)) // shortened URL
+		// check if long url is already in the map
+		// for _, v := range urls {
+		// 	if v == string(b) {
+		// 		//...
+		// 	}
+		// }
+
+		// get shortened URL
+		shortURL := Shorten(string(b))
 
 		// add url to the map
 		urls[shortURL] = string(b)
+
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
+
 		// пишем тело ответа
-		w.Write([]byte("http:/localhost:8080/" + shortURL))
+		w.Write([]byte(shortURL))
 	}
 
 }
