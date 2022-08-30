@@ -42,6 +42,7 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 			base := path.Base(r.URL.Path)
 			log.Println("after last slash", base)
 
+			// check if hash exists
 			if _, ok := urls[base]; !ok {
 				http.Error(w, "URL does not exist", 400)
 				return
