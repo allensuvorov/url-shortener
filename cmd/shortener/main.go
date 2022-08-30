@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"path"
 )
 
@@ -63,6 +64,14 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		// check if long URL is empty string
 		if len(b) == 0 {
 			http.Error(w, "empty URL", 400)
+			return
+		}
+		// check it URL is valid
+		u, err := url.ParseRequestURI(string(b))
+		log.Println("parsed URL", u)
+		if err != nil {
+			http.Error(w, err.Error(), 400)
+			//log.Printf("hi/there?: err=%+v url=%+v\n", err, u)
 			return
 		}
 
