@@ -106,6 +106,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 
+		shortURL = "http://localhost:8080/" + shortURL
+
 		// пишем тело ответа
 		w.Write([]byte(shortURL))
 	}
