@@ -36,11 +36,13 @@ func Shorten(s string) string {
 // CreateShortURL — обработчик запроса.
 func Handler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
+		log.Println("path is /", r.URL.Path)
 		if r.Method == "GET" {
 
 			// get part after last slash
 			base := path.Base(r.URL.Path)
 			log.Println("after last slash", base)
+			log.Println(r.URL, r.URL.Path)
 
 			// check if hash exists
 			if _, ok := urls[base]; !ok {
