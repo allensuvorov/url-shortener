@@ -84,16 +84,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// check if long url is already in the map
-		var urlIsNew = true
+		var exists bool
 		var shortURL string
 		for k, v := range urls {
 			if v == string(b) {
-				urlIsNew = false
+				exists = true
 				shortURL = k
+				break
 			}
 		}
 
-		if urlIsNew {
+		if !exists {
 
 			// get shortened URL
 			shortURL = Shorten(string(b))
