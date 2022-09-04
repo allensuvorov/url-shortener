@@ -6,14 +6,23 @@ var Urls map[string]string = make(map[string]string)
 // DBStorage interface has methods we need here:
 type DBStorage interface {
 	// check if longURL exists
-	URLExists(URL string) bool
-
-	// return longURL for the matching shortURL
-	GetURL(ShortURL string) string
-
-	// add new record - pair shortURL: longURL
-	NewURL(URL string) string
+	URLExists(u string) (bool, string)
 
 	// check if shortURL exists
-	ShortURLExists(ShortURL string) bool
+	ShortURLExists(u string) bool
+
+	// return longURL for the matching shortURL
+	GetURL(u string) string
+
+	// add new record - pair shortURL: longURL
+	NewURL(u string) string
+}
+
+func URLExists(u string) bool, string {
+	for k, v := range Urls {
+		if v == u {
+			return true
+		}
+	}
+	return false
 }
