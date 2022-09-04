@@ -3,8 +3,17 @@ package storage
 // map to store short urls and full urls
 var Urls map[string]string = make(map[string]string)
 
-// methods we need here:
-// add new record - pair shortURL: longURL
-// return longURL for the matching shortURL
-// check if shortURL exists
-// check if longURL exists
+// DBStorage interface has methods we need here:
+type DBStorage interface {
+	// check if longURL exists
+	URLExists(URL string) bool
+
+	// return longURL for the matching shortURL
+	GetURL(ShortURL string) string
+
+	// add new record - pair shortURL: longURL
+	NewURL(URL string) string
+
+	// check if shortURL exists
+	ShortURLExists(ShortURL string) bool
+}
