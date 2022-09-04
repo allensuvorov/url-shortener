@@ -7,7 +7,6 @@ import (
 
 	"yandex/projects/urlshortner/internal/app/shortner/storage"
 	"yandex/projects/urlshortner/internal/app/shortner/util"
-	// "github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 // Multiplexer - is a request router.
@@ -34,18 +33,18 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	// log.Println(r.URL, r.URL.Path)
 
 	// check if hash exists
-	if _, ok := storage.Urls[base]; !ok {
+	if !storage.HashExists(base) {
 		http.Error(w, "URL does not exist", 400)
 		return
 	}
-
+	u := storage.GetURL(base)
 	// set header Location
-	w.Header().Set("Location", storage.Urls[base])
+	w.Header().Set("Location", u)
 
 	// устанавливаем статус-код 307
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
-	w.Write([]byte(storage.Urls[base]))
+	w.Write([]byte(u))
 
 	return
 }
@@ -64,13 +63,14 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "empty URL", 400)
 		return
 	}
-	// check it URL is valid
+	// // check it URL is valid
 	// u, err := url.ParseRequestURI(string(b))
 	// log.Println("parsed URL", u)
-	if err != nil {
-		http.Error(w, err.Error(), 400)
-		return
-	}
+
+	// if err != nil {
+	// 	http.Error(w, err.Error(), 400)
+	// 	return
+	// }
 
 	// check if long url is already in the map
 	exists, h := storage.URLExists(string(b))
