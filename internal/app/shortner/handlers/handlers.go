@@ -2,9 +2,7 @@ package handlers
 
 import (
 	"io"
-	"log"
 	"net/http"
-	"net/url"
 	"path"
 
 	"yandex/projects/urlshortner/internal/app/shortner/storage"
@@ -13,7 +11,7 @@ import (
 
 // Multiplexer - is a request router.
 func Multiplexer(w http.ResponseWriter, r *http.Request) {
-	log.Println("path is /", r.URL.Path)
+	//log.Println("path is /", r.URL.Path)
 
 	// проверяем, каким методом получили запрос
 	switch r.Method {
@@ -31,8 +29,8 @@ func Multiplexer(w http.ResponseWriter, r *http.Request) {
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	// get hash - the part after last slash
 	base := path.Base(r.URL.Path)
-	log.Println("after last slash", base)
-	log.Println(r.URL, r.URL.Path)
+	// log.Println("Path after last slash", base)
+	// log.Println(r.URL, r.URL.Path)
 
 	// check if hash exists
 	if _, ok := storage.Urls[base]; !ok {
@@ -66,28 +64,19 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// check it URL is valid
-	u, err := url.ParseRequestURI(string(b))
-	log.Println("parsed URL", u)
+	// u, err := url.ParseRequestURI(string(b))
+	// log.Println("parsed URL", u)
 	if err != nil {
 		http.Error(w, err.Error(), 400)
-		//log.Printf("hi/there?: err=%+v url=%+v\n", err, u)
 		return
 	}
 
 	// check if long url is already in the map
-	var exists bool
-	var shortURL string
-	for k, v := range storage.Urls {
-		if v == string(b) {
-			exists = true
-			shortURL = k
-			break
-		}
-	}
+	exists, shortURL := storage.URLExists(string(b))
 
 	if !exists {
 
-		// get shortened URL
+		// generate shortened URL
 		shortURL = util.Shorten(string(b))
 
 		// add url to the map
