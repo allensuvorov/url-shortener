@@ -49,8 +49,6 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
 	w.Write([]byte(u))
-
-	return
 }
 
 // postHandler - handles POST requests.
