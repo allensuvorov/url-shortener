@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"yandex/projects/urlshortner/internal/app/shortner/storage"
+	//"yandex/projects/urlshortner/internal/app/shortner/storage"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 // sha256 to generate the hash value

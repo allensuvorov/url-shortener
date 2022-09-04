@@ -3,7 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
-	"yandex/projects/urlshortner/internal/app/shortner/handlers"
+
+	//"yandex/projects/urlshortner/internal/app/shortner/handlers"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/handlers"
 )
 
 func main() {

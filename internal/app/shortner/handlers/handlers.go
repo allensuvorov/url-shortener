@@ -5,8 +5,11 @@ import (
 	"net/http"
 	"path"
 
-	"yandex/projects/urlshortner/internal/app/shortner/storage"
-	"yandex/projects/urlshortner/internal/app/shortner/util"
+	// "yandex/projects/urlshortner/internal/app/shortner/storage"
+	// "yandex/projects/urlshortner/internal/app/shortner/util"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/util"
 )
 
 // Multiplexer - is a request router.
@@ -37,6 +40,7 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "URL does not exist", 400)
 		return
 	}
+
 	u := storage.GetURL(base)
 	// set header Location
 	w.Header().Set("Location", u)
