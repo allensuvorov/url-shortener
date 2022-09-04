@@ -20,6 +20,7 @@ type DBStorage interface {
 	NewURL(h, string, u string) error
 }
 
+// check if longURL exists
 func URLExists(u string) (bool, string) {
 	for k, v := range Urls {
 		if v == u {
@@ -30,6 +31,7 @@ func URLExists(u string) (bool, string) {
 	return false, ""
 }
 
+// check if hash exists
 func HashExists(h string) bool {
 	if _, ok := Urls[h]; ok {
 		return true
