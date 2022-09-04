@@ -10,14 +10,14 @@ type DBStorage interface {
 	// check if longURL exists
 	URLExists(u string) (bool, string)
 
-	// check if shortURL exists
-	ShortURLExists(u string) bool
+	// check if hash exists
+	HashExists(u string) bool
 
-	// return longURL for the matching shortURL
+	// return longURL for the matching hash
 	GetURL(u string) string
 
 	// add new record - pair shortURL: longURL
-	NewURL(u string) error
+	NewURL(h, string, u string) error
 }
 
 func URLExists(u string) (bool, string) {
@@ -30,19 +30,20 @@ func URLExists(u string) (bool, string) {
 	return false, ""
 }
 
-func ShortURLExists(u string) bool {
-	if _, ok := Urls[u]; ok {
+func HashExists(h string) bool {
+	if _, ok := Urls[h]; ok {
 		return true
 	}
 	return false
 }
 
-// return longURL for the matching shortURL
-func GetURL(u string) string {
-	return Urls[u]
+// return longURL for the matching hash
+func GetURL(h string) string {
+	return Urls[h]
 }
 
 // add new record - pair shortURL: longURL
-func NewURL(u string) error {
+func NewURL(h string, u string) error {
+	Urls[h] = u
 	return nil
 }

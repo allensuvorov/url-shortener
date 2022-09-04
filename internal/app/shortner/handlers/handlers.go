@@ -7,6 +7,7 @@ import (
 
 	"yandex/projects/urlshortner/internal/app/shortner/storage"
 	"yandex/projects/urlshortner/internal/app/shortner/util"
+	// "github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 // Multiplexer - is a request router.
@@ -72,21 +73,21 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if long url is already in the map
-	exists, shortURL := storage.URLExists(string(b))
+	exists, h := storage.URLExists(string(b))
 
 	if !exists {
 
 		// generate shortened URL
-		shortURL = util.Shorten(string(b))
+		h = util.Shorten(string(b))
 
 		// add url to the map
-		storage.Urls[shortURL] = string(b)
+		storage.NewURL(h, string(b))
 	}
 
 	// устанавливаем статус-код 201
 	w.WriteHeader(http.StatusCreated)
 
-	shortURL = "http://localhost:8080/" + shortURL
+	shortURL := "http://localhost:8080/" + h
 
 	// пишем тело ответа
 	w.Write([]byte(shortURL))
