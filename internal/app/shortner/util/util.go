@@ -14,17 +14,15 @@ func Shorten(s string) string {
 	h.Write([]byte(s))
 
 	hash := fmt.Sprintf("%x", h.Sum(nil))
-	var shortURL string
+	var sh string // short hash
 
 	// check if short URL (hash) is already in the map for a different long url, expand hash slice till unique
 	for i := 8; i < len(hash); i++ {
-		shortURL = hash[0:i]
-		exists := storage.HashExists(shortURL)
-		u := storage.GetURL(shortURL)
-		if exists && u != s {
+		sh = hash[0:i]
+		if storage.HashExists(sh) && storage.GetURL(sh) != s {
 			break
 		}
 	}
-	log.Println("created new shortURL", shortURL)
-	return shortURL
+	log.Println("created new shortURL", sh)
+	return sh
 }
