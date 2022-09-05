@@ -5,7 +5,7 @@ import "log"
 // map to store short urls and full urls
 var Urls map[string]string = make(map[string]string)
 
-// DBStorage interface has methods we need here:
+// DBStorage interface (to be adopted for mock-testing):
 type DBStorage interface {
 	// check if longURL exists
 	URLExists(u string) (bool, string)

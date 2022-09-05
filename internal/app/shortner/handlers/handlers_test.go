@@ -9,23 +9,6 @@ import (
 )
 
 func TestPostHandler(t *testing.T) {
-	// type post struct {
-	// 	method string
-	// 	URL    string
-	// 	body   io.Reader
-	// 	rbody  string
-	// 	status int
-	// 	err    string
-	// }
-
-	// tt := []struct {
-	// 		name: "post req-res",
-	// 			method: "POST",
-	// 			URL: "localhost:8080/",
-	// 			body: bytes.NewReader([]byte(`{"apple.com/store"}`)),
-	// 			rbody: "http://localhost:8080/7a999481",
-	// 			status:
-	// }
 
 	jsonBody := []byte(`{"apple.com/store"}`)
 	bodyReader := bytes.NewReader(jsonBody)
@@ -55,13 +38,6 @@ func TestPostHandler(t *testing.T) {
 }
 
 func TestGetHandeler(t *testing.T) {
-	// type get struct {
-	// 	method string
-	// 	URL    string
-	// 	header string // location
-	// 	status int
-	// 	err    string
-	// }
 
 	requestURL := "http://localhost:8080/7a999481"
 	req, err := http.NewRequest("GET", requestURL, nil)
