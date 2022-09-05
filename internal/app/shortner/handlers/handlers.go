@@ -5,28 +5,9 @@ import (
 	"net/http"
 	"path"
 
-	// "yandex/projects/urlshortner/internal/app/shortner/storage"
-	// "yandex/projects/urlshortner/internal/app/shortner/util"
-
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/util"
 )
-
-// Multiplexer - is a request router.
-func Multiplexer(w http.ResponseWriter, r *http.Request) {
-	//log.Println("path is /", r.URL.Path)
-
-	// проверяем, каким методом получили запрос
-	switch r.Method {
-	// если методом POST
-	case "GET":
-		GetHandler(w, r)
-	case "POST":
-		PostHandler(w, r)
-	default:
-		return
-	}
-}
 
 // GetHandler - handles GET requests.
 func GetHandler(w http.ResponseWriter, r *http.Request) {
