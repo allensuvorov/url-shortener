@@ -4,12 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	//"yandex/projects/urlshortner/internal/app/shortner/handlers"
-
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/handlers"
 )
 
 func main() {
+	r := chi.NewRouter()
 	// маршрутизация запросов обработчику
 	http.HandleFunc("/", handlers.Multiplexer)
 	// запуск сервера с адресом localhost, порт 8080
