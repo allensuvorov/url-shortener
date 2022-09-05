@@ -20,16 +20,16 @@ func Multiplexer(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	// если методом POST
 	case "GET":
-		getHandler(w, r)
+		GetHandler(w, r)
 	case "POST":
-		postHandler(w, r)
+		PostHandler(w, r)
 	default:
 		return
 	}
 }
 
-// getHandler - handles GET requests.
-func getHandler(w http.ResponseWriter, r *http.Request) {
+// GetHandler - handles GET requests.
+func GetHandler(w http.ResponseWriter, r *http.Request) {
 	// get hash - the part after last slash
 	base := path.Base(r.URL.Path)
 	// log.Println("Path after last slash", base)
@@ -51,8 +51,8 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(u))
 }
 
-// postHandler - handles POST requests.
-func postHandler(w http.ResponseWriter, r *http.Request) {
+// PostHandler - handles POST requests.
+func PostHandler(w http.ResponseWriter, r *http.Request) {
 	// читаем Body
 	b, err := io.ReadAll(r.Body)
 	// обрабатываем ошибку
