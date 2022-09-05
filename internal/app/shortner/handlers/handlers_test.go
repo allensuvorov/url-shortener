@@ -74,7 +74,7 @@ func TestGetHandeler(t *testing.T) {
 	GetHandler(rec, req)
 
 	res := rec.Result()
-
+	defer res.Body.Close()
 	if res.StatusCode != http.StatusTemporaryRedirect {
 		t.Errorf("expected status TemporaryRedirect; got %v", res.Status)
 	}
