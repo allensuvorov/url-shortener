@@ -11,10 +11,8 @@ import (
 
 // GetURL - handles GET requests.
 func GetURL(w http.ResponseWriter, r *http.Request) {
-	// get hash - the part after last slash
+	// get hash - last element of path
 	base := path.Base(r.URL.Path)
-	// log.Println("Path after last slash", base)
-	// log.Println(r.URL, r.URL.Path)
 
 	// check if hash exists
 	if !storage.HashExists(base) {
