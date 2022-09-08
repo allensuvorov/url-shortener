@@ -16,7 +16,7 @@ func GetURL(w http.ResponseWriter, r *http.Request) {
 
 	// check if hash exists
 	if !storage.HashExists(base) {
-		http.Error(w, "URL does not exist", 400)
+		http.Error(w, "URL does not exist", http.StatusBadRequest)
 		return
 	}
 
