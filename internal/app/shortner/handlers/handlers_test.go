@@ -37,7 +37,7 @@ func TestPostHandler(t *testing.T) {
 	}
 }
 
-func TestGetHandeler(t *testing.T) {
+func TestGetURL(t *testing.T) {
 
 	requestURL := "http://localhost:8080/7a999481"
 	req, err := http.NewRequest("GET", requestURL, nil)
@@ -47,7 +47,7 @@ func TestGetHandeler(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	GetHandler(rec, req)
+	GetURL(rec, req)
 
 	res := rec.Result()
 	defer res.Body.Close()

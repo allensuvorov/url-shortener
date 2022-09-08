@@ -9,8 +9,8 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/util"
 )
 
-// GetHandler - handles GET requests.
-func GetHandler(w http.ResponseWriter, r *http.Request) {
+// GetURL - handles GET requests.
+func GetURL(w http.ResponseWriter, r *http.Request) {
 	// get hash - the part after last slash
 	base := path.Base(r.URL.Path)
 	// log.Println("Path after last slash", base)
