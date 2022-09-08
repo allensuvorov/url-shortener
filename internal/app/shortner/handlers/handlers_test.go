@@ -38,7 +38,7 @@ func TestPostURL(t *testing.T) {
 }
 
 func TestGetURL(t *testing.T) {
-
+	// TODO: create a record for the the URL, to that this test can work independatly
 	requestURL := "http://localhost:8080/a7d59904"
 	req, err := http.NewRequest("GET", requestURL, nil)
 
