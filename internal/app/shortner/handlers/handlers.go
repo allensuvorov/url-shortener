@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"io"
+	"log"
 	"net/http"
+	"net/url"
 	"path"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
@@ -13,6 +15,9 @@ import (
 func GetURL(w http.ResponseWriter, r *http.Request) {
 	// get hash - last element of path (after slash)
 	base := path.Base(r.URL.Path)
+
+	// log path and hash
+	log.Println(base, r.URL.Path)
 
 	// check if hash exists, if not - return 400
 	if !storage.HashExists(base) {
@@ -46,17 +51,20 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "empty URL", http.StatusBadRequest)
 		return
 	}
-	// // check it URL is valid
-	// u, err := url.ParseRequestURI(string(b))
-	// log.Println("parsed URL", u)
 
-	// if err != nil {
-	// 	http.Error(w, err.Error(), 400)
-	// 	return
-	// }
+	// check it URL is valid
+	_, err = url.ParseRequestURI(string(b))
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	// check if long url is already in the map
 	exists, h := storage.URLExists(string(b))
+
+	// log body from request
+	log.Println(string(b))
 
 	if !exists {
 

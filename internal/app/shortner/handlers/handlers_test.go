@@ -10,7 +10,7 @@ import (
 
 func TestPostURL(t *testing.T) {
 
-	jsonBody := []byte(`{"apple.com/store"}`)
+	jsonBody := []byte("http://www.apple.com/store")
 	bodyReader := bytes.NewReader(jsonBody)
 	requestURL := "localhost:8080/"
 
@@ -32,14 +32,14 @@ func TestPostURL(t *testing.T) {
 	if err != nil {
 		t.Fatalf("coult not read respons: %v", err)
 	}
-	if string(b) != "http://localhost:8080/7a999481" {
-		t.Fatalf("expected http://localhost:8080/7a999481; got %s", string(b))
+	if string(b) != "http://localhost:8080/a7d59904" {
+		t.Fatalf("expected http://localhost:8080/a7d59904; got %s", string(b))
 	}
 }
 
 func TestGetURL(t *testing.T) {
 
-	requestURL := "http://localhost:8080/7a999481"
+	requestURL := "http://localhost:8080/a7d59904"
 	req, err := http.NewRequest("GET", requestURL, nil)
 
 	if err != nil {
@@ -55,8 +55,8 @@ func TestGetURL(t *testing.T) {
 		t.Errorf("expected status TemporaryRedirect; got %v", res.Status)
 	}
 
-	if res.Header.Get("Location") != `{"apple.com/store"}` {
-		t.Errorf("Expected Header apple.com/store, got %s", res.Header.Get("Location"))
+	if res.Header.Get("Location") != "http://www.apple.com/store" {
+		t.Errorf("Expected Header http://www.apple.com/store, got %s", res.Header.Get("Location"))
 	}
 
 }
