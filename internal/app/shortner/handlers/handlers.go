@@ -9,7 +9,7 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/util"
 )
 
-// GetURL - handles GET requests.
+// GetURL - takes short URL and returns full URL.
 func GetURL(w http.ResponseWriter, r *http.Request) {
 	// get hash - last element of path
 	base := path.Base(r.URL.Path)
@@ -30,8 +30,8 @@ func GetURL(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(u))
 }
 
-// PostHandler - handles POST requests.
-func PostHandler(w http.ResponseWriter, r *http.Request) {
+// PostURL - takes full URL and returns short URL.
+func PostURL(w http.ResponseWriter, r *http.Request) {
 	// читаем Body
 	b, err := io.ReadAll(r.Body)
 	// обрабатываем ошибку

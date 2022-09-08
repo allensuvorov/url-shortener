@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-func TestPostHandler(t *testing.T) {
+func TestPostURL(t *testing.T) {
 
 	jsonBody := []byte(`{"apple.com/store"}`)
 	bodyReader := bytes.NewReader(jsonBody)
@@ -21,7 +21,7 @@ func TestPostHandler(t *testing.T) {
 	}
 
 	rec := httptest.NewRecorder()
-	PostHandler(rec, req)
+	PostURL(rec, req)
 
 	res := rec.Result()
 	defer res.Body.Close()

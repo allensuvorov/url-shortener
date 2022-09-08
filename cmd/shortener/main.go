@@ -11,7 +11,7 @@ import (
 func main() {
 	r := chi.NewRouter()
 
-	r.Post("/", handlers.PostHandler)
+	r.Post("/", handlers.PostURL)
 	r.Get("/{hash}", handlers.GetURL)
 
 	log.Println("Serving on port: 8080")
