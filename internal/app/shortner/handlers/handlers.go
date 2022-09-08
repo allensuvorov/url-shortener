@@ -11,16 +11,18 @@ import (
 
 // GetURL - takes short URL and returns full URL.
 func GetURL(w http.ResponseWriter, r *http.Request) {
-	// get hash - last element of path
+	// get hash - last element of path (after slash)
 	base := path.Base(r.URL.Path)
 
-	// check if hash exists
+	// check if hash exists, if not - return 400
 	if !storage.HashExists(base) {
 		http.Error(w, "URL does not exist", http.StatusBadRequest)
 		return
 	}
 
+	// getURL from storage
 	u := storage.GetURL(base)
+
 	// set header Location
 	w.Header().Set("Location", u)
 
@@ -36,12 +38,12 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	b, err := io.ReadAll(r.Body)
 	// обрабатываем ошибку
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	// check if long URL is empty string
 	if len(b) == 0 {
-		http.Error(w, "empty URL", 400)
+		http.Error(w, "empty URL", http.StatusBadRequest)
 		return
 	}
 	// // check it URL is valid
