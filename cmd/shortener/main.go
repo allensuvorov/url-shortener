@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -15,6 +14,6 @@ func main() {
 	r.Post("/", handlers.PostHandler)
 	r.Get("/{hash}", handlers.GetHandler)
 
-	fmt.Println("Serving on port: 8080")
+	log.Println("Serving on port: 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
