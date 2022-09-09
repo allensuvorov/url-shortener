@@ -45,7 +45,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		h = util.Shorten(string(b))
 
 		// add url to the map
-		storage.CreateURL(h, string(b))
+		storage.CreateHash(h, string(b))
 	}
 
 	// устанавливаем статус-код 201

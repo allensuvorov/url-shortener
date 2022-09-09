@@ -11,8 +11,6 @@ var ErrNotFound = errors.New("Resource was not found")
 
 // DBStorage interface (to be adopted for mock-testing):
 type DBStorage interface {
-	// check if longURL exists
-	URLExists(u string) (bool, string)
 
 	// check if hash exists
 	HashExists(u string) bool
@@ -20,11 +18,11 @@ type DBStorage interface {
 	// return longURL for the matching hash
 	GetURL(u string) string
 
-	// return hash for a matching longURL
+	// return hash for a matching longURL, check if URL exists
 	GetHash(u string) (string, error)
 
 	// add new record - pair shortURL: longURL
-	CreateURL(h, string, u string) error
+	CreateHash(h, string, u string) error
 }
 
 // check if longURL exists
@@ -52,7 +50,7 @@ func GetURL(h string) string {
 }
 
 // add new record - pair shortURL: longURL
-func CreateURL(h string, u string) error {
+func CreateHash(h string, u string) error {
 	Urls[h] = u
 	return nil
 }
