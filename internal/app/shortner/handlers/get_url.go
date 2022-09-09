@@ -16,14 +16,14 @@ func GetURL(w http.ResponseWriter, r *http.Request) {
 	// log path and hash
 	log.Println(base, r.URL.Path)
 
+	// getURL from storage
+	u, ok := storage.GetURL(base)
+
 	// check if hash exists, if not - return 400
-	if !storage.HashExists(base) {
+	if !ok {
 		http.Error(w, "URL does not exist", http.StatusBadRequest)
 		return
 	}
-
-	// getURL from storage
-	u := storage.GetURL(base)
 
 	// set header Location
 	w.Header().Set("Location", u)

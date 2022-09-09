@@ -41,10 +41,10 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// get Hash if the longURL already exists in storage
-	h, err := storage.GetHash(u)
+	h, ok := storage.GetHash(u)
 
 	// if longURL does not exist in storage
-	if err != nil {
+	if !ok {
 
 		// generate shortened URL
 		h = util.Shorten(u)
