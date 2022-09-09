@@ -19,13 +19,18 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	// check if long URL is empty string
 	if len(b) == 0 {
 		http.Error(w, "empty URL", http.StatusBadRequest)
 		return
 	}
+
 	// get u - string of b
 	u := string(b)
+
+	// log body from request
+	log.Println("URL in the POST request is", u)
 
 	// check if URL is valid
 	_, err = url.ParseRequestURI(u)
@@ -35,19 +40,16 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// get Hash and check if long url is already in the map
+	// get Hash if the longURL already exists in storage
 	h, err := storage.GetHash(u)
 
-	// log body from request
-	log.Println(u)
-
-	// if Hash already exists
-	if err == nil {
+	// if longURL does not exist in storage
+	if err != nil {
 
 		// generate shortened URL
 		h = util.Shorten(u)
 
-		// add url to the map
+		// add url to the storage
 		storage.CreateHash(h, u)
 	}
 
