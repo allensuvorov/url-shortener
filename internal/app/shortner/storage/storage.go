@@ -1,9 +1,13 @@
 package storage
 
-import "log"
+import (
+	"errors"
+	"log"
+)
 
 // map to store short urls and full urls
 var Urls map[string]string = make(map[string]string)
+var ErrNotFound = errors.New("Resource was not found")
 
 // DBStorage interface (to be adopted for mock-testing):
 type DBStorage interface {
@@ -16,19 +20,22 @@ type DBStorage interface {
 	// return longURL for the matching hash
 	GetURL(u string) string
 
+	// return hash for a matching longURL
+	GetHash(u string) (string, error)
+
 	// add new record - pair shortURL: longURL
 	CreateURL(h, string, u string) error
 }
 
 // check if longURL exists
-func URLExists(u string) (bool, string) {
+func GetHash(u string) (string, error) {
 	for k, v := range Urls {
 		if v == u {
 			log.Println("URL already exists")
-			return true, k
+			return k, nil
 		}
 	}
-	return false, ""
+	return "", ErrNotFound
 }
 
 // check if hash exists

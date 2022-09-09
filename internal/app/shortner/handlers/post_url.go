@@ -34,7 +34,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// check if long url is already in the map
-	exists, h := storage.URLExists(string(b))
+	exists, h := storage.GetHash(string(b))
 
 	// log body from request
 	log.Println(string(b))
