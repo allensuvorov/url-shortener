@@ -25,7 +25,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// check it URL is valid
+	// check if URL is valid
 	_, err = url.ParseRequestURI(string(b))
 
 	if err != nil {
@@ -45,7 +45,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		h = util.Shorten(string(b))
 
 		// add url to the map
-		storage.NewURL(h, string(b))
+		storage.CreateURL(h, string(b))
 	}
 
 	// устанавливаем статус-код 201

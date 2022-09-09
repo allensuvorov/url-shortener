@@ -17,7 +17,7 @@ type DBStorage interface {
 	GetURL(u string) string
 
 	// add new record - pair shortURL: longURL
-	NewURL(h, string, u string) error
+	CreateURL(h, string, u string) error
 }
 
 // check if longURL exists
@@ -45,7 +45,7 @@ func GetURL(h string) string {
 }
 
 // add new record - pair shortURL: longURL
-func NewURL(h string, u string) error {
+func CreateURL(h string, u string) error {
 	Urls[h] = u
 	return nil
 }
