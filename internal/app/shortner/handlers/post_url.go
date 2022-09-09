@@ -7,7 +7,6 @@ import (
 	"net/url"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/util"
 )
 
 // PostURL - takes full URL and returns short URL.
@@ -47,7 +46,7 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 	if !ok {
 
 		// generate shortened URL
-		h = util.Shorten(u)
+		h = Shorten(u)
 
 		// add url to the storage
 		storage.CreateHash(h, u)
