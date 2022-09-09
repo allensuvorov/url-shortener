@@ -24,28 +24,31 @@ func PostURL(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "empty URL", http.StatusBadRequest)
 		return
 	}
+	// get u - string of b
+	u := string(b)
 
 	// check if URL is valid
-	_, err = url.ParseRequestURI(string(b))
+	_, err = url.ParseRequestURI(u)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// check if long url is already in the map
-	exists, h := storage.GetHash(string(b))
+	// get Hash and check if long url is already in the map
+	h, err := storage.GetHash(u)
 
 	// log body from request
-	log.Println(string(b))
+	log.Println(u)
 
-	if !exists {
+	// if Hash already exists
+	if err == nil {
 
 		// generate shortened URL
-		h = util.Shorten(string(b))
+		h = util.Shorten(u)
 
 		// add url to the map
-		storage.CreateHash(h, string(b))
+		storage.CreateHash(h, u)
 	}
 
 	// устанавливаем статус-код 201

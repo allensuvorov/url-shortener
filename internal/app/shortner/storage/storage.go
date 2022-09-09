@@ -18,14 +18,14 @@ type DBStorage interface {
 	// return longURL for the matching hash
 	GetURL(u string) string
 
-	// return hash for a matching longURL, check if URL exists
+	// return hash for a matching longURL, check if longURL exists
 	GetHash(u string) (string, error)
 
 	// add new record - pair shortURL: longURL
 	CreateHash(h, string, u string) error
 }
 
-// check if longURL exists
+// return hash for a matching longURL, check if longURL exists
 func GetHash(u string) (string, error) {
 	for k, v := range Urls {
 		if v == u {
