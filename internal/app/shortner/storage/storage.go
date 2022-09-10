@@ -23,6 +23,11 @@ type DBStorage interface {
 	CreateHash(h, string, u string) error
 }
 
+// Object with storage methods to work with DB
+type URLStorage struct {
+	inMemory map[string]string
+}
+
 // HashExists checks if hash exists.
 func HashExists(h string) bool {
 	if _, ok := Urls[h]; ok {
