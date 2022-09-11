@@ -2,6 +2,8 @@ package storage
 
 import (
 	"log"
+
+	"github.com/allensuvorov/urlshortner/internal/app/domain/entity"
 )
 
 // map to store short urls and full urls
@@ -31,7 +33,7 @@ type URLStorage struct {
 // NewURLStorage create URLStorage object
 func NewURLStorage() URLStorage {
 	return URLStorage{
-		inMemory: make(map[string]string),
+		inMemory: make([]entity.URLEntity, 0),
 	}
 }
 
