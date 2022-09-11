@@ -28,6 +28,20 @@ type URLStorage struct {
 	inMemory map[string]string
 }
 
+// NewURLStorage create URLStorage object
+func NewURLStorage() URLStorage {
+	return URLStorage{
+		inMemory: make(map[string]string),
+	}
+}
+
+// func NewEmployeeStore() *EmployeeStore {
+// 	return &EmployeeStore{
+// 		inMemory: make([]*entity.EmployeeEntity, 0),
+// 		mu:       sync.Mutex{},
+// 	}
+// }
+
 // HashExists checks if hash exists.
 func HashExists(h string) bool {
 	if _, ok := Urls[h]; ok {
