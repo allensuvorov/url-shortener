@@ -39,19 +39,30 @@ func NewURLStorage() URLStorage {
 	}
 }
 
-// Create adds new url record to storage
+// Create adds new URL record to storage
 func (us URLStorage) Create(url entity.URLEntity) error {
 	us.inMemory = append(us.inMemory, url)
-
-}
-
-// add new record - pair shortURL: longURL
-func CreateHash(h string, u string) error {
-	Urls[h] = u
 	return nil
 }
 
-// Get
+// Get URL record by URL or Hash
+func (us URLStorage) Get(ur entity.URLEntity) (entity.URLEntity, error) {
+	if len(ur.URL) != 0 {
+		for _, v := range us.inMemory {
+			if v.URL == ur.URL {
+				return v
+			}
+		}
+	}
+	if len(ur.Hash) != 0 {
+		for _, v := range us.inMemory {
+			if v.Hash == ur.Hash {
+				return v
+			}
+		}
+	}
+	return ur, nil
+}
 
 // HashExists checks if hash exists.
 func HashExists(h string) bool {
