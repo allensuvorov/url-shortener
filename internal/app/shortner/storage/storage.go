@@ -2,12 +2,14 @@ package storage
 
 import (
 	"log"
+	"yandex/projects/urlshortner/internal/app/shortner/domain/entity"
 
-	"github.com/allensuvorov/urlshortner/internal/app/domain/entity"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+	//"github.com/allensuvorov/urlshortner/internal/app/domain/entity"
 )
 
 // map to store short urls and full urls
-var Urls map[string]string = make(map[string]string)
+// var Urls map[string]string = make(map[string]string)
 
 // DBStorage interface (to be adopted for mock-testing):
 type DBStorage interface {
@@ -27,22 +29,29 @@ type DBStorage interface {
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	inMemory map[string]string
+	inMemory []entity.URLEntity
 }
 
-// NewURLStorage create URLStorage object
+// NewURLStorage creates URLStorage object
 func NewURLStorage() URLStorage {
 	return URLStorage{
 		inMemory: make([]entity.URLEntity, 0),
 	}
 }
 
-// func NewEmployeeStore() *EmployeeStore {
-// 	return &EmployeeStore{
-// 		inMemory: make([]*entity.EmployeeEntity, 0),
-// 		mu:       sync.Mutex{},
-// 	}
-// }
+// Create adds new url record to storage
+func (us URLStorage) Create(url entity.URLEntity) error {
+	us.inMemory = append(us.inMemory, url)
+
+}
+
+// add new record - pair shortURL: longURL
+func CreateHash(h string, u string) error {
+	Urls[h] = u
+	return nil
+}
+
+// Get
 
 // HashExists checks if hash exists.
 func HashExists(h string) bool {
@@ -69,10 +78,4 @@ func GetURL(h string) (string, bool) {
 		return u, true
 	}
 	return "", false
-}
-
-// add new record - pair shortURL: longURL
-func CreateHash(h string, u string) error {
-	Urls[h] = u
-	return nil
 }
