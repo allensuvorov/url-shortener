@@ -9,17 +9,14 @@ import (
 // URLStorage interface (to be adopted for mock-testing):
 type URLStorage interface {
 
-	// check if hash exists
-	HashExists(u string) bool
-
-	// return longURL for the matching hash
-	GetByURL(u string) (entity.URLEntity, error)
-
-	// return hash for a matching longURL, check if longURL exists
-	GetHash(u string) (string, error)
-
 	// add new record - pair shortURL: longURL
-	CreateHash(h, string, u string) error
+	Create(url entity.URLEntity) error
+
+	// return entity for the matching hash, check if hash exists
+	GetByHash(u string) (entity.URLEntity, error)
+
+	// return entity for the matching URL, check if URL exists
+	GetByURL(u string) (entity.URLEntity, error)
 }
 
 type URLService struct {
