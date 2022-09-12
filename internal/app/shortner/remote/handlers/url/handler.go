@@ -71,7 +71,7 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	// h := chi.URLParam(r, "hash")
 
 	// log path and hash
-	log.Println(h, r.URL.Path)
+	log.Println("Handler Get", h, r.URL.Path)
 
 	// Get from storage
 	u, err := uh.urlService.Get(h)
