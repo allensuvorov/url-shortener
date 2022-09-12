@@ -26,20 +26,20 @@ func (us URLStorage) Create(url entity.URLEntity) error {
 	return nil
 }
 
-func (us URLStorage) GetHashByURL(u string) (entity.URLEntity, error) {
+func (us URLStorage) GetHashByURL(u string) (string, error) {
 	for _, v := range us.inMemory {
 		if v.URL == u {
+			return v.Hash, nil
+		}
+	}
+	return "", errors.NotFound
+}
+
+func (us URLStorage) GetURLByHash(u string) (string, error) {
+	for _, v := range us.inMemory {
+		if v.Hash == u {
 			return v.URL, nil
 		}
 	}
-	return nil, errors.NotFound
-}
-
-func (us URLStorage) GetByHash(u string) (entity.URLEntity, error) {
-	for _, v := range us.inMemory {
-		if v.Hash == u {
-			return v, nil
-		}
-	}
-	return nil, errors.NotFound
+	return "", errors.NotFound
 }

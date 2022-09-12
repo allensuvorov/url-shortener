@@ -1,6 +1,7 @@
 package url
 
 import (
+	"log"
 	"net/url"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
@@ -14,10 +15,10 @@ type URLStorage interface {
 	Create(url entity.URLEntity) error
 
 	// GetByHash returns entity for the matching hash, checks if hash exists.
-	GetByHash(u string) (entity.URLEntity, error)
+	GetURLByHash(u string) (string, error)
 
 	// GetByURL returns hash for the matching URL, checks if URL exists.
-	GetHashByURL(u string) (h string, error)
+	GetHashByURL(u string) (string, error)
 }
 
 type URLService struct {
@@ -49,12 +50,16 @@ func (us URLService) Create(u string) (string, error) {
 
 		// generate shortened URL
 		h = Shorten(u)
-		
+
+		// cut it to a short hash
+		sh := getUniqShortHash(h, u, us)
+
+		log.Println("created new shortURL", sh)
 		// New url entity
-		ue := entity.URLEntity{ 
-			URL: u, 
+		ue := entity.URLEntity{
+			URL:  u,
 			Hash: h,
-		} 
+		}
 
 		// add url to the storage
 		us.urlStorage.Create(ue)

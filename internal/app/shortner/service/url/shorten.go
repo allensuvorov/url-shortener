@@ -3,11 +3,8 @@ package url
 import (
 	"crypto/sha256"
 	"fmt"
-	"log"
 
-	//"yandex/projects/urlshortner/internal/app/shortner/storage"
-
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
 // sha256 to generate the hash value
@@ -16,21 +13,20 @@ func Shorten(s string) string {
 	h.Write([]byte(s)) // what's that?
 
 	hash := fmt.Sprintf("%x", h.Sum(nil))
-	sh := getUniqShortHash(hash, s)
-	log.Println("created new shortURL", sh)
-	return sh
+
+	return hash
 }
 
-// check if short URL (hash) is already in the map for a different long url, expand hash slice till unique
-func getUniqShortHash(h string, u string) string {
+// check if short URL (hash) is already in the DB for a different long url, expand hash slice till unique
+func getUniqShortHash(h string, u string, us URLService) string {
 	var sh string // short hash
 	for i := 8; i < len(h); i++ {
 		sh = h[0:i]
 
-		u1, ok := storage.GetURL(sh)
+		u1, err := us.urlStorage.GetURLByHash(sh)
 
 		// if sh is uniq (not in storage), return sh
-		if !ok {
+		if err == errors.NotFound {
 			return sh
 		}
 		// check it the URL is different
