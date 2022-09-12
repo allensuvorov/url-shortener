@@ -7,7 +7,7 @@ import (
 
 func NewRouter(url url.URLHandler) chi.Router {
 	r := chi.NewRouter()
-	r.Get("/{hash}", url.GetURL)
+	r.Get("/{hash}", url.Get)
 	r.Post("/", url.Create)
 	return r
 }

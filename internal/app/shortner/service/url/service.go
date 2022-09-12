@@ -71,6 +71,12 @@ func (us URLService) Create(u string) (string, error) {
 }
 
 // TODO Get
-func (us URLService) Get(u string) (string, error) {
+func (us URLService) Get(h string) (string, error) {
+	// check if hash exists, if not - return 400
+	u, err := us.urlStorage.GetURLByHash(h)
 
+	if err == errors.NotFound {
+		return "", err
+	}
+	return u, nil
 }

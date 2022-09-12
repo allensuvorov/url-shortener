@@ -4,15 +4,16 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
 type URLService interface {
 	// Create takes URL and returns hash.
 	Create(u string) (string, error)
 	// Get takes hash and returns URL.
-	Get(h string) (entity.URLEntity, error)
+	Get(h string) (string, error)
 }
 
 type URLHandler struct {
@@ -64,5 +65,27 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Get passes Hash to service and returns response with URL.
 func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
+	// get hash - last element of path (after slash)
+	h := path.Base(r.URL.Path)
+	// or
+	// h := chi.URLParam(r, "hash")
 
+	// log path and hash
+	log.Println(h, r.URL.Path)
+
+	// Get from storage
+	u, err := uh.urlService.Get(h)
+
+	if err == errors.NotFound {
+		http.Error(w, "URL does not exist", http.StatusBadRequest)
+		return
+	}
+
+	// set header Location
+	w.Header().Set("Location", u)
+
+	// устанавливаем статус-код 307
+	w.WriteHeader(http.StatusTemporaryRedirect)
+
+	w.Write([]byte(u))
 }
