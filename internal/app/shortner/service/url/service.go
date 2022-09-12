@@ -1,4 +1,24 @@
-// CreateURL
+package url
+
+import (
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+
+)
+
+type URLStorage interface {
+
+}
+
+type URLService struct {
+	urlStorage URLStorage
+}
+
+func NewURLService(us URLStorage) URLService {
+	return NewURLService{
+		urlStorage: us,
+	}
+}
+// func CreateURL
 
 // check if URL is valid
 _, err = url.ParseRequestURI(u)
