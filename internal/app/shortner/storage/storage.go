@@ -1,8 +1,8 @@
 package storage
 
 import (
-	"yandex/projects/urlshortner/internal/app/shortner/domain/entity"
-	"yandex/projects/urlshortner/internal/app/shortner/domain/errors"
+	// "yandex/projects/urlshortner/internal/app/shortner/domain/entity"
+	// "yandex/projects/urlshortner/internal/app/shortner/domain/errors"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"

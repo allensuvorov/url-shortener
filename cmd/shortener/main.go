@@ -4,16 +4,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/handlers"
-	"github.com/go-chi/chi/v5"
+	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/routers"
+	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 func main() {
-	r := chi.NewRouter()
-
-	r.Post("/", handlers.PostURL)
-	r.Get("/{hash}", handlers.GetURL)
-
+	URLStorage := storage.NewURLStorage()
+	URLService := service.NewURLService(URLStorage)
+	URLHandler := handler.NewURLHandler(URLService)
+	r := routers.NewRouter(URLHandler)
 	log.Println("Serving on port: 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
