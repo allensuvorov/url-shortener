@@ -10,7 +10,7 @@ import (
 
 type URLService interface {
 	// CreateURL
-	CreateURL(url entity.URLEntity) (string, error)
+	CreateURL(ue entity.URLEntity) (string, error)
 	// GetByURL
 	GetByURL(u string) (entity.URLEntity, error)
 	// GetByHash
@@ -28,7 +28,7 @@ func NewURLHandler(us URLService) URLHandler {
 }
 
 func (uh URLHandler) CreateURL(w http.ResponseWriter, r *http.Request) {
-	var URL entity.URLEntity
+	var ue entity.URLEntity // url entity
 
 	// читаем Body
 	b, err := io.ReadAll(r.Body)
@@ -41,7 +41,7 @@ func (uh URLHandler) CreateURL(w http.ResponseWriter, r *http.Request) {
 
 	// convert to string
 	u := string(b)
-	URL.URL = u
+	ue.URL = u
 
 	// check if long URL is empty string
 	if len(b) == 0 {
@@ -52,7 +52,7 @@ func (uh URLHandler) CreateURL(w http.ResponseWriter, r *http.Request) {
 	// log body from request
 	log.Println("URL in the POST request is", u)
 
-	shortURL, err := uh.urlService.CreateURL(URL)
+	shortURL, err := uh.urlService.CreateURL(ue)
 
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)

@@ -11,22 +11,6 @@ import (
 // map to store short urls and full urls
 // var Urls map[string]string = make(map[string]string)
 
-// DBStorage interface (to be adopted for mock-testing):
-type DBStorage interface {
-
-	// check if hash exists
-	HashExists(u string) bool
-
-	// return longURL for the matching hash
-	GetURL(u string) string
-
-	// return hash for a matching longURL, check if longURL exists
-	GetHash(u string) (string, error)
-
-	// add new record - pair shortURL: longURL
-	CreateHash(h, string, u string) error
-}
-
 // Object with storage methods to work with DB
 type URLStorage struct {
 	inMemory []entity.URLEntity
@@ -43,6 +27,15 @@ func NewURLStorage() URLStorage {
 func (us URLStorage) Create(url entity.URLEntity) error {
 	us.inMemory = append(us.inMemory, url)
 	return nil
+}
+
+func (us URLStorage) GetByURL(u string) (entity.URLEntity, error) {
+	for _, v := range us.inMemory {
+		if v.URL == u {
+			return v, nil
+		}
+	}
+	return nil, errors.NotFound
 }
 
 // Get URL record by URL or Hash
