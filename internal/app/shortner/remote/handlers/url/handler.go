@@ -2,11 +2,17 @@ package url
 
 import "github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 
-type UrlService interface {
-	// CreateUrl
-	CreateUrl(url entity.URLEntity) error
-	// GetByUrl
+type URLService interface {
+	// CreateURL
+	CreateURL(url entity.URLEntity) error
+	// GetByURL
 	GetByURL(u string) (entity.URLEntity, error)
 	// GetByHash
 	GetByHash(h string) (entity.URLEntity, error)
 }
+
+type URLHandler struct {
+	urlService URLService
+}
+
+func NewURLHandler()
