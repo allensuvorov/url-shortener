@@ -15,4 +15,8 @@ type URLHandler struct {
 	urlService URLService
 }
 
-func NewURLHandler()
+func NewURLHandler(us URLService) URLHandler {
+	return URLHandler{
+		urlService: us,
+	}
+}
