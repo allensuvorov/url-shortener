@@ -26,10 +26,10 @@ func (us URLStorage) Create(url entity.URLEntity) error {
 	return nil
 }
 
-func (us URLStorage) GetByURL(u string) (entity.URLEntity, error) {
+func (us URLStorage) GetHashByURL(u string) (entity.URLEntity, error) {
 	for _, v := range us.inMemory {
 		if v.URL == u {
-			return v, nil
+			return v.URL, nil
 		}
 	}
 	return nil, errors.NotFound
