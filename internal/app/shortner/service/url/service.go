@@ -55,6 +55,7 @@ func (us URLService) Create(u string) (string, error) {
 		sh := getUniqShortHash(h, u, us)
 
 		log.Println("created new shortURL", sh)
+
 		// New url entity
 		ue := entity.URLEntity{
 			URL:  u,
