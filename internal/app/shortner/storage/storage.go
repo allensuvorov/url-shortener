@@ -13,17 +13,17 @@ type URLStorage struct {
 }
 
 // NewURLStorage creates URLStorage object
-func NewURLStorage() URLStorage {
-	return URLStorage{
+func NewURLStorage() *URLStorage {
+	return &URLStorage{
 		inMemory: make([]*entity.URLEntity, 0),
 	}
 }
 
 // Create adds new URL record to storage
-func (us *URLStorage) Create(url *entity.URLEntity) error {
-	us.inMemory = append(us.inMemory, url)
+func (us *URLStorage) Create(ue *entity.URLEntity) error {
+	us.inMemory = append(us.inMemory, ue)
 	log.Println("Storage Create UE, appended, updated slice len is", len(us.inMemory))
-	log.Println("Storage Create UE", url)
+	log.Println("Storage Create UE", ue)
 	return nil
 }
 

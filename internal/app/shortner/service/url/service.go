@@ -57,7 +57,7 @@ func (us URLService) Create(u string) (string, error) {
 		log.Println("created new shortURL", h)
 
 		// New url entity
-		ue := entity.URLEntity{
+		ue := &entity.URLEntity{
 			URL:  u,
 			Hash: h,
 		}
