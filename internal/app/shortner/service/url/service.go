@@ -12,7 +12,7 @@ import (
 type URLStorage interface {
 
 	// Create new entity (pair shortURL: longURL).
-	Create(url entity.URLEntity) error
+	Create(url *entity.URLEntity) error
 
 	// GetByHash returns entity for the matching hash, checks if hash exists.
 	GetURLByHash(u string) (string, error)
