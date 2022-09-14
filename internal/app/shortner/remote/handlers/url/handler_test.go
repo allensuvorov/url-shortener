@@ -39,6 +39,17 @@ func TestURLHandler_Create(t *testing.T) {
 				shortURL:   "http://localhost:8080/a7d59904",
 				StatusCode: http.StatusCreated,
 			},
+		},
+		{
+			name: "2st Test Case: invalide long URL",
+			fields: fields{
+				urlService: service.NewURLService(storage.NewURLStorage()),
+			},
+			args: args{
+				longURL:    "123http://www.apple.com/store",
+				requestURL: "localhost:8080/",
+				StatusCode: http.StatusInternalServerError,
+			},
 		}, // TODO: Add test cases.
 	}
 
@@ -70,13 +81,16 @@ func TestURLHandler_Create(t *testing.T) {
 			if res.StatusCode != tt.args.StatusCode {
 				t.Errorf("expected status Created; got %v", res.Status)
 			}
-			// Check response body
-			b, err := ioutil.ReadAll(res.Body)
-			if err != nil {
-				t.Fatalf("coult not read respons: %v", err)
-			}
-			if string(b) != tt.args.shortURL {
-				t.Fatalf("expected %s, got %s", tt.args.shortURL, string(b))
+
+			if res.StatusCode == http.StatusCreated {
+				// Check response body
+				b, err := ioutil.ReadAll(res.Body)
+				if err != nil {
+					t.Fatalf("coult not read respons: %v", err)
+				}
+				if string(b) != tt.args.shortURL {
+					t.Fatalf("expected %s, got %s", tt.args.shortURL, string(b))
+				}
 			}
 		})
 	}
