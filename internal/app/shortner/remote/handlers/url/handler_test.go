@@ -169,6 +169,23 @@ func TestURLHandler_Get(t *testing.T) {
 				longURL:    "http://www.apple.com/store",
 				StatusCode: http.StatusTemporaryRedirect,
 			},
+		},
+		{
+			name: "2st Test Case: negative - not found",
+			fields: fields{
+				urlService: service.NewURLService(&URLStorageMock{
+					inMemory: []*entity.URLEntity{
+						{
+							URL:  "http://www.apple.com/store",
+							Hash: "a7d59904",
+						},
+					}}),
+			},
+			args: args{
+				requestURL: "http://localhost:8080/111111",
+				longURL:    "http://www.apple.com/store",
+				StatusCode: http.StatusBadRequest,
+			},
 		}, // TODO: Add test cases.
 	}
 	for _, tt := range tests {
@@ -200,9 +217,9 @@ func TestURLHandler_Get(t *testing.T) {
 
 			// Check response status code
 			if res.StatusCode != tt.args.StatusCode {
-				t.Errorf("expected status TemporaryRedirect; got %v", res.Status)
+				t.Errorf("expected status %v; got %v", tt.args.StatusCode, res.Status)
 			}
-			if res.StatusCode == tt.args.StatusCode {
+			if res.StatusCode == http.StatusTemporaryRedirect {
 				if res.Header.Get("Location") != tt.args.longURL {
 					t.Errorf("Expected Header %s, got %s", tt.args.longURL, res.Header.Get("Location"))
 				}
