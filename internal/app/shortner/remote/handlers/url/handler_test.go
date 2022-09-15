@@ -12,6 +12,7 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestURLHandler_Create(t *testing.T) {
@@ -81,9 +82,15 @@ func TestURLHandler_Create(t *testing.T) {
 			res := rec.Result()
 			defer res.Body.Close()
 			// Check response status code
-			if res.StatusCode != tt.args.StatusCode {
-				t.Errorf("expected status Created; got %v", res.Status)
-			}
+			assert.Equal(
+				t,
+				res.StatusCode,
+				tt.args.StatusCode,
+				"expected status Created, got other",
+			)
+			// if res.StatusCode != tt.args.StatusCode {
+			// 	t.Errorf("expected status Created; got %v", res.Status)
+			// }
 
 			if res.StatusCode == http.StatusCreated {
 				// Check response body
