@@ -48,8 +48,8 @@ func (us URLService) Create(u string) (string, error) {
 	// Generate new Hash if URL does not exist in storage
 	if err == errors.NotFound {
 
-		// generate shortened URL
-		h = Shorten(u)
+		// generate Hash for the shortened URL
+		h = BuildHash(u)
 
 		// cut it to a short hash
 		h = getUniqShortHash(h, u, us)

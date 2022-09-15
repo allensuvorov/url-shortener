@@ -8,7 +8,7 @@ import (
 )
 
 // sha256 to generate the hash value
-func Shorten(s string) string {
+func BuildHash(s string) string {
 	h := sha256.New()
 	h.Write([]byte(s)) // what's that?
 
