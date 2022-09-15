@@ -26,7 +26,7 @@ func getUniqShortHash(h string, u string, us URLService) string {
 		u1, err := us.urlStorage.GetURLByHash(sh)
 
 		// if sh is uniq (not in storage), return sh
-		if err == errors.NotFound {
+		if err == errors.ErrNotFound {
 			return sh
 		}
 		// check it the URL is different

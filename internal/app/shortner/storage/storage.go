@@ -35,7 +35,7 @@ func (us *URLStorage) GetHashByURL(u string) (string, error) {
 			return v.Hash, nil
 		}
 	}
-	return "", errors.NotFound
+	return "", errors.ErrNotFound
 }
 
 func (us *URLStorage) GetURLByHash(u string) (string, error) {
@@ -48,5 +48,5 @@ func (us *URLStorage) GetURLByHash(u string) (string, error) {
 			return v.URL, nil
 		}
 	}
-	return "", errors.NotFound
+	return "", errors.ErrNotFound
 }

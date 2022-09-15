@@ -121,7 +121,7 @@ func (usm *URLStorageMock) GetURLByHash(u string) (string, error) {
 			return v.URL, nil
 		}
 	}
-	return "", errors.NotFound
+	return "", errors.ErrNotFound
 }
 
 // GetByURL returns hash for the matching URL, checks if URL exists.

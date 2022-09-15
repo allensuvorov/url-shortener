@@ -76,7 +76,7 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	// Get from storage
 	u, err := uh.urlService.Get(h)
 
-	if err == errors.NotFound {
+	if err == errors.ErrNotFound {
 		http.Error(w, "URL does not exist", http.StatusBadRequest)
 		return
 	}

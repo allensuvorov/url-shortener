@@ -46,7 +46,7 @@ func (us URLService) Create(u string) (string, error) {
 	h, err := us.urlStorage.GetHashByURL(u)
 
 	// Generate new Hash if URL does not exist in storage
-	if err == errors.NotFound {
+	if err == errors.ErrNotFound {
 
 		// generate Hash for the shortened URL
 		h = BuildHash(u)
@@ -75,7 +75,7 @@ func (us URLService) Get(h string) (string, error) {
 	// check if hash exists, if not - return 400
 	u, err := us.urlStorage.GetURLByHash(h)
 
-	if err == errors.NotFound {
+	if err == errors.ErrNotFound {
 		return "", err
 	}
 	return u, nil
