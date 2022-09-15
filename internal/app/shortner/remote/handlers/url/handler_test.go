@@ -131,14 +131,6 @@ func (usm *URLStorageMock) GetHashByURL(u string) (string, error) {
 
 func TestURLHandler_Get(t *testing.T) {
 	log.Println("Starting TestURLHandler_Get")
-	// New url entity
-	// ue := &entity.URLEntity{
-	// 	URL:  "http://www.apple.com/store",
-	// 	Hash: "a7d59904",
-	// }
-
-	// usm := new(URLStorageMock)
-	// usm.inMemory = append(usm.inMemory, ue)
 
 	type fields struct {
 		urlService URLService
@@ -203,6 +195,15 @@ func TestURLHandler_Get(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			// handler object
+			// TODO: decide - should we build the object in this func?
+			// New url entity
+			// ue := &entity.URLEntity{
+			// 	URL:  "http://www.apple.com/store",
+			// 	Hash: "a7d59904",
+			// }
+
+			// usm := new(URLStorageMock)
+			// usm.inMemory = append(usm.inMemory, ue)
 
 			uh := URLHandler{
 				urlService: tt.fields.urlService,
