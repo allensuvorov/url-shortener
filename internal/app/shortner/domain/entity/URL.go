@@ -1,7 +1,7 @@
 package entity
 
 type URLEntity struct {
-	Id   int
+	ID   int
 	URL  string
 	Hash string
 }
