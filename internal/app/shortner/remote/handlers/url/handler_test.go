@@ -13,6 +13,7 @@ import (
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestURLHandler_Create(t *testing.T) {
@@ -82,15 +83,7 @@ func TestURLHandler_Create(t *testing.T) {
 			res := rec.Result()
 			defer res.Body.Close()
 			// Check response status code
-			assert.Equal(
-				t,
-				res.StatusCode,
-				tt.args.StatusCode,
-				"expected status Created, got other",
-			)
-			// if res.StatusCode != tt.args.StatusCode {
-			// 	t.Errorf("expected status Created; got %v", res.Status)
-			// }
+			assert.Equal(t, res.StatusCode, tt.args.StatusCode, "expected status Created, got other")
 
 			if res.StatusCode == http.StatusCreated {
 				// Check response body
@@ -98,9 +91,7 @@ func TestURLHandler_Create(t *testing.T) {
 				if err != nil {
 					t.Fatalf("coult not read respons: %v", err)
 				}
-				if string(b) != tt.args.shortURL {
-					t.Fatalf("expected %s, got %s", tt.args.shortURL, string(b))
-				}
+				require.Equal(t, tt.args.shortURL, string(b), "short URL is not matching")
 			}
 		})
 	}
