@@ -11,7 +11,6 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -33,7 +32,7 @@ func TestURLHandler_Create(t *testing.T) {
 		args args
 	}{
 		{
-			name: "1st Test Case: apple/store",
+			name: "1st Test Case - Positive: apple/store",
 			fields: fields{
 				urlService: service.NewURLService(storage.NewURLStorage()),
 			},
@@ -45,13 +44,14 @@ func TestURLHandler_Create(t *testing.T) {
 			},
 		},
 		{
-			name: "2st Test Case: invalide long URL",
+			name: "2st Test Case - Negative: invalide long URL",
 			fields: fields{
 				urlService: service.NewURLService(storage.NewURLStorage()),
 			},
 			args: args{
 				longURL:    "123http://www.apple.com/store",
 				requestURL: "localhost:8080/",
+				shortURL:   "Failed to create short URL\n",
 				StatusCode: http.StatusInternalServerError,
 			},
 		}, // TODO: Add test cases.
@@ -82,20 +82,20 @@ func TestURLHandler_Create(t *testing.T) {
 			res := rec.Result()
 			defer res.Body.Close()
 			// Check response status code
-			assert.Equal(t, res.StatusCode, tt.args.StatusCode, "expected status Created, got other")
+			require.Equal(t, res.StatusCode, tt.args.StatusCode, "expected status Created, got other")
 
-			if res.StatusCode == http.StatusCreated {
-				// Check response body
-				b, err := ioutil.ReadAll(res.Body)
-				if err != nil {
-					t.Fatalf("coult not read respons: %v", err)
-				}
-				require.Equal(t, tt.args.shortURL, string(b), "short URL is not matching")
+			// Check response body
+			b, err := ioutil.ReadAll(res.Body)
+			if err != nil {
+				t.Fatalf("could not read respons: %v", err)
 			}
+			require.Equal(t, tt.args.shortURL, string(b), "short URL is not matching")
+
 		})
 	}
 }
 
+// data for handlerGetTest
 type handlerGetTest struct {
 	name  string
 	input input
@@ -110,14 +110,13 @@ type input struct {
 	requestURL string
 }
 type want struct {
-	requestURL string
 	longURL    string
 	StatusCode int
 }
 
 func (st handlerGetTest) run(t *testing.T) {
 	// request
-	requestURL := tt.args.requestURL
+	requestURL := st.input.requestURL
 	log.Println("Test Get, requestURL is", requestURL)
 	req, err := http.NewRequest("GET", requestURL, nil)
 
@@ -131,8 +130,8 @@ func (st handlerGetTest) run(t *testing.T) {
 	// handler object
 	// New url entity
 	ue := &entity.URLEntity{
-		URL:  tt.fields.URL,
-		Hash: tt.fields.Hash,
+		URL:  st.input.md.URL,
+		Hash: st.input.md.Hash,
 	}
 
 	usm := storage.NewURLStorage()
@@ -150,38 +149,38 @@ func (st handlerGetTest) run(t *testing.T) {
 	defer res.Body.Close()
 
 	// Check response status code
-	if res.StatusCode != tt.args.StatusCode {
-		t.Errorf("expected status %v; got %v", tt.args.StatusCode, res.Status)
-	}
-	if res.StatusCode == http.StatusTemporaryRedirect {
-		if res.Header.Get("Location") != tt.args.longURL {
-			t.Errorf("Expected Header %s, got %s", tt.args.longURL, res.Header.Get("Location"))
-		}
-	}
+	require.Equal(t, st.want.StatusCode, res.StatusCode, "response status does not match expected")
+
+	// Check response header
+	require.Equal(t, st.want.longURL, res.Header.Get("Location"), "response header location does not match expected")
 }
 
 var tests = []handlerGetTest{
 	{
-		name: "1st Test Case: positive - apple/store",
-		fields: md{
-			URL:  "http://www.apple.com/store",
-			Hash: "a7d59904",
-		},
-		args: want{
+		name: "1st Test Case - Positive: apple/store",
+		input: input{
+			md: md{
+				URL:  "http://www.apple.com/store",
+				Hash: "a7d59904",
+			},
 			requestURL: "http://localhost:8080/a7d59904",
+		},
+		want: want{
 			longURL:    "http://www.apple.com/store",
 			StatusCode: http.StatusTemporaryRedirect,
 		},
 	},
 	{
-		name: "2st Test Case: negative - not found",
-		fields: md{
-			URL:  "http://www.apple.com/store",
-			Hash: "a7d59904",
+		name: "2st Test Case - Negative: not found",
+		input: input{
+			md: md{
+				URL:  "http://www.apple.com/store",
+				Hash: "a7d59904",
+			},
+			requestURL: "http://localhost:8080/1111111",
 		},
-		args: want{
-			requestURL: "http://localhost:8080/111111",
-			longURL:    "http://www.apple.com/store",
+		want: want{
+			longURL:    "",
 			StatusCode: http.StatusBadRequest,
 		},
 	}, // TODO: Add test cases.
@@ -190,6 +189,8 @@ var tests = []handlerGetTest{
 func TestURLHandler_Get(t *testing.T) {
 	log.Println("TestURLHandler_Get - Starting TestURLHandler_Get")
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T))
+		t.Run(tt.name, tt.run)
 	}
 }
+
+//#endregion
