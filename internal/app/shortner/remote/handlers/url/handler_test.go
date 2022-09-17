@@ -114,11 +114,9 @@ type want struct {
 	StatusCode int
 }
 
-func (st handlerGetTest) run(t *testing.T) {
+func (st handlerGetTest) run(t *testing.T) { // subtest
 	// request
-	requestURL := st.input.requestURL
-	log.Println("Test Get, requestURL is", requestURL)
-	req, err := http.NewRequest("GET", requestURL, nil)
+	req, err := http.NewRequest("GET", st.input.requestURL, nil)
 
 	if err != nil {
 		t.Fatalf("could not create request: %v", err)
@@ -133,13 +131,10 @@ func (st handlerGetTest) run(t *testing.T) {
 		URL:  st.input.md.URL,
 		Hash: st.input.md.Hash,
 	}
-
 	usm := storage.NewURLStorage()
 	usm.InMemory = append(usm.InMemory, ue)
-
-	uh := URLHandler{
-		urlService: service.NewURLService(usm),
-	}
+	us := service.NewURLService(usm)
+	uh := NewURLHandler(us)
 
 	// Run the handler
 	uh.Get(rec, req)
@@ -192,5 +187,3 @@ func TestURLHandler_Get(t *testing.T) {
 		t.Run(tt.name, tt.run)
 	}
 }
-
-//#endregion
