@@ -14,19 +14,19 @@ import (
 
 type handlerGetTest struct {
 	name  string
-	input input
-	want  want
+	input getInput
+	want  getWant
 }
 
 type md struct { // mock data
 	URL  string
 	Hash string
 }
-type input struct {
+type getInput struct {
 	md         md
 	requestURL string
 }
-type want struct {
+type getWant struct {
 	longURL    string
 	StatusCode int
 }
@@ -74,28 +74,28 @@ func (st handlerGetTest) run(t *testing.T) { // subtest
 var tests = []handlerGetTest{
 	{
 		name: "1st Test Case - Positive: apple/store",
-		input: input{
+		input: getInput{
 			md: md{
 				URL:  "http://www.apple.com/store",
 				Hash: "a7d59904",
 			},
 			requestURL: "http://localhost:8080/a7d59904",
 		},
-		want: want{
+		want: getWant{
 			longURL:    "http://www.apple.com/store",
 			StatusCode: http.StatusTemporaryRedirect,
 		},
 	},
 	{
 		name: "2st Test Case - Negative: not found",
-		input: input{
+		input: getInput{
 			md: md{
 				URL:  "http://www.apple.com/store",
 				Hash: "a7d59904",
 			},
 			requestURL: "http://localhost:8080/1111111",
 		},
-		want: want{
+		want: getWant{
 			longURL:    "",
 			StatusCode: http.StatusBadRequest,
 		},
