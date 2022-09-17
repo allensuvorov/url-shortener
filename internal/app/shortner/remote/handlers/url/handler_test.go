@@ -96,93 +96,100 @@ func TestURLHandler_Create(t *testing.T) {
 	}
 }
 
-func TestURLHandler_Get(t *testing.T) {
-	log.Println("Starting TestURLHandler_Get")
+type handlerGetTest struct {
+	name  string
+	input input
+	want  want
+}
+type md struct { // mock data
+	URL  string
+	Hash string
+}
+type input struct {
+	md         md
+	requestURL string
+}
+type want struct {
+	requestURL string
+	longURL    string
+	StatusCode int
+}
 
-	type fields struct {
-		URL  string
-		Hash string
+func (st handlerGetTest) run(t *testing.T) {
+	// request
+	requestURL := tt.args.requestURL
+	log.Println("Test Get, requestURL is", requestURL)
+	req, err := http.NewRequest("GET", requestURL, nil)
+
+	if err != nil {
+		t.Fatalf("could not create request: %v", err)
 	}
-	type args struct {
-		requestURL string
-		longURL    string
-		StatusCode int
+
+	// response
+	rec := httptest.NewRecorder()
+
+	// handler object
+	// New url entity
+	ue := &entity.URLEntity{
+		URL:  tt.fields.URL,
+		Hash: tt.fields.Hash,
 	}
-	tests := []struct {
-		name   string
-		fields fields
-		args   args
-	}{
-		{
-			name: "1st Test Case: positive - apple/store",
-			fields: fields{
-				URL:  "http://www.apple.com/store",
-				Hash: "a7d59904",
-			},
-			args: args{
-				requestURL: "http://localhost:8080/a7d59904",
-				longURL:    "http://www.apple.com/store",
-				StatusCode: http.StatusTemporaryRedirect,
-			},
+
+	usm := storage.NewURLStorage()
+	usm.InMemory = append(usm.InMemory, ue)
+
+	uh := URLHandler{
+		urlService: service.NewURLService(usm),
+	}
+
+	// Run the handler
+	uh.Get(rec, req)
+
+	// Check response
+	res := rec.Result()
+	defer res.Body.Close()
+
+	// Check response status code
+	if res.StatusCode != tt.args.StatusCode {
+		t.Errorf("expected status %v; got %v", tt.args.StatusCode, res.Status)
+	}
+	if res.StatusCode == http.StatusTemporaryRedirect {
+		if res.Header.Get("Location") != tt.args.longURL {
+			t.Errorf("Expected Header %s, got %s", tt.args.longURL, res.Header.Get("Location"))
+		}
+	}
+}
+
+var tests = []handlerGetTest{
+	{
+		name: "1st Test Case: positive - apple/store",
+		fields: md{
+			URL:  "http://www.apple.com/store",
+			Hash: "a7d59904",
 		},
-		{
-			name: "2st Test Case: negative - not found",
-			fields: fields{
-				URL:  "http://www.apple.com/store",
-				Hash: "a7d59904",
-			},
-			args: args{
-				requestURL: "http://localhost:8080/111111",
-				longURL:    "http://www.apple.com/store",
-				StatusCode: http.StatusBadRequest,
-			},
-		}, // TODO: Add test cases.
-	}
+		args: want{
+			requestURL: "http://localhost:8080/a7d59904",
+			longURL:    "http://www.apple.com/store",
+			StatusCode: http.StatusTemporaryRedirect,
+		},
+	},
+	{
+		name: "2st Test Case: negative - not found",
+		fields: md{
+			URL:  "http://www.apple.com/store",
+			Hash: "a7d59904",
+		},
+		args: want{
+			requestURL: "http://localhost:8080/111111",
+			longURL:    "http://www.apple.com/store",
+			StatusCode: http.StatusBadRequest,
+		},
+	}, // TODO: Add test cases.
+}
+
+func TestURLHandler_Get(t *testing.T) {
+	log.Println("TestURLHandler_Get - Starting TestURLHandler_Get")
 	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			// request
-			requestURL := tt.args.requestURL
-			log.Println("Test Get, requestURL is", requestURL)
-			req, err := http.NewRequest("GET", requestURL, nil)
-
-			if err != nil {
-				t.Fatalf("could not create request: %v", err)
-			}
-
-			// response
-			rec := httptest.NewRecorder()
-
-			// handler object
-			// New url entity
-			ue := &entity.URLEntity{
-				URL:  tt.fields.URL,
-				Hash: tt.fields.Hash,
-			}
-
-			usm := storage.NewURLStorage()
-			usm.InMemory = append(usm.InMemory, ue)
-
-			uh := URLHandler{
-				urlService: service.NewURLService(usm),
-			}
-
-			// Run the handler
-			uh.Get(rec, req)
-
-			// Check response
-			res := rec.Result()
-			defer res.Body.Close()
-
-			// Check response status code
-			if res.StatusCode != tt.args.StatusCode {
-				t.Errorf("expected status %v; got %v", tt.args.StatusCode, res.Status)
-			}
-			if res.StatusCode == http.StatusTemporaryRedirect {
-				if res.Header.Get("Location") != tt.args.longURL {
-					t.Errorf("Expected Header %s, got %s", tt.args.longURL, res.Header.Get("Location"))
-				}
-			}
-
-		})
+		t.Run(tt.name, func(t *testing.T))
 	}
 }
