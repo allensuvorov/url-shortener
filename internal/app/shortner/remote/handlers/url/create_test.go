@@ -24,40 +24,40 @@ type createInput struct {
 }
 
 type createWant struct {
-	shortURL   string
-	StatusCode int
+	responseBody string
+	statusCode   int
 }
 
 // new create hander
 var ch = NewURLHandler(service.NewURLService(storage.NewURLStorage()))
 
 func (st handlerCreateTest) run(t *testing.T) {
-	jsonBody := []byte(st.input.longURL)
-	bodyReader := bytes.NewReader(jsonBody)
-	requestURL := st.input.requestURL
-	req, err := http.NewRequest("POST", requestURL, bodyReader)
-
+	// Get request
+	bodyReader := bytes.NewReader([]byte(st.input.longURL))
+	req, err := http.NewRequest("POST", st.input.requestURL, bodyReader)
 	if err != nil {
 		t.Fatalf("could not create request: %v", err)
 	}
-	// response
+
+	// New response recorder
 	rec := httptest.NewRecorder()
 
 	// Run the handler
 	ch.Create(rec, req)
 
-	// Check response
+	// Get response
 	res := rec.Result()
 	defer res.Body.Close()
+
 	// Check response status code
-	require.Equal(t, res.StatusCode, st.want.StatusCode, "expected status Created, got other")
+	require.Equal(t, res.StatusCode, st.want.statusCode, "expected status Created, got other")
 
 	// Check response body
 	b, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		t.Fatalf("could not read respons: %v", err)
 	}
-	require.Equal(t, st.want.shortURL, string(b), "short URL is not matching")
+	require.Equal(t, st.want.responseBody, string(b), "short URL is not matching")
 }
 
 // test data
@@ -70,8 +70,8 @@ var createTests = []handlerCreateTest{
 			requestURL: "localhost:8080/",
 		},
 		want: createWant{
-			shortURL:   "http://localhost:8080/a7d59904",
-			StatusCode: http.StatusCreated,
+			responseBody: "http://localhost:8080/a7d59904",
+			statusCode:   http.StatusCreated,
 		},
 	},
 	{
@@ -81,14 +81,14 @@ var createTests = []handlerCreateTest{
 			requestURL: "localhost:8080/",
 		},
 		want: createWant{
-			shortURL:   "Failed to create short URL\n",
-			StatusCode: http.StatusInternalServerError,
+			responseBody: "Failed to create short URL\n",
+			statusCode:   http.StatusInternalServerError,
 		},
 	}, // TODO: Add test cases.
 }
 
 func TestURLHandler_Create(t *testing.T) {
-	for _, tt := range getTests {
+	for _, tt := range createTests {
 		t.Run(tt.name, tt.run)
 	}
 }
