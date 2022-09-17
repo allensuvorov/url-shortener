@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/assert"
@@ -97,36 +96,6 @@ func TestURLHandler_Create(t *testing.T) {
 	}
 }
 
-type URLStorageMock struct {
-	inMemory []*entity.URLEntity
-}
-
-// Create new entity (pair shortURL: longURL).
-func (usm *URLStorageMock) Create(ue *entity.URLEntity) error {
-	// usm.inMemory = append(usm.inMemory, ue)
-	return nil
-}
-
-// GetByHash returns entity for the matching hash, checks if hash exists.
-func (usm *URLStorageMock) GetURLByHash(u string) (string, error) {
-	log.Println("Testing GetURLByHash, looking in slice len", len(usm.inMemory))
-	log.Println("Testing GetURLByHash, looking for matching Hash =", u)
-	log.Println("URL Storage Mock inMemory", *usm.inMemory[0])
-	for _, v := range usm.inMemory {
-		log.Printf("Testing GetURLByHash, comparing local %s and received %s", v.Hash, u)
-		if v.Hash == u {
-			log.Println("Testing GetURLByHash, found ue", v)
-			return v.URL, nil
-		}
-	}
-	return "", errors.ErrNotFound
-}
-
-// GetByURL returns hash for the matching URL, checks if URL exists.
-func (usm *URLStorageMock) GetHashByURL(u string) (string, error) {
-	return "", nil
-}
-
 func TestURLHandler_Get(t *testing.T) {
 	log.Println("Starting TestURLHandler_Get")
 
@@ -146,8 +115,8 @@ func TestURLHandler_Get(t *testing.T) {
 		{
 			name: "1st Test Case: positive - apple/store",
 			fields: fields{
-				urlService: service.NewURLService(&URLStorageMock{
-					inMemory: []*entity.URLEntity{
+				urlService: service.NewURLService(&storage.URLStorage{
+					InMemory: []*entity.URLEntity{
 						{
 							URL:  "http://www.apple.com/store",
 							Hash: "a7d59904",
@@ -163,8 +132,8 @@ func TestURLHandler_Get(t *testing.T) {
 		{
 			name: "2st Test Case: negative - not found",
 			fields: fields{
-				urlService: service.NewURLService(&URLStorageMock{
-					inMemory: []*entity.URLEntity{
+				urlService: service.NewURLService(&storage.URLStorage{
+					InMemory: []*entity.URLEntity{
 						{
 							URL:  "http://www.apple.com/store",
 							Hash: "a7d59904",
