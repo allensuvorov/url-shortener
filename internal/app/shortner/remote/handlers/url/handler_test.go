@@ -100,7 +100,8 @@ func TestURLHandler_Get(t *testing.T) {
 	log.Println("Starting TestURLHandler_Get")
 
 	type fields struct {
-		urlService URLService
+		URL  string
+		Hash string
 	}
 	type args struct {
 		requestURL string
@@ -115,13 +116,8 @@ func TestURLHandler_Get(t *testing.T) {
 		{
 			name: "1st Test Case: positive - apple/store",
 			fields: fields{
-				urlService: service.NewURLService(&storage.URLStorage{
-					InMemory: []*entity.URLEntity{
-						{
-							URL:  "http://www.apple.com/store",
-							Hash: "a7d59904",
-						},
-					}}),
+				URL:  "http://www.apple.com/store",
+				Hash: "a7d59904",
 			},
 			args: args{
 				requestURL: "http://localhost:8080/a7d59904",
@@ -132,13 +128,8 @@ func TestURLHandler_Get(t *testing.T) {
 		{
 			name: "2st Test Case: negative - not found",
 			fields: fields{
-				urlService: service.NewURLService(&storage.URLStorage{
-					InMemory: []*entity.URLEntity{
-						{
-							URL:  "http://www.apple.com/store",
-							Hash: "a7d59904",
-						},
-					}}),
+				URL:  "http://www.apple.com/store",
+				Hash: "a7d59904",
 			},
 			args: args{
 				requestURL: "http://localhost:8080/111111",
@@ -162,18 +153,17 @@ func TestURLHandler_Get(t *testing.T) {
 			rec := httptest.NewRecorder()
 
 			// handler object
-			// TODO: decide - should we build the object in this func?
 			// New url entity
-			// ue := &entity.URLEntity{
-			// 	URL:  "http://www.apple.com/store",
-			// 	Hash: "a7d59904",
-			// }
+			ue := &entity.URLEntity{
+				URL:  tt.fields.URL,
+				Hash: tt.fields.Hash,
+			}
 
-			// usm := new(URLStorageMock)
-			// usm.inMemory = append(usm.inMemory, ue)
+			usm := storage.NewURLStorage()
+			usm.InMemory = append(usm.InMemory, ue)
 
 			uh := URLHandler{
-				urlService: tt.fields.urlService,
+				urlService: service.NewURLService(usm),
 			}
 
 			// Run the handler
