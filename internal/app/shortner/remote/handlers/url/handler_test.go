@@ -96,11 +96,14 @@ func TestURLHandler_Create(t *testing.T) {
 }
 
 // data for handlerGetTest
+
 type handlerGetTest struct {
 	name  string
 	input input
 	want  want
 }
+
+// #endregion
 type md struct { // mock data
 	URL  string
 	Hash string
@@ -114,6 +117,18 @@ type want struct {
 	StatusCode int
 }
 
+func newMockHandler(u, h string) URLHandler {
+	ue := &entity.URLEntity{
+		URL:  u,
+		Hash: h,
+	}
+	usm := storage.NewURLStorage()
+	usm.InMemory = append(usm.InMemory, ue)
+	us := service.NewURLService(usm)
+	uh := NewURLHandler(us)
+	return uh
+}
+
 func (st handlerGetTest) run(t *testing.T) { // subtest
 	// request
 	req, err := http.NewRequest("GET", st.input.requestURL, nil)
@@ -125,16 +140,8 @@ func (st handlerGetTest) run(t *testing.T) { // subtest
 	// response
 	rec := httptest.NewRecorder()
 
-	// handler object
-	// New url entity
-	ue := &entity.URLEntity{
-		URL:  st.input.md.URL,
-		Hash: st.input.md.Hash,
-	}
-	usm := storage.NewURLStorage()
-	usm.InMemory = append(usm.InMemory, ue)
-	us := service.NewURLService(usm)
-	uh := NewURLHandler(us)
+	// new mock handler object
+	uh := newMockHandler(st.input.md.URL, st.input.md.Hash)
 
 	// Run the handler
 	uh.Get(rec, req)
@@ -187,3 +194,5 @@ func TestURLHandler_Get(t *testing.T) {
 		t.Run(tt.name, tt.run)
 	}
 }
+
+//#endregion
