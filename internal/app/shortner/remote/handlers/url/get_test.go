@@ -71,7 +71,7 @@ func (st handlerGetTest) run(t *testing.T) { // subtest
 	require.Equal(t, st.want.longURL, res.Header.Get("Location"), "response header location does not match expected")
 }
 
-var tests = []handlerGetTest{
+var getTests = []handlerGetTest{
 	{
 		name: "1st Test Case - Positive: apple/store",
 		input: getInput{
@@ -104,7 +104,7 @@ var tests = []handlerGetTest{
 
 func TestURLHandler_Get(t *testing.T) {
 	log.Println("TestURLHandler_Get - Starting TestURLHandler_Get")
-	for _, tt := range tests {
+	for _, tt := range getTests {
 		t.Run(tt.name, tt.run)
 	}
 }

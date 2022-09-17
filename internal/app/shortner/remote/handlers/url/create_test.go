@@ -15,7 +15,7 @@ import (
 type handlerCreateTest struct {
 	name  string
 	input createInput
-	want  createWant 
+	want  createWant
 }
 
 type createInput struct {
@@ -26,46 +26,43 @@ type createInput struct {
 type createWant struct {
 	shortURL   string
 	StatusCode int
-} 
-
-// func (st handlerCreateTest) run(t *testing.T) {
-// 	jsonBody := []byte(tt.args.longURL)
-// 	bodyReader := bytes.NewReader(jsonBody)
-// 	requestURL := tt.args.requestURL
-// 	req, err := http.NewRequest("POST", requestURL, bodyReader)
-
-// 	if err != nil {
-// 		t.Fatalf("could not create request: %v", err)
-// 	}
-// 	// response
-// 	rec := httptest.NewRecorder()
-
-// 	// handler object
-// 	uh := URLHandler{
-// 		urlService: tt.fields.urlService,
-// 	}
-// 	// Run the handler
-// 	uh.Create(rec, req)
-
-// 	// Check response
-// 	res := rec.Result()
-// 	defer res.Body.Close()
-// 	// Check response status code
-// 	require.Equal(t, res.StatusCode, tt.args.StatusCode, "expected status Created, got other")
-
-// 	// Check response body
-// 	b, err := ioutil.ReadAll(res.Body)
-// 	if err != nil {
-// 		t.Fatalf("could not read respons: %v", err)
-// 	}
-// 	require.Equal(t, tt.args.shortURL, string(b), "short URL is not matching")
-
-// }
+}
 
 // new create hander
-var ch = service.NewURLService(storage.NewURLStorage())
-	// test data
-var tests = []handlerCreateTest {
+var ch = NewURLHandler(service.NewURLService(storage.NewURLStorage()))
+
+func (st handlerCreateTest) run(t *testing.T) {
+	jsonBody := []byte(st.input.longURL)
+	bodyReader := bytes.NewReader(jsonBody)
+	requestURL := st.input.requestURL
+	req, err := http.NewRequest("POST", requestURL, bodyReader)
+
+	if err != nil {
+		t.Fatalf("could not create request: %v", err)
+	}
+	// response
+	rec := httptest.NewRecorder()
+
+	// Run the handler
+	ch.Create(rec, req)
+
+	// Check response
+	res := rec.Result()
+	defer res.Body.Close()
+	// Check response status code
+	require.Equal(t, res.StatusCode, st.want.StatusCode, "expected status Created, got other")
+
+	// Check response body
+	b, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		t.Fatalf("could not read respons: %v", err)
+	}
+	require.Equal(t, st.want.shortURL, string(b), "short URL is not matching")
+}
+
+// test data
+
+var createTests = []handlerCreateTest{
 	{
 		name: "1st Test Case - Positive: apple/store",
 		input: createInput{
@@ -90,9 +87,8 @@ var tests = []handlerCreateTest {
 	}, // TODO: Add test cases.
 }
 
-
-
 func TestURLHandler_Create(t *testing.T) {
-for _, tt := range tests {
-	t.Run(tt.name, tt.run)
+	for _, tt := range getTests {
+		t.Run(tt.name, tt.run)
+	}
 }
