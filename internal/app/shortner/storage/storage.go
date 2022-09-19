@@ -38,15 +38,12 @@ func (us *URLStorage) GetHashByURL(u string) (string, error) {
 	return "", errors.ErrNotFound
 }
 
-func (us *URLStorage) GetURLByHash(u string) (string, error) {
-	log.Println("Storage GetURLByHash, looking in slice len", len(us.InMemory))
-	log.Println("Storage GetURLByHash, looking for matching Hash", u)
-	for _, v := range us.InMemory {
-		log.Println("Storage GetURLByHash, comparing", v.Hash, u)
-		if v.Hash == u {
-			log.Println("Storage GetURLByHash, found ue", v)
-			return v.URL, nil
-		}
+func (us *URLStorage) GetURLByHash(h string) (string, error) {
+	log.Println("Storage GetURLByHash, looking in map len", len(us.InMemory))
+	log.Println("Storage GetURLByHash, looking for matching Hash", h)
+	u, ok := us.InMemory[h]
+	if !ok {
+		return "", errors.ErrNotFound
 	}
-	return "", errors.ErrNotFound
+	return u, nil
 }
