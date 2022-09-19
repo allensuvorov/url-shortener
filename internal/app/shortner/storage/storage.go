@@ -5,23 +5,24 @@ import (
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	InMemory []*entity.URLEntity
+	InMemory *hashmap.URLHashMap
 }
 
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
 	return &URLStorage{
-		InMemory: make([]*entity.URLEntity, 0),
+		InMemory: new(hashmap.URLHashMap),
 	}
 }
 
 // Create adds new URL record to storage
-func (us *URLStorage) Create(ue *entity.URLEntity) error {
-	us.InMemory = append(us.InMemory, ue)
+func (us *URLStorage) Create(ue *hashmap.URLHashMap) error {
+	us.InMemory[]
 	log.Println("Storage Create UE, appended, updated slice len is", len(us.InMemory))
 	log.Println("Storage Create UE", ue)
 	return nil

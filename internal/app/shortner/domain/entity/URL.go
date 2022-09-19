@@ -1,6 +1,6 @@
 package entity
 
 type URLEntity struct {
-	URL  string
 	Hash string
+	URL  string
 }
