@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
@@ -12,7 +11,7 @@ import (
 type URLStorage interface {
 
 	// Create new entity (pair shortURL: longURL).
-	Create(ue *entity.URLEntity) error
+	Create(h, u string) error
 
 	// GetByHash returns entity for the matching hash, checks if hash exists.
 	GetURLByHash(u string) (string, error)
@@ -56,14 +55,8 @@ func (us URLService) Create(u string) (string, error) {
 
 		log.Println("created new shortURL", h)
 
-		// New url entity
-		ue := &entity.URLEntity{
-			URL:  u,
-			Hash: h,
-		}
-
 		// add url to the storage
-		us.urlStorage.Create(ue)
+		us.urlStorage.Create(h, u)
 	}
 
 	shortURL := "http://localhost:8080/" + h
