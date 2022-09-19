@@ -6,7 +6,6 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/require"
@@ -32,12 +31,8 @@ type getWant struct {
 }
 
 func newMockHandler(u, h string) URLHandler {
-	ue := &entity.URLEntity{
-		URL:  u,
-		Hash: h,
-	}
 	usm := storage.NewURLStorage()
-	usm.InMemory = append(usm.InMemory, ue)
+	usm.Create(h, u)
 	us := service.NewURLService(usm)
 	uh := NewURLHandler(us)
 	return uh
