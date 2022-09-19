@@ -21,10 +21,12 @@ type md struct { // mock data
 	URL  string
 	Hash string
 }
+
 type getInput struct {
 	md         md
 	requestURL string
 }
+
 type getWant struct {
 	longURL    string
 	StatusCode int
