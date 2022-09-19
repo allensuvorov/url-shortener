@@ -1,4 +1,4 @@
-package url
+package url_test
 
 import (
 	"bytes"
@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/require"
@@ -29,7 +30,7 @@ type createWant struct {
 }
 
 // new create hander
-var ch = NewURLHandler(service.NewURLService(storage.NewURLStorage()))
+var ch = handler.NewURLHandler(service.NewURLService(storage.NewURLStorage()))
 
 func (st handlerCreateTest) run(t *testing.T) {
 	// Get request

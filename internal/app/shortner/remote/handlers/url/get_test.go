@@ -1,4 +1,4 @@
-package url
+package url_test
 
 import (
 	"log"
@@ -6,6 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/require"
@@ -32,11 +33,11 @@ type getWant struct {
 	StatusCode int
 }
 
-func newMockHandler(u, h string) URLHandler {
+func newMockHandler(u, h string) handler.URLHandler {
 	usm := storage.NewURLStorage()
 	usm.Create(h, u)
 	us := service.NewURLService(usm)
-	uh := NewURLHandler(us)
+	uh := handler.NewURLHandler(us)
 	return uh
 }
 
