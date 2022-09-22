@@ -4,9 +4,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"path"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
+	"github.com/go-chi/chi/v5"
 )
 
 type URLService interface {
@@ -59,10 +59,8 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 // Get passes Hash to service and returns response with URL.
 func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
-	// get hash - last element of path (after slash)
-	h := path.Base(r.URL.Path)
-	// or
-	// h := chi.URLParam(r, "hash")
+	// get hash
+	h := chi.URLParam(r, "hash")
 
 	// log path and hash
 	log.Println("Handler Get", h, r.URL.Path)
