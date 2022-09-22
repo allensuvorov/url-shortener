@@ -47,7 +47,7 @@ func (us URLService) Create(u string) (string, error) {
 	if err == errors.ErrNotFound {
 
 		// generate Hash for the shortened URL
-		h = BuildHash(u)
+		h = buildHash(u)
 
 		// cut it to a short hash
 		h = getUniqShortHash(h, u, us)
