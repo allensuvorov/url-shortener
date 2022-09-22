@@ -1,6 +1,9 @@
 package url
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -24,6 +27,42 @@ func NewURLHandler(us URLService) URLHandler {
 	return URLHandler{
 		urlService: us,
 	}
+}
+
+func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
+	// целевой объект
+	var v1 struct {
+		URL string
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&v1); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.Println("API hander - URL in the request is", v1.URL)
+
+	shortURL, err := uh.urlService.Create(v1.URL)
+
+	if err != nil {
+		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
+	}
+
+	// устанавливаем статус-код 201
+	w.WriteHeader(http.StatusCreated)
+
+	v2 := struct {
+		result string //`json:"result"`
+	}{
+		result: shortURL,
+	}
+	buf := bytes.NewBuffer([]byte{})
+	encoder := json.NewEncoder(buf)
+	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
+	encoder.Encode(v2)
+	fmt.Println(buf.String())
+
+	// пишем тело ответа
+	w.Write([]byte(v2.result))
 }
 
 // Create passes URL to service and returns response with Hash.
