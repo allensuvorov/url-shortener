@@ -37,7 +37,6 @@ func (us URLService) Create(u string) (string, error) {
 	_, err := url.ParseRequestURI(u)
 
 	if err != nil {
-		// http.Error(w, err.Error(), http.StatusBadRequest)
 		return "", err
 	}
 
