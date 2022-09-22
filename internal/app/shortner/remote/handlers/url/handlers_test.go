@@ -26,13 +26,13 @@ func Test_apiShortener(t *testing.T) {
 	}{
 		{
 			name:                 "Invalid URL",
-			url:                  `{"result":"htt_1_p://google.com/"}`,
+			url:                  `{"url":"htt_1_p://google.com/"}`,
 			expectedStatusCode:   http.StatusInternalServerError,
 			expectedResponseBody: []byte("Failed to create short URL\n"),
 		},
 		{
 			name:                 "Created",
-			url:                  `{"result":"http://www.apple.com/store"}`,
+			url:                  `{"url":"http://www.apple.com/store"}`,
 			expectedStatusCode:   http.StatusCreated,
 			expectedResponseBody: []byte(`{"result":"http://localhost:8080/a7d59904}"`),
 		},
@@ -41,10 +41,10 @@ func Test_apiShortener(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			b := bytes.NewBufferString(tc.url)
-			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080/api/shortner", b)
+			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080/api/shorten", b)
 			w := httptest.NewRecorder()
 
-			uh.Create(w, r)
+			uh.API(w, r)
 
 			assert.Equal(t, tc.expectedStatusCode, w.Code)
 			assert.Equal(t, tc.expectedResponseBody, w.Body.Bytes())

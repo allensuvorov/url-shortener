@@ -3,7 +3,6 @@ package url
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -39,7 +38,11 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println("API hander - URL in the request is", v1.URL)
+	log.Println("API handler - request: object", v1)
+	log.Println("API handler - URL in the request is", v1.URL)
+
+	b, err := io.ReadAll(r.Body)
+	log.Println("API handler - request: body", b)
 
 	shortURL, err := uh.urlService.Create(v1.URL)
 
@@ -51,18 +54,20 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	v2 := struct {
-		result string //`json:"result"`
+		Result string `json:"result"`
 	}{
-		result: shortURL,
+		Result: shortURL,
 	}
 	buf := bytes.NewBuffer([]byte{})
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
 	encoder.Encode(v2)
-	fmt.Println(buf.String())
+
+	log.Println("API handler - v2 is", v2.Result)
+	log.Println("API handler - buf is", buf.String())
 
 	// пишем тело ответа
-	w.Write([]byte(v2.result))
+	w.Write(buf.Bytes())
 }
 
 // Create passes URL to service and returns response with Hash.
@@ -81,7 +86,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	u := string(b)
 
 	// log body from request
-	log.Println("URL in the POST request is", u)
+	log.Println("Create Handler - URL in the POST request is", u)
 
 	shortURL, err := uh.urlService.Create(u)
 
