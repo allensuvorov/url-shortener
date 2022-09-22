@@ -41,12 +41,6 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	// convert to string
 	u := string(b)
 
-	// check if long URL is empty string
-	if len(b) == 0 {
-		http.Error(w, "empty URL", http.StatusBadRequest)
-		return
-	}
-
 	// log body from request
 	log.Println("URL in the POST request is", u)
 
