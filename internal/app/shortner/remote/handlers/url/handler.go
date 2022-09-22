@@ -41,9 +41,6 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 	log.Println("API handler - request: object", v1)
 	log.Println("API handler - URL in the request is", v1.URL)
 
-	b, err := io.ReadAll(r.Body)
-	log.Println("API handler - request: body", b)
-
 	shortURL, err := uh.urlService.Create(v1.URL)
 
 	if err != nil {

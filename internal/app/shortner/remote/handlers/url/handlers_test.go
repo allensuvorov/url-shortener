@@ -28,13 +28,13 @@ func Test_apiShortener(t *testing.T) {
 			name:                 "Invalid URL",
 			url:                  `{"url":"htt_1_p://google.com/"}`,
 			expectedStatusCode:   http.StatusInternalServerError,
-			expectedResponseBody: []byte("Failed to create short URL\n"),
+			expectedResponseBody: []byte("Failed to create short URL\n" + `{"result":""}` + "\n"),
 		},
 		{
 			name:                 "Created",
 			url:                  `{"url":"http://www.apple.com/store"}`,
 			expectedStatusCode:   http.StatusCreated,
-			expectedResponseBody: []byte(`{"result":"http://localhost:8080/a7d59904}"`),
+			expectedResponseBody: []byte(`{"result":"http://localhost:8080/a7d59904"}` + "\n"),
 		},
 	}
 
