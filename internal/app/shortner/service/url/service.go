@@ -55,7 +55,10 @@ func (us URLService) Create(u string) (string, error) {
 		log.Println("created new shortURL", h)
 
 		// add url to the storage
-		us.urlStorage.Create(h, u)
+		err = us.urlStorage.Create(h, u)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	shortURL := "http://localhost:8080/" + h
