@@ -29,7 +29,7 @@ func getUniqShortHash(h string, u string, us URLService) string {
 		if err == errors.ErrNotFound {
 			return sh
 		}
-		// check it the URL is different
+		// check if the URL is the same as in storage
 		if u1 == u {
 			return sh
 		}
