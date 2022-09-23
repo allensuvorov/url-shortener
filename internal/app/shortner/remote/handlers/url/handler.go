@@ -34,6 +34,10 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 		URL string
 	}
 
+	// TODO: Read and handle content-type header from request
+	// contentType := response.Header.Get("Content-Type")
+	// это может быть, например, "application/json; charset=UTF-8"
+
 	if err := json.NewDecoder(r.Body).Decode(&v1); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -46,6 +50,10 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
+
+	// сначала устанавливаем заголовок Content-Type
+	// для передачи клиенту информации, кодированной в JSON
+	w.Header().Set("content-type", "application/json")
 
 	// устанавливаем статус-код 201
 	w.WriteHeader(http.StatusCreated)
