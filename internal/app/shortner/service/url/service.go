@@ -69,11 +69,11 @@ func (us URLService) Create(u string) (string, error) {
 	bu, ok := os.LookupEnv("BASE_URL")
 	if !ok {
 		log.Printf("%s not set\n; passing default", "BASE_URL")
-		bu = "http://localhost:8080/"
+		bu = "http://localhost:8080"
 	}
 
 	log.Println("Service: BASE_URL from local env is:", bu)
-	shortURL := bu + h
+	shortURL := bu + "/" + h
 	return shortURL, nil
 }
 
