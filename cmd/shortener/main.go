@@ -12,6 +12,9 @@ import (
 )
 
 func main() {
+	// Add vars to env
+	os.Setenv("SERVER_ADDRESS", ":8080")
+	os.Setenv("BASE_URL", "http://localhost:8080")
 	// Commands to add vars to env
 	// export SERVER_ADDRESS=:8080
 	// export BASE_URL=http://localhost:8080/
