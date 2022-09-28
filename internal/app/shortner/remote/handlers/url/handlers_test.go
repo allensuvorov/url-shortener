@@ -46,7 +46,7 @@ func Test_apiShortener(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			uh.API(w, r)
-			log.Println("Test_apiShortener, body is:", string(w.Body.Bytes()))
+			log.Println("Test_apiShortener, body is:", w.Body.String())
 			assert.Equal(t, tc.expectedStatusCode, w.Code)
 			assert.Equal(t, tc.expectedResponseBody, w.Body.Bytes())
 		})
