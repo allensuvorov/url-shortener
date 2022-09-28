@@ -61,6 +61,9 @@ func (us URLService) Create(u string) (string, error) {
 			return "", err
 		}
 	}
+	// Set local env var
+	os.Setenv("BASE_URL", "http://localhost:8080/")
+	// Get local env var
 	ba := os.Getenv("BASE_URL")
 	log.Println("Service: BASE_URL from local env is:", ba)
 	shortURL := ba + h
