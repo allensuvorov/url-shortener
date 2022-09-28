@@ -16,8 +16,11 @@ func main() {
 	// Commands to add vars to env
 	// export SERVER_ADDRESS=:8080
 	// export BASE_URL=http://localhost:8080/
-	os.Setenv("SERVER_ADDRESS", ":8080")
-	sa := os.Getenv("SERVER_ADDRESS")
+	sa, ok := os.LookupEnv("SERVER_ADDRESS")
+	if !ok {
+		log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
+		sa = ":8080"
+	}
 
 	URLStorage := storage.NewURLStorage()
 	URLService := service.NewURLService(URLStorage)

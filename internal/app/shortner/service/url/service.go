@@ -61,12 +61,19 @@ func (us URLService) Create(u string) (string, error) {
 			return "", err
 		}
 	}
-	// Set local env var
-	os.Setenv("BASE_URL", "http://localhost:8080/")
-	// Get local env var
-	ba := os.Getenv("BASE_URL")
-	log.Println("Service: BASE_URL from local env is:", ba)
-	shortURL := ba + h
+	// // Set local env var
+	// os.Setenv("BASE_URL", "http://localhost:8080/")
+	// // Get local env var
+	// bu := os.Getenv("BASE_URL")
+
+	bu, ok := os.LookupEnv("BASE_URL")
+	if !ok {
+		log.Printf("%s not set\n; passing default", "BASE_URL")
+		bu = "http://localhost:8080/"
+	}
+
+	log.Println("Service: BASE_URL from local env is:", bu)
+	shortURL := bu + h
 	return shortURL, nil
 }
 
