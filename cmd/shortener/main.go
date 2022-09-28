@@ -11,6 +11,9 @@ import (
 )
 
 func main() {
+	// Commands to add vars to env
+	// export SERVER_ADDRESS=:8080
+	// export BASE_URL=http://localhost:8080/
 	URLStorage := storage.NewURLStorage()
 	URLService := service.NewURLService(URLStorage)
 	URLHandler := handler.NewURLHandler(URLService)
