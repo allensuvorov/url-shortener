@@ -3,6 +3,7 @@ package url
 import (
 	"log"
 	"net/url"
+	"os"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
@@ -60,8 +61,9 @@ func (us URLService) Create(u string) (string, error) {
 			return "", err
 		}
 	}
-
-	shortURL := "http://localhost:8080/" + h
+	ba := os.Getenv("BASE_URL")
+	log.Println("Service: BASE_URL from local env is:", ba)
+	shortURL := ba + h
 	return shortURL, nil
 }
 
