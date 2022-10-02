@@ -2,6 +2,7 @@ package storage
 
 import (
 	"log"
+	"os"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
@@ -21,9 +22,14 @@ func NewURLStorage() *URLStorage {
 
 // Create adds new URL record to storage
 func (us *URLStorage) Create(h, u string) error {
-	us.InMemory[h] = u
-	log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
-	log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+	fsp, ok := os.LookupEnv("FILE_STORAGE_PATH")
+	if !ok {
+		log.Printf("%s not set\n; saving to map", "FILE_STORAGE_PATH")
+		us.InMemory[h] = u
+		log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
+		log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+	}
+	log.Printf("Storage: saving to path - %s", fsp)
 	return nil
 }
 
