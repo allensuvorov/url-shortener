@@ -22,8 +22,8 @@ func NewURLStorage() *URLStorage {
 
 // Create adds new URL record to storage
 func (us *URLStorage) Create(h, u string) error {
-	fsp, ok := os.LookupEnv("FILE_STORAGE_PATH")
-	if !ok {
+	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	if len(fsp) == 0 {
 		log.Printf("%s not set\n; saving to map", "FILE_STORAGE_PATH")
 		us.InMemory[h] = u
 		log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
