@@ -36,12 +36,7 @@ func (us *URLStorage) Create(h, u string) error {
 	return nil
 }
 
-// Write to file
-func write(h, u, fsp string) error {
-	log.Printf("Storage: saving to path - %s", fsp)
-	// TODO: Write to file...
-	return nil
-}
+// read
 
 func (us *URLStorage) GetHashByURL(u string) (string, error) {
 	log.Println("Storage GetHashByURL, looking for matching URL", u)
