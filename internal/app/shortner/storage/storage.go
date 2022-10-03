@@ -26,10 +26,16 @@ func (us *URLStorage) Create(h, u string) error {
 	us.InMemory[h] = u
 	log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
 	log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+
 	// Save to file
+
+	// set env
+	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/")
+
 	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
 
 	// Save to file, if there is path in env var
+
 	if len(fsp) > 0 {
 		write(h, u, fsp)
 	}
