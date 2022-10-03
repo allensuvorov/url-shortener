@@ -29,10 +29,17 @@ func (us *URLStorage) Create(h, u string) error {
 	// Save to file
 	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
 
-	if len(fsp) > 0 { // if there is path in env var
-		// TODO: save to file...
-		log.Printf("Storage: saving to path - %s", fsp)
+	// Save to file, if there is path in env var
+	if len(fsp) > 0 {
+		write(h, u, fsp)
 	}
+	return nil
+}
+
+// Write to file
+func write(h, u, fsp string) error {
+	log.Printf("Storage: saving to path - %s", fsp)
+	// TODO: Write to file...
 	return nil
 }
 
