@@ -22,14 +22,17 @@ func NewURLStorage() *URLStorage {
 
 // Create adds new URL record to storage
 func (us *URLStorage) Create(h, u string) error {
+	// Save to map
+	us.InMemory[h] = u
+	log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
+	log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+	// Save to file
 	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
-	if len(fsp) == 0 {
-		log.Printf("%s not set\n; saving to map", "FILE_STORAGE_PATH")
-		us.InMemory[h] = u
-		log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
-		log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+
+	if len(fsp) > 0 { // if there is path in env var
+		// TODO: save to file...
+		log.Printf("Storage: saving to path - %s", fsp)
 	}
-	log.Printf("Storage: saving to path - %s", fsp)
 	return nil
 }
 
