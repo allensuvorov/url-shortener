@@ -56,5 +56,6 @@ func Restore(fsp string) hashmap.URLHashMap {
 			um[k] = v
 		}
 	}
+	log.Println(um)
 	return um
 }

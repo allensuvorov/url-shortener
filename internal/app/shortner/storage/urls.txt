@@ -1,3 +1,4 @@
+
 {"a7d59904":"http://www.apple.com/store"}
-{"4e745fa7":"http://www.apple.com/store1"}
-{"7e063cad":"http://www.apple.com/store2"}
+{"ace45255":"http://www.amazon.com/"}
+{"4cd89a20":"http://www.booking.com/"}
