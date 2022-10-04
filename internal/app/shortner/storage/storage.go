@@ -15,8 +15,18 @@ type URLStorage struct {
 
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
+	// Restore data at start up
+	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/")
+
+	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	um := make(hashmap.URLHashMap) // url map
+
+	if len(fsp) > 0 {
+		um = Restore(fsp) // get map
+	}
+
 	return &URLStorage{
-		InMemory: make(hashmap.URLHashMap),
+		InMemory: um,
 	}
 }
 
@@ -41,8 +51,6 @@ func (us *URLStorage) Create(h, u string) error {
 	}
 	return nil
 }
-
-// read
 
 func (us *URLStorage) GetHashByURL(u string) (string, error) {
 	log.Println("Storage GetHashByURL, looking for matching URL", u)

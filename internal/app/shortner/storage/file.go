@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
 func write(h, u, fsp string) error {
@@ -27,4 +29,32 @@ func write(h, u, fsp string) error {
 	}
 
 	return nil
+}
+
+func Restore(fsp string) hashmap.URLHashMap {
+	log.Println("Storage: restoring data from file")
+	um := make(hashmap.URLHashMap) // url map
+	fileName := "urls.txt"
+
+	// open file
+	file, err := os.OpenFile(fsp+fileName, os.O_RDONLY, 0777)
+	if err != nil {
+		log.Fatal(err)
+	}
+	dec := json.NewDecoder(file)
+
+	// Go over the data
+	for dec.More() {
+		t := map[string]string{}
+		if err := dec.Decode(&t); err != nil {
+			log.Fatal(err)
+		}
+		log.Println("t =", t)
+
+		// push data to url map
+		for k, v := range t {
+			um[k] = v
+		}
+	}
+	return um
 }
