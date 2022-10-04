@@ -13,8 +13,7 @@ func write(h, u, fsp string) error {
 	log.Printf("Storage: saving to path - %s", fsp)
 
 	// Create and open file
-	fileName := "urls.txt"
-	file, err := os.OpenFile(fsp+fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
+	file, err := os.OpenFile(fsp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -34,10 +33,9 @@ func write(h, u, fsp string) error {
 func Restore(fsp string) hashmap.URLHashMap {
 	log.Println("Storage: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
-	fileName := "urls.txt"
 
 	// open file
-	file, err := os.OpenFile(fsp+fileName, os.O_RDONLY, 0777)
+	file, err := os.OpenFile(fsp, os.O_RDONLY|os.O_CREATE, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
