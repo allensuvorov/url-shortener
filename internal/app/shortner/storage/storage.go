@@ -22,7 +22,7 @@ func NewURLStorage() *URLStorage {
 	um := make(hashmap.URLHashMap) // url map
 
 	if len(fsp) > 0 {
-		um = Restore(fsp) // get map
+		um = restore(fsp) // get map
 	}
 
 	return &URLStorage{

@@ -30,7 +30,7 @@ func write(h, u, fsp string) error {
 	return nil
 }
 
-func Restore(fsp string) hashmap.URLHashMap {
+func restore(fsp string) hashmap.URLHashMap {
 	log.Println("Storage: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
 
