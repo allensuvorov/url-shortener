@@ -12,10 +12,6 @@ import (
 )
 
 func main() {
-	// Add vars to env
-	// Commands to add vars to env
-	// export SERVER_ADDRESS=:8080
-	// export BASE_URL=http://localhost:8080/
 
 	sa, ok := os.LookupEnv("SERVER_ADDRESS")
 	if !ok {
