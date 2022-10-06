@@ -42,8 +42,8 @@ func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println("API handler - request: object", v1)
-	log.Println("API handler - URL in the request is", v1.URL)
+	log.Println("Handler/API - request: object", v1)
+	log.Println("Handler/API - URL in the request is", v1.URL)
 
 	shortURL, err := uh.urlService.Create(v1.URL)
 

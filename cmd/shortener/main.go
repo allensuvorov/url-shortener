@@ -38,6 +38,7 @@ func main() {
 	}
 
 	URLStorage := storage.NewURLStorage()
+	URLConfig := service.URLConfig()
 	URLService := service.NewURLService(URLStorage)
 	URLHandler := handler.NewURLHandler(URLService)
 	r := routers.NewRouter(URLHandler)

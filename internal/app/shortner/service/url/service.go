@@ -3,9 +3,7 @@ package url
 import (
 	"log"
 	"net/url"
-	"os"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
@@ -24,7 +22,7 @@ type URLStorage interface {
 
 // Config interface
 type URLConfig interface {
-	GetConfig() config.Config
+	GetBU() string
 }
 
 type URLService struct {
@@ -32,9 +30,10 @@ type URLService struct {
 	urlConfig  URLConfig
 }
 
-func NewURLService(us URLStorage) URLService {
+func NewURLService(us URLStorage, uc URLConfig) URLService {
 	return URLService{
 		urlStorage: us,
+		urlConfig:  uc,
 	}
 }
 
@@ -60,25 +59,18 @@ func (us URLService) Create(u string) (string, error) {
 		// cut it to a short hash
 		h = getUniqShortHash(h, u, us)
 
-		log.Println("created new shortURL", h)
+		log.Println("Service/Create(): created new shortURL", h)
 
 		// add url to the storage
 		err = us.urlStorage.Create(h, u)
 		if err != nil {
 			return "", err
 		}
+		log.Println("Service/Create(): saved new shortURL in map", h)
 	}
-	// // Set local env var
-	// os.Setenv("BASE_URL", "http://localhost:8080/")
-	// // Get local env var
-	// bu := os.Getenv("BASE_URL")
-
-	bu, ok := os.LookupEnv("BASE_URL")
-	if !ok {
-		log.Printf("%s not set\n; passing default", "BASE_URL")
-		bu = "http://localhost:8080"
-	}
-
+	// Get Base URL
+	log.Println("Service/Create(): about go get BU from config", h)
+	bu := us.urlConfig.GetBU()
 	log.Println("Service: BASE_URL from local env is:", bu)
 	shortURL := bu + "/" + h
 	return shortURL, nil

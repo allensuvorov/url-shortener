@@ -34,8 +34,8 @@ func NewURLStorage() *URLStorage {
 func (us *URLStorage) Create(h, u string) error {
 	// Save to map
 	us.InMemory[h] = u
-	log.Println("Storage Create UE, added to map, updated map len is", len(us.InMemory))
-	log.Println("Storage Create UE, added to map, updated map is", us.InMemory)
+	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory))
+	log.Println("Storage/Create(): added to map, updated map is", us.InMemory)
 
 	// set env
 	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.go")
@@ -46,11 +46,12 @@ func (us *URLStorage) Create(h, u string) error {
 	if len(fsp) > 0 {
 		write(h, u, fsp)
 	}
+	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, fsp)
 	return nil
 }
 
 func (us *URLStorage) GetHashByURL(u string) (string, error) {
-	log.Println("Storage GetHashByURL, looking for matching URL", u)
+	log.Println("Storage/GetHashByURL(), looking for matching URL", u)
 	for k, v := range us.InMemory {
 		if v == u {
 			log.Println("Storage GetHashByURL, found record", k)
@@ -61,8 +62,8 @@ func (us *URLStorage) GetHashByURL(u string) (string, error) {
 }
 
 func (us *URLStorage) GetURLByHash(h string) (string, error) {
-	log.Println("Storage GetURLByHash, looking in map len", len(us.InMemory))
-	log.Println("Storage GetURLByHash, looking for matching Hash", h)
+	log.Println("Storage/GetURLByHash(), looking in map len", len(us.InMemory))
+	log.Println("Storage/GetURLByHash(), looking for matching Hash", h)
 	u, ok := us.InMemory[h]
 	if !ok {
 		return "", errors.ErrNotFound

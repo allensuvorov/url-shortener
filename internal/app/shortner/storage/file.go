@@ -10,7 +10,7 @@ import (
 )
 
 func write(h, u, fsp string) error {
-	log.Printf("Storage: saving to path - %s", fsp)
+	log.Printf("Storage/File: saving to path - %s", fsp)
 
 	// Create and open file
 	file, err := os.OpenFile(fsp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
