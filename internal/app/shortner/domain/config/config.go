@@ -8,7 +8,7 @@ import (
 type Config struct {
 }
 
-func NewConfig() Config {
+func NewURLConfig() Config {
 	return Config{}
 }
 

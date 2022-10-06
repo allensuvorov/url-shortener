@@ -69,7 +69,7 @@ func (us URLService) Create(u string) (string, error) {
 		log.Println("Service/Create(): saved new shortURL in map", h)
 	}
 	// Get Base URL
-	log.Println("Service/Create(): about go get BU from config", h)
+	log.Println("Service/Create(): about go get BU from config")
 	bu := us.urlConfig.GetBU()
 	log.Println("Service: BASE_URL from local env is:", bu)
 	shortURL := bu + "/" + h
