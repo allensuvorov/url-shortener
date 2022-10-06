@@ -23,6 +23,8 @@ type URLStorage interface {
 // Config interface
 type URLConfig interface {
 	GetBU() string
+	// GetSA() string
+	// GetFSP() string
 }
 
 type URLService struct {
