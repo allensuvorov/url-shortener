@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
@@ -21,8 +22,14 @@ type URLStorage interface {
 	GetHashByURL(u string) (string, error)
 }
 
+// Config interface
+type URLConfig interface {
+	GetConfig() config.Config
+}
+
 type URLService struct {
 	urlStorage URLStorage
+	urlConfig  URLConfig
 }
 
 func NewURLService(us URLStorage) URLService {
