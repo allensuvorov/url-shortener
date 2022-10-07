@@ -20,22 +20,13 @@ type URLStorage interface {
 	GetHashByURL(u string) (string, error)
 }
 
-// Config interface
-type URLConfig interface {
-	GetBU() string
-	// GetSA() string
-	// GetFSP() string
-}
-
 type URLService struct {
 	urlStorage URLStorage
-	urlConfig  URLConfig
 }
 
-func NewURLService(us URLStorage, uc URLConfig) URLService {
+func NewURLService(us URLStorage) URLService {
 	return URLService{
 		urlStorage: us,
-		urlConfig:  uc,
 	}
 }
 
@@ -72,9 +63,11 @@ func (us URLService) Create(u string) (string, error) {
 	}
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
-	bu := us.urlConfig.GetBU()
+	// bu := config.UC.BU
+	buStr := "http://localhost:8080"
+	bu := &buStr
 	log.Println("Service: BASE_URL from local env is:", bu)
-	shortURL := bu + "/" + h
+	shortURL := *bu + "/" + h
 	return shortURL, nil
 }
 
