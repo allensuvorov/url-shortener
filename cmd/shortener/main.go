@@ -19,9 +19,7 @@ func main() {
 	URLHandler := handler.NewURLHandler(URLService)
 	r := routers.NewRouter(URLHandler)
 	log.Println("Main: now will try to get sa from config")
-	// sa := config.UC.SA // server address
-	defaultSA := ":8080"
-	sa := &defaultSA
+	sa := config.UC.SA // server address from config
 	log.Println("Serving on port", *sa)
 	log.Fatal(http.ListenAndServe(*sa, r))
 }
