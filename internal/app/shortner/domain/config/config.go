@@ -3,7 +3,6 @@ package config
 import (
 	"flag"
 	"log"
-	"os"
 )
 
 // declare config vars
@@ -11,12 +10,6 @@ var (
 	sa *string
 	bu *string
 )
-
-// get config vars from CLI flags
-// func init() {
-// 	SA = flag.String("a", ":8080", "SERVER_ADDRESS")
-// 	BU = flag.String("b", "http://localhost:8080", "BASE_URL")
-// }
 
 func BuildConfig() {
 	// get config vars from CLI flags
@@ -28,6 +21,7 @@ func BuildConfig() {
 
 }
 
+/*
 // new congit struct instance
 var UC = URLConfig{
 	SA: getSA(),
@@ -75,3 +69,5 @@ func getBU() *string {
 	}
 	return bu
 }
+
+*/
