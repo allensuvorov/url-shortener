@@ -3,6 +3,7 @@ package config
 import (
 	"flag"
 	"log"
+	"os"
 )
 
 // declare config vars
@@ -11,28 +12,26 @@ var (
 	bu *string
 )
 
+// declare config struct
+type URLConfig struct {
+	SA *string
+	BU *string
+	// FSP *string
+}
+
+// new congit struct instance
+var UC = URLConfig{}
+
 func BuildConfig() {
 	// get config vars from CLI flags
 
 	sa = flag.String("a", ":8080", "SERVER_ADDRESS")
 	bu = flag.String("b", "http://localhost:8080", "BASE_URL")
 	flag.Parse()
-	log.Println("Config/BuildConfig: completed")
+	log.Println("Config/BuildConfig: CLI flag declared and parsed completed")
 
-}
-
-/*
-// new congit struct instance
-var UC = URLConfig{
-	SA: getSA(),
-	BU: getBU(),
-}
-
-// declare config struct
-type URLConfig struct {
-	SA *string
-	BU *string
-	// FSP *string
+	UC.SA = getSA()
+	UC.BU = getBU()
 }
 
 func getSA() *string {
@@ -69,5 +68,3 @@ func getBU() *string {
 	}
 	return bu
 }
-
-*/
