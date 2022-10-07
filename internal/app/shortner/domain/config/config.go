@@ -25,12 +25,14 @@ var UC = URLConfig{}
 func BuildConfig() {
 	// get config vars from CLI flags
 
-	sa = flag.String("a", ":8080", "SERVER_ADDRESS")
+	UC.SA = flag.String("a", ":8080", "SERVER_ADDRESS")
 	bu = flag.String("b", "http://localhost:8080", "BASE_URL")
 	flag.Parse()
 	log.Println("Config/BuildConfig: CLI flag declared and parsed completed")
 
-	UC.SA = getSA()
+	if len(*UC.SA) == 0 {
+		UC.SA = getSA()
+	}
 	UC.BU = getBU()
 }
 
@@ -38,14 +40,14 @@ func getSA() *string {
 	log.Println("Config/GetSA: started")
 	log.Println("Config/GetSA: Port from Flag is", *sa)
 	// get server address from local env if not in cli flags
-	if len(*sa) == 0 {
-		saStr, ok := os.LookupEnv("SERVER_ADDRESS")
-		if !ok {
-			log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
-			saStr = ":8080"
-		}
-		*sa = saStr
+
+	saStr, ok := os.LookupEnv("SERVER_ADDRESS")
+	if !ok {
+		log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
+		saStr = ":8080"
 	}
+	*sa = saStr
+
 	return sa
 }
 
