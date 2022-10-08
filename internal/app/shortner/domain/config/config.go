@@ -25,52 +25,54 @@ type URLConfig struct {
 // new congit struct instance
 var UC = URLConfig{}
 
-func BuildConfig() {
-	// get config vars from CLI flags
+func getConfigFromCLI() {
+
 	sa = flag.String("a", "", "SERVER_ADDRESS")
 	bu = flag.String("b", "", "BASE_URL")
 
 	flag.Parse()
-	log.Println("Config/BuildConfig: CLI flag declared and parsed completed")
+	log.Println("Config/BuildConfig: CLI flag declared and parsed - completed")
+}
 
-	// get config from local var if was not set by flag
+func getSAfromEnv() {
+	// get sa from env if empty
 	if len(*sa) == 0 {
-		sa = getSA()
+		s, ok := os.LookupEnv("SERVER_ADDRESS")
+		// if empty set default
+		if !ok {
+			log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
+			s = dsa
+		}
+		*sa = s
 	}
 	UC.SA = sa
-	UC.BU = getBU()
 }
 
-func getSA() *string {
-	log.Println("Config/GetSA: started")
-	log.Println("Config/GetSA: Port from Flag is", *sa)
-
-	saStr, ok := os.LookupEnv("SERVER_ADDRESS")
-	if !ok {
-		log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
-		saStr = ":8080"
-	}
-	*sa = saStr
-
-	return sa
-}
-
-func getBU() *string {
-	// get BU from flag
-
+func getBUfromEng() {
+	// get bu from env if empty
 	if len(*bu) == 0 {
 
 		// get BU from local env
 		log.Println("Config/GetBU: about to take BASE_URL from local env")
-		buStr, ok := os.LookupEnv("BASE_URL")
+		s, ok := os.LookupEnv("BASE_URL")
 		if ok {
-			log.Println("Config/GetBU: BASE_URL from local env is:", buStr)
+			log.Println("Config/GetBU: BASE_URL from local env is:", s)
 		}
 		if !ok {
 			log.Printf("Config/GetBU: %s not set\n; passing default", "BASE_URL")
-			buStr = "http://localhost:8080"
+			s = dbu
 		}
-		*bu = buStr
+		*bu = s
 	}
-	return bu
+	UC.BU = bu
+}
+
+func BuildConfig() {
+	// get config vars from CLI flags
+	getConfigFromCLI()
+
+	// get config from local var if was not set by flag
+	getSAfromEnv()
+	getBUfromEng()
+
 }
