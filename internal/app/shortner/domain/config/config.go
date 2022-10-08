@@ -10,6 +10,9 @@ import (
 var (
 	sa *string
 	bu *string
+	//default values
+	dsa = ":8080"
+	dbu = "http://localhost:8080"
 )
 
 // declare config struct
@@ -24,22 +27,23 @@ var UC = URLConfig{}
 
 func BuildConfig() {
 	// get config vars from CLI flags
+	sa = flag.String("a", "", "SERVER_ADDRESS")
+	bu = flag.String("b", "", "BASE_URL")
 
-	UC.SA = flag.String("a", ":8080", "SERVER_ADDRESS")
-	bu = flag.String("b", "http://localhost:8080", "BASE_URL")
 	flag.Parse()
 	log.Println("Config/BuildConfig: CLI flag declared and parsed completed")
 
-	if len(*UC.SA) == 0 {
-		UC.SA = getSA()
+	// get config from local var if was not set by flag
+	if len(*sa) == 0 {
+		sa = getSA()
 	}
+	UC.SA = sa
 	UC.BU = getBU()
 }
 
 func getSA() *string {
 	log.Println("Config/GetSA: started")
 	log.Println("Config/GetSA: Port from Flag is", *sa)
-	// get server address from local env if not in cli flags
 
 	saStr, ok := os.LookupEnv("SERVER_ADDRESS")
 	if !ok {
