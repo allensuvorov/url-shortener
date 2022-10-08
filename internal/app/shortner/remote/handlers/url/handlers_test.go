@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"
@@ -15,6 +16,7 @@ import (
 )
 
 func Test_apiShortener(t *testing.T) {
+	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	us := service.NewURLService(usm)
 	uh := NewURLHandler(us)
@@ -54,6 +56,7 @@ func Test_apiShortener(t *testing.T) {
 }
 
 func Test_shortener(t *testing.T) {
+	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	us := service.NewURLService(usm)
 	uh := NewURLHandler(us)
@@ -93,6 +96,7 @@ func Test_shortener(t *testing.T) {
 }
 
 func Test_expander(t *testing.T) {
+	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	usm.Create("a7d59904", "http://www.apple.com/store")
 	us := service.NewURLService(usm)

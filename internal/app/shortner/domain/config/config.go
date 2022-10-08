@@ -6,6 +6,14 @@ import (
 	"os"
 )
 
+func init() {
+	log.Println("Config/getConfigFromCLI, passed flag: a")
+	sa = flag.String("a", "", "SERVER_ADDRESS")
+
+	log.Println("Config/getConfigFromCLI, passed flag: b")
+	bu = flag.String("b", "", "BASE_URL")
+}
+
 // declare config vars
 var (
 	sa *string
@@ -26,9 +34,6 @@ type URLConfig struct {
 var UC = URLConfig{}
 
 func getConfigFromCLI() {
-
-	sa = flag.String("a", "", "SERVER_ADDRESS")
-	bu = flag.String("b", "", "BASE_URL")
 
 	flag.Parse()
 	log.Println("Config/BuildConfig: CLI flag declared and parsed - completed")
