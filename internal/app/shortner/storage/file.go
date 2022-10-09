@@ -31,7 +31,7 @@ func write(h, u, fsp string) error {
 }
 
 func restore(fsp string) hashmap.URLHashMap {
-	log.Println("Storage: restoring data from file")
+	log.Println("File/restore: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
 
 	// open file
@@ -47,13 +47,13 @@ func restore(fsp string) hashmap.URLHashMap {
 		if err := dec.Decode(&t); err != nil {
 			log.Fatal(err)
 		}
-		log.Println("t =", t)
+		log.Println("File/restore: restoring URL entry from file:", t)
 
 		// push data to url map
 		for k, v := range t {
 			um[k] = v
 		}
 	}
-	log.Println(um)
+	log.Println("File/restore: all restored data in map:", um)
 	return um
 }

@@ -65,14 +65,11 @@ func (us URLService) Create(u string) (string, error) {
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
 	bu := config.UC.BU
-	// buStr := "http://localhost:8080"
-	// bu := &buStr
 	log.Println("Service: BASE_URL from local env is:", *bu)
 	shortURL := *bu + "/" + h
 	return shortURL, nil
 }
 
-// TODO Get
 func (us URLService) Get(h string) (string, error) {
 	// check if hash exists, if not - return 400
 	u, err := us.urlStorage.GetURLByHash(h)

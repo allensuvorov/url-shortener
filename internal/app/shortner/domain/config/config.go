@@ -74,6 +74,8 @@ func getBUfromEnv() {
 func getFSPfromEnv() {
 	if len(*fsp) == 0 {
 		s, ok := os.LookupEnv("FILE_STORAGE_PATH")
+		log.Println("Config/getFSPfromEnv: fsp in env var is", s)
+
 		if !ok {
 			log.Printf("Config/GetFSP: %s not set\n; passing default", "FILE_STORAGE_PATH")
 			s = dfsp
