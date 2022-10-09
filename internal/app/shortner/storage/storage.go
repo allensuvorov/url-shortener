@@ -2,7 +2,6 @@ package storage
 
 import (
 	"log"
-	"os"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
@@ -38,16 +37,14 @@ func (us *URLStorage) Create(h, u string) error {
 	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory))
 	log.Println("Storage/Create(): added to map, updated map is", us.InMemory)
 
-	// set env
-	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.go")
-
-	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	// get file storage path from config
+	fsp := config.UC.FSP
 
 	// Save to file, if there is path in env var
-	if len(fsp) > 0 {
-		write(h, u, fsp)
+	if len(*fsp) > 0 {
+		write(h, u, *fsp)
 	}
-	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, fsp)
+	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, *fsp)
 	return nil
 }
 

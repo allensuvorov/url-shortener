@@ -30,9 +30,9 @@ var (
 
 // declare config struct
 type URLConfig struct {
-	SA  *string
-	BU  *string
-	FSP *string
+	SA  *string //SERVER_ADDRESS
+	BU  *string //BASE_URL
+	FSP *string //FILE_STORAGE_PATH
 }
 
 // new congit struct instance
