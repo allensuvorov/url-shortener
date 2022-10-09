@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
@@ -18,11 +19,11 @@ func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
 
-	fsp, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap) // url map
 
-	if len(fsp) > 0 {
-		um = restore(fsp) // get map
+	if len(*fsp) > 0 {
+		um = restore(*fsp) // get map
 	}
 
 	return &URLStorage{

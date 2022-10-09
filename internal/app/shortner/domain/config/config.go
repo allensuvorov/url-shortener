@@ -12,22 +12,27 @@ func init() {
 
 	log.Println("Config/getConfigFromCLI, passed flag: b")
 	bu = flag.String("b", "", "BASE_URL")
+
+	log.Println("Config/getConfigFromCLI, passed flag: f")
+	fsp = flag.String("f", "", "FILE_STORAGE_PATH")
 }
 
 // declare config vars
 var (
-	sa *string
-	bu *string
+	sa  *string
+	bu  *string
+	fsp *string
 	//default values
-	dsa = ":8080"
-	dbu = "http://localhost:8080"
+	dsa  = ":8080"
+	dbu  = "http://localhost:8080"
+	dfsp = ""
 )
 
 // declare config struct
 type URLConfig struct {
-	SA *string
-	BU *string
-	// FSP *string
+	SA  *string
+	BU  *string
+	FSP *string
 }
 
 // new congit struct instance
@@ -45,7 +50,7 @@ func getSAfromEnv() {
 		s, ok := os.LookupEnv("SERVER_ADDRESS")
 		// if empty set default
 		if !ok {
-			log.Printf("%s not set\n; passing default", "SERVER_ADDRESS")
+			log.Printf("Config/getSAfromEnv: %s not set\n; passing default", "SERVER_ADDRESS")
 			s = dsa
 		}
 		*sa = s
@@ -53,23 +58,29 @@ func getSAfromEnv() {
 	UC.SA = sa
 }
 
-func getBUfromEng() {
+func getBUfromEnv() {
 	// get bu from env if empty
 	if len(*bu) == 0 {
-
-		// get BU from local env
-		log.Println("Config/GetBU: about to take BASE_URL from local env")
 		s, ok := os.LookupEnv("BASE_URL")
-		if ok {
-			log.Println("Config/GetBU: BASE_URL from local env is:", s)
-		}
 		if !ok {
-			log.Printf("Config/GetBU: %s not set\n; passing default", "BASE_URL")
+			log.Printf("Config/getBUfromEnv: %s not set\n; passing default", "BASE_URL")
 			s = dbu
 		}
 		*bu = s
 	}
 	UC.BU = bu
+}
+
+func getFSPfromEnv() {
+	if len(*fsp) == 0 {
+		s, ok := os.LookupEnv("FILE_STORAGE_PATH")
+		if !ok {
+			log.Printf("Config/GetFSP: %s not set\n; passing default", "FILE_STORAGE_PATH")
+			s = dfsp
+		}
+		*fsp = s
+	}
+	UC.FSP = fsp
 }
 
 func BuildConfig() {
@@ -78,6 +89,7 @@ func BuildConfig() {
 
 	// get config from local var if was not set by flag
 	getSAfromEnv()
-	getBUfromEng()
+	getBUfromEnv()
+	getFSPfromEnv()
 
 }
