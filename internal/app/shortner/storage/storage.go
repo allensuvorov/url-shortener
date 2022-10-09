@@ -17,10 +17,8 @@ type URLStorage struct {
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
 	// Restore data at start up
-	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
-
 	fsp := config.UC.FSP
-	log.Println("Storage/NewURLStorage: fsp in config is", fsp)
+	log.Println("Storage/NewURLStorage: fsp in config is", *fsp)
 	um := make(hashmap.URLHashMap) // url map
 
 	// restore if path in config not empty

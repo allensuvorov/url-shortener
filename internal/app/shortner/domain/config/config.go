@@ -41,10 +41,12 @@ var UC = URLConfig{}
 func getConfigFromCLI() {
 
 	flag.Parse()
-	log.Println("Config/BuildConfig: CLI flag declared and parsed - completed")
+	log.Println("Config/getConfigFromCLI: CLI flag declared and parsed - completed")
+	log.Println("Config/getConfigFromCLI: CLI flag:", *sa, *bu, *fsp)
 }
 
 func getSAfromEnv() {
+
 	// get sa from env if empty
 	if len(*sa) == 0 {
 		s, ok := os.LookupEnv("SERVER_ADDRESS")
@@ -72,6 +74,12 @@ func getBUfromEnv() {
 }
 
 func getFSPfromEnv() {
+
+	// Set env for testing
+	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
+	s, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	log.Print("Config/getSAfromEnv: set FSP env var for testing:", s)
+
 	if len(*fsp) == 0 {
 		s, ok := os.LookupEnv("FILE_STORAGE_PATH")
 		log.Println("Config/getFSPfromEnv: fsp in env var is", s)
@@ -93,5 +101,5 @@ func BuildConfig() {
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
-
+	log.Println("Config/BuildConfig: final URL config object:", *UC.SA, *UC.BU, *UC.FSP)
 }
