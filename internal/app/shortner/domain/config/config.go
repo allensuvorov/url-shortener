@@ -76,9 +76,9 @@ func getBUfromEnv() {
 func getFSPfromEnv() {
 
 	// Set env for testing
-	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
-	s, _ := os.LookupEnv("FILE_STORAGE_PATH")
-	log.Print("Config/getSAfromEnv: set FSP env var for testing:", s)
+	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
+	// s, _ := os.LookupEnv("FILE_STORAGE_PATH")
+	// log.Print("Config/getSAfromEnv: set FSP env var for testing:", s)
 
 	if len(*fsp) == 0 {
 		s, ok := os.LookupEnv("FILE_STORAGE_PATH")
