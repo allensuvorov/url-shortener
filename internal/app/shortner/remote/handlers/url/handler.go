@@ -132,14 +132,14 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 // middleware принимает параметром Handler и возвращает тоже Handler.
-func middleware(next http.Handler) http.Handler {
+func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
 	// собираем Handler приведением типа
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки
 		// например, разрешаем запросы cross-domain
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		// ...
 		// замыкание — используем ServeHTTP следующего хендлера
 		next.ServeHTTP(w, r)
-	})
+	}
 }
