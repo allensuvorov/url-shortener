@@ -138,6 +138,12 @@ func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
 		// здесь пишем логику обработки
 		// например, разрешаем запросы cross-domain
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
+		if r.Method == http.MethodPost {
+
+		}
+		if r.Method == http.MethodGet {
+
+		}
 		// ...
 		// замыкание — используем ServeHTTP следующего хендлера
 		next.ServeHTTP(w, r)
