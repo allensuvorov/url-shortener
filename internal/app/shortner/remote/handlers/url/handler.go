@@ -132,23 +132,40 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 // middleware принимает параметром Handler и возвращает тоже Handler.
-func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
-	// собираем HandlerFunc
-	return func(w http.ResponseWriter, r *http.Request) {
+
+func (uh URLHandler) Middleware1(next http.Handler) http.Handler {
+	// собираем Handler приведением типа
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки
 		// например, разрешаем запросы cross-domain
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
-		log.Println("Handler/Middleware: Hi, I'm Middleware ")
+		log.Println("Handler/Middleware1: Hi, I'm Middleware ")
 
 		if r.Method == http.MethodPost {
-			log.Println("Handler/Middleware: request method = post ")
+			log.Println("Handler/Middleware1: request method = post ")
 		}
+
 		if r.Method == http.MethodGet {
-			log.Println("Handler/Middleware: request method = get ")
+			log.Println("Handler/Middleware1: request method = get ")
 		}
-		// ...
 		// замыкание — используем ServeHTTP следующего хендлера
 		next.ServeHTTP(w, r)
-		log.Println("Handler/Middleware: Bye! ")
-	}
+
+		log.Println("Handler/Middleware1: Bye! ")
+
+	})
 }
+
+// func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
+// 	return func(w http.ResponseWriter, r *http.Request) {
+// 		log.Println("Handler/Middleware: Hi, I'm Middleware ")
+// 		if r.Method == http.MethodPost {
+// 			log.Println("Handler/Middleware: request method = post ")
+// 		}
+// 		if r.Method == http.MethodGet {
+// 			log.Println("Handler/Middleware: request method = get ")
+// 		}
+// 		next.ServeHTTP(w, r)
+// 		log.Println("Handler/Middleware: Bye! ")
+// 	}
+// }
