@@ -2,10 +2,12 @@ package url
 
 import (
 	"bytes"
+	"compress/gzip"
 	"encoding/json"
 	"io"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/go-chi/chi/v5"
@@ -131,41 +133,56 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(u))
 }
 
-// middleware принимает параметром Handler и возвращает тоже Handler.
+type gzipWriter struct {
+	http.ResponseWriter
+	Writer io.Writer
+}
 
-func (uh URLHandler) Middleware1(next http.Handler) http.Handler {
+func (w gzipWriter) Write(b []byte) (int, error) {
+	// w.Writer будет отвечать за gzip-сжатие, поэтому пишем в него
+	return w.Writer.Write(b)
+}
+
+// middleware принимает параметром Handler и возвращает тоже Handler.
+func (uh URLHandler) Middleware(next http.Handler) http.Handler {
 	// собираем Handler приведением типа
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки
 		// например, разрешаем запросы cross-domain
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
-		log.Println("Handler/Middleware1: Hi, I'm Middleware ")
+		log.Println("Handler/Middleware: Hi, I'm Middleware ")
 
 		if r.Method == http.MethodPost {
-			log.Println("Handler/Middleware1: request method = post ")
+			log.Println("Handler/Middleware: request method = post ")
+			next.ServeHTTP(w, r)
 		}
 
 		if r.Method == http.MethodGet {
-			log.Println("Handler/Middleware1: request method = get ")
+			log.Println("Handler/Middleware: request method = get ")
+			// проверяем, что клиент поддерживает gzip-сжатие
+			if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+				log.Println("Handler/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
+				// если gzip не поддерживается, передаём управление
+				// дальше без изменений
+				next.ServeHTTP(w, r)
+				return
+			}
+			log.Println("Handler/Middleware: gzip is accepted, header:", r.Header["Accept-Encoding"])
+			// создаём gzip.Writer поверх текущего w
+			gz, err := gzip.NewWriterLevel(w, gzip.BestSpeed)
+			if err != nil {
+				io.WriteString(w, err.Error())
+				return
+			}
+			defer gz.Close()
+
+			w.Header().Set("Content-Encoding", "gzip")
+			// передаём обработчику страницы переменную типа gzipWriter для вывода данных
+			next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
 		}
 		// замыкание — используем ServeHTTP следующего хендлера
-		next.ServeHTTP(w, r)
 
-		log.Println("Handler/Middleware1: Bye! ")
+		log.Println("Handler/Middleware: Bye! ")
 
 	})
 }
-
-// func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
-// 	return func(w http.ResponseWriter, r *http.Request) {
-// 		log.Println("Handler/Middleware: Hi, I'm Middleware ")
-// 		if r.Method == http.MethodPost {
-// 			log.Println("Handler/Middleware: request method = post ")
-// 		}
-// 		if r.Method == http.MethodGet {
-// 			log.Println("Handler/Middleware: request method = get ")
-// 		}
-// 		next.ServeHTTP(w, r)
-// 		log.Println("Handler/Middleware: Bye! ")
-// 	}
-// }
