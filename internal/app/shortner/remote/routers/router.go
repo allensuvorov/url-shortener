@@ -8,7 +8,7 @@ import (
 func NewRouter(url url.URLHandler) chi.Router {
 	r := chi.NewRouter()
 	r.Get("/{hash}", url.Middleware(url.Get))
-	r.Post("/", url.Create)
-	r.Post("/api/shorten", url.API)
+	r.Post("/", url.Middleware(url.Create))
+	r.Post("/api/shorten", url.Middleware(url.API))
 	return r
 }

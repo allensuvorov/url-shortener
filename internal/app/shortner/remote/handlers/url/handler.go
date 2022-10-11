@@ -133,7 +133,7 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 // middleware принимает параметром Handler и возвращает тоже Handler.
 func (uh URLHandler) Middleware(next http.HandlerFunc) http.HandlerFunc {
-	// собираем Handler приведением типа
+	// собираем HandlerFunc
 	return func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки
 		// например, разрешаем запросы cross-domain
