@@ -156,32 +156,32 @@ func (uh URLHandler) Middleware(next http.Handler) http.Handler {
 
 			// переменная rc будет равна r.Body или *gzip.Reader
 			// var rc io.Reader
-			var rc io.ReadCloser
+			// var rc io.ReadCloser
 
-			if r.Header.Get(`Content-Encoding`) == `gzip` {
-				log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
-				gz, err := gzip.NewReader(r.Body)
-				if err != nil {
-					http.Error(w, err.Error(), http.StatusInternalServerError)
-					return
-				}
-				rc = gz
-				defer gz.Close()
+			// if r.Header.Get(`Content-Encoding`) == `gzip` {
+			// 	log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
+			// 	gz, err := gzip.NewReader(r.Body)
+			// 	if err != nil {
+			// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+			// 		return
+			// 	}
+			// 	rc = gz
+			// 	defer gz.Close()
 
-			} else {
-				log.Println("Handler/Middleware: POST request Content-Encoding is not gzip")
-				rc = r.Body
-				defer r.Body.Close()
-			}
-			r.Body = rc
-			b, err := io.ReadAll(r.Body)
-			log.Println("Handler/Middleware: POST request body:", string(b))
+			// } else {
+			// 	log.Println("Handler/Middleware: POST request Content-Encoding is not gzip")
+			// 	rc = r.Body
+			// 	defer r.Body.Close()
+			// }
+			// r.Body = rc
+			// b, err := io.ReadAll(r.Body)
+			// log.Println("Handler/Middleware: POST request body:", string(b))
 
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			log.Printf("Handler/Middleware: Length: %d", len(b))
+			// if err != nil {
+			// 	http.Error(w, err.Error(), http.StatusInternalServerError)
+			// 	return
+			// }
+			// log.Printf("Handler/Middleware: Length: %d", len(b))
 
 			next.ServeHTTP(w, r)
 		}
