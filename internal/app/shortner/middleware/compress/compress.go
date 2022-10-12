@@ -37,8 +37,11 @@ type gzipReader struct {
 // 	req.Body = gzr
 // }
 
+type GzipHandler struct {
+}
+
 // middleware принимает параметром Handler и возвращает тоже Handler.
-func GzipHandler(next http.Handler) http.Handler {
+func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 	// собираем Handler приведением типа
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки

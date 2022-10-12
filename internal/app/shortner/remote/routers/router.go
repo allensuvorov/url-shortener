@@ -8,7 +8,7 @@ import (
 
 func NewRouter(url url.URLHandler) chi.Router {
 	r := chi.NewRouter()
-	mw := compress.GzipHandler
+	mw := compress.GzipMiddleware
 
 	r.Use(mw)
 	r.Get("/{hash}", url.Get)
