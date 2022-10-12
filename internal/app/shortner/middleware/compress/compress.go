@@ -18,8 +18,27 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
+// Reader
+type gzipReader struct {
+	rc  io.ReadCloser
+	gzr *gzip.Reader
+}
+
+// func (g gzipReader) Read(p []byte) (n int, err error) {}
+// func (g gzipReader) Close() error {}
+
+// func main() {
+// 	req, _ := http.NewRequest(http.MethodGet, "", nil)
+// 	gz, _ := gzip.NewReader(req.Body)
+// 	gzr := gzipReader{
+// 		rc:  req.Body,
+// 		gzr: gz,
+// 	}
+// 	req.Body = gzr
+// }
+
 // middleware принимает параметром Handler и возвращает тоже Handler.
-func Middleware(next http.Handler) http.Handler {
+func GzipHandler(next http.Handler) http.Handler {
 	// собираем Handler приведением типа
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// здесь пишем логику обработки
@@ -33,7 +52,7 @@ func Middleware(next http.Handler) http.Handler {
 		// 	var rc io.Reader
 		// 	var rc io.ReadCloser
 
-		// 	if r.Header.Get(`Content-Encoding`) == `gzip` {
+		// if r.Header.Get(`Content-Encoding`) == `gzip` {
 		// 		log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
 		// 		gz, err := gzip.NewReader(r.Body)
 		// 		if err != nil {

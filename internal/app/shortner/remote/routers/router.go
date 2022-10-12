@@ -8,7 +8,9 @@ import (
 
 func NewRouter(url url.URLHandler) chi.Router {
 	r := chi.NewRouter()
-	r.Use(compress.Middleware)
+	mw := compress.GzipHandler
+
+	r.Use(mw)
 	r.Get("/{hash}", url.Get)
 	r.Post("/", url.Create)
 	r.Post("/api/shorten", url.API)
