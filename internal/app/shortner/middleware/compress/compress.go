@@ -79,16 +79,14 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 				Writer:         gz,
 			}
 			// next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
+		} else {
 
+			log.Println("Compress/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
+
+			// замыкание — используем ServeHTTP следующего хендлера
+			next.ServeHTTP(w, r)
 		}
 
-		log.Println("Compress/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
-
-		// если gzip не поддерживается, передаём управление
-		// дальше без изменений
-
-		// замыкание — используем ServeHTTP следующего хендлера
-		next.ServeHTTP(w, r)
 		log.Println("Compress/GzipMiddleware: Bye! ")
 	})
 }
