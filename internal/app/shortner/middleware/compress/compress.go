@@ -18,6 +18,23 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 	return w.Writer.Write(b)
 }
 
+// Reader
+type gzipReader struct {
+	rc  io.ReadCloser
+	gzr *gzip.Reader
+}
+
+func (g gzipReader) Read(b []byte) (n int, err error) {
+	return g.gzr.Read(b)
+
+}
+
+func (g gzipReader) Close() error {
+	g.rc.Close()
+	g.gzr.Close()
+	return nil
+}
+
 type GzipHandler struct {
 }
 
@@ -25,17 +42,26 @@ type GzipHandler struct {
 func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 	// собираем Handler приведением типа
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Handler/GzipMiddleware: Hi, I'm GzipMiddleware ")
+		log.Println("Compress/GzipMiddleware: Hi, I'm GzipMiddleware ")
 
 		// check if request is gzip-encoded
-		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
-			log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
-			// TODO: read response
-		}
+		// if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+		// 	log.Println("Compress/Middleware: POST request Content-Encoding == gzip")
+		// 	// TODO: read response
+
+		// 	gz, _ := gzip.NewReader(r.Body)
+		// 	gzr := gzipReader{
+		// 		rc:  r.Body,
+		// 		gzr: gz,
+		// 	}
+		// 	r.Body = gzr
+		// 	defer gz.Close()
+
+		// }
 
 		// check if sender can accept is gzip-encoded response
 		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			log.Println("Handler/Middleware: gzip can be accepted, header:", r.Header["Accept-Encoding"])
+			log.Println("Compress/Middleware: gzip can be accepted, header:", r.Header["Accept-Encoding"])
 			// TODO: create gziped response
 
 			// создаём gzip.Writer поверх текущего w
@@ -48,43 +74,28 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 
 			w.Header().Set("Content-Encoding", "gzip")
 			// передаём обработчику страницы переменную типа gzipWriter для вывода данных
-			next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
+			w = gzipWriter{
+				ResponseWriter: w,
+				Writer:         gz,
+			}
+			// next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
 
 		}
 
-		// log.Println("Handler/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
+		log.Println("Compress/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
 
 		// если gzip не поддерживается, передаём управление
 		// дальше без изменений
 
 		// замыкание — используем ServeHTTP следующего хендлера
 		next.ServeHTTP(w, r)
-		log.Println("Handler/GzipMiddleware: Bye! ")
+		log.Println("Compress/GzipMiddleware: Bye! ")
 	})
 }
 
 // type WrappedResponseWriter struct {
 // 	http.ResponseWriter
 // 	gw *gzip.Writer
-// }
-
-// // Reader
-// type gzipReader struct {
-// 	rc  io.ReadCloser
-// 	gzr *gzip.Reader
-// }
-
-// func (g gzipReader) Read(p []byte) (n int, err error) {}
-// func (g gzipReader) Close() error {}
-
-// func main() {
-// 	req, _ := http.NewRequest(http.MethodGet, "", nil)
-// 	gz, _ := gzip.NewReader(req.Body)
-// 	gzr := gzipReader{
-// 		rc:  req.Body,
-// 		gzr: gz,
-// 	}
-// 	req.Body = gzr
 // }
 
 // // middleware принимает параметром Handler и возвращает тоже Handler.
