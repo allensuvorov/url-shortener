@@ -1,7 +1,6 @@
 package compress
 
 import (
-	"compress/gzip"
 	"log"
 	"net/http"
 	"strings"
@@ -16,23 +15,30 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handler/GzipMiddleware: Hi, I'm GzipMiddleware ")
 
-		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-			// create gziped response
-
-		} else {
-			log.Println("Handler/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
-			// если gzip не поддерживается, передаём управление
-			// дальше без изменений
-			next.ServeHTTP(w, r)
-			return
+		// check if request is gzip-encoded
+		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
+			log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
+			// TODO: read response
 		}
+
+		// check if sender can accept is gzip-encoded response
+		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
+			log.Println("Handler/Middleware: gzip can be accepted, header:", r.Header["Accept-Encoding"])
+			// TODO: create gziped response
+
+		}
+
+		// log.Println("Handler/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
+		// если gzip не поддерживается, передаём управление
+		// дальше без изменений
+		next.ServeHTTP(w, r)
 	})
 }
 
-type WrappedResponseWriter struct {
-	rw http.ResponseWriter
-	gw *gzip.Writer
-}
+// type WrappedResponseWriter struct {
+// 	http.ResponseWriter
+// 	gw *gzip.Writer
+// }
 
 // type gzipWriter struct {
 // 	http.ResponseWriter
