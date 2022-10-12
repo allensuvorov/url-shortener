@@ -151,40 +151,40 @@ func (uh URLHandler) Middleware(next http.Handler) http.Handler {
 		// w.Header().Set("Access-Control-Allow-Origin", "*")
 		log.Println("Handler/Middleware: Hi, I'm Middleware ")
 
-		if r.Method == http.MethodPost {
-			log.Println("Handler/Middleware: request method = post ")
+		// if r.Method == http.MethodPost {
+		// 	log.Println("Handler/Middleware: request method = post ")
 
-			// переменная rc будет равна r.Body или *gzip.Reader
-			// var rc io.Reader
-			// var rc io.ReadCloser
+		// 	// переменная rc будет равна r.Body или *gzip.Reader
+		// 	var rc io.Reader
+		// 	var rc io.ReadCloser
 
-			// if r.Header.Get(`Content-Encoding`) == `gzip` {
-			// 	log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
-			// 	gz, err := gzip.NewReader(r.Body)
-			// 	if err != nil {
-			// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-			// 		return
-			// 	}
-			// 	rc = gz
-			// 	defer gz.Close()
+		// 	if r.Header.Get(`Content-Encoding`) == `gzip` {
+		// 		log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
+		// 		gz, err := gzip.NewReader(r.Body)
+		// 		if err != nil {
+		// 			http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 			return
+		// 		}
+		// 		rc = gz
+		// 		defer gz.Close()
 
-			// } else {
-			// 	log.Println("Handler/Middleware: POST request Content-Encoding is not gzip")
-			// 	rc = r.Body
-			// 	defer r.Body.Close()
-			// }
-			// r.Body = rc
-			// b, err := io.ReadAll(r.Body)
-			// log.Println("Handler/Middleware: POST request body:", string(b))
+		// 	} else {
+		// 		log.Println("Handler/Middleware: POST request Content-Encoding is not gzip")
+		// 		rc = r.Body
+		// 		defer r.Body.Close()
+		// 	}
+		// 	r.Body = rc
+		// 	b, err := io.ReadAll(r.Body)
+		// 	log.Println("Handler/Middleware: POST request body:", string(b))
 
-			// if err != nil {
-			// 	http.Error(w, err.Error(), http.StatusInternalServerError)
-			// 	return
-			// }
-			// log.Printf("Handler/Middleware: Length: %d", len(b))
+		// 	if err != nil {
+		// 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// 		return
+		// 	}
+		// 	log.Printf("Handler/Middleware: Length: %d", len(b))
 
-			next.ServeHTTP(w, r)
-		}
+		// 	next.ServeHTTP(w, r)
+		// }
 
 		if r.Method == http.MethodGet {
 			log.Println("Handler/Middleware: request method = get ")
