@@ -20,13 +20,12 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 
 // gzipReader is a Readcloser. As is r.body
 type gzipReader struct {
-	rc  io.ReadCloser
-	gzr *gzip.Reader
+	rc  io.ReadCloser // here we will put original request.Body
+	gzr *gzip.Reader  // here we will put new reader -
 }
 
 func (g gzipReader) Read(b []byte) (n int, err error) {
 	return g.gzr.Read(b)
-
 }
 
 func (g gzipReader) Close() error {
@@ -60,7 +59,7 @@ type GzipHandler struct {
 	- pass decompressed data to the new body,
 	- close body reader.
 
-- To that we will build an object - a struct, that has read and close methods.
+- To do that we will build an object - a struct, that has read and close methods.
 
 - returns a new handler function that calls our handler, with it's method ServeHTTP.
 - In that call it passes updated arguments to that handler
@@ -80,11 +79,11 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 			// и распаковывать его
 			gz, _ := gzip.NewReader(r.Body) // *Reader - type Reader struct {Header}
 			gzr := gzipReader{              // new ReadCloser
-				rc:  r.Body, // field rc gets the original request.Body - also a ReadCloser
-				gzr: gz,     // *gzip.Reader
+				rc:  r.Body, // a ReadCloser - gets the original request.Body
+				gzr: gz,     // *gzip.Reader of r.Body
 			}
+			defer gzr.Close()
 			r.Body = gzr // struct that is ReadCloser
-			defer gz.Close()
 
 		}
 
@@ -107,89 +106,18 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 				ResponseWriter: w,
 				Writer:         gz,
 			}
-			// next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
+			log.Println("Compress/Middleware: gzip.Writer - end")
+
 		} else {
 
 			log.Println("Compress/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
 
 		}
 		// замыкание — используем ServeHTTP следующего хендлера
+		log.Println("Compress/Middleware: w and r ready to pass to next")
+
 		next.ServeHTTP(w, r)
 
 		log.Println("Compress/GzipMiddleware: Bye! ")
 	})
 }
-
-// type WrappedResponseWriter struct {
-// 	http.ResponseWriter
-// 	gw *gzip.Writer
-// }
-
-// // middleware принимает параметром Handler и возвращает тоже Handler.
-// func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
-// 	// собираем Handler приведением типа
-
-// 		// w.Header().Set("Access-Control-Allow-Origin", "*")
-
-// 		// if r.Method == http.MethodPost {
-// 		// 	log.Println("Handler/Middleware: request method = post ")
-
-// 		// 	// переменная rc будет равна r.Body или *gzip.Reader
-// 		// 	var rc io.Reader
-// 		// 	var rc io.ReadCloser
-
-// 		// if r.Header.Get(`Content-Encoding`) == `gzip` {
-// 		// 		log.Println("Handler/Middleware: POST request Content-Encoding == gzip")
-// 		// 		gz, err := gzip.NewReader(r.Body)
-// 		// 		if err != nil {
-// 		// 			http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		// 			return
-// 		// 		}
-// 		// 		rc = gz
-// 		// 		defer gz.Close()
-
-// 		// 	} else {
-// 		// 		log.Println("Handler/Middleware: POST request Content-Encoding is not gzip")
-// 		// 		rc = r.Body
-// 		// 		defer r.Body.Close()
-// 		// 	}
-// 		// 	r.Body = rc
-// 		// 	b, err := io.ReadAll(r.Body)
-// 		// 	log.Println("Handler/Middleware: POST request body:", string(b))
-
-// 		// 	if err != nil {
-// 		// 		http.Error(w, err.Error(), http.StatusInternalServerError)
-// 		// 		return
-// 		// 	}
-// 		// 	log.Printf("Handler/Middleware: Length: %d", len(b))
-
-// 		// 	next.ServeHTTP(w, r)
-// 		// }
-
-// 		// проверяем, что клиент поддерживает gzip-сжатие
-// 		if !strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
-// 			log.Println("Handler/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
-// 			// если gzip не поддерживается, передаём управление
-// 			// дальше без изменений
-// 			next.ServeHTTP(w, r)
-// 			return
-// 		}
-// 		log.Println("Handler/Middleware: gzip is accepted, header:", r.Header["Accept-Encoding"])
-// 		// создаём gzip.Writer поверх текущего w
-// 		gz, err := gzip.NewWriterLevel(w, gzip.BestSpeed)
-// 		if err != nil {
-// 			io.WriteString(w, err.Error())
-// 			return
-// 		}
-// 		defer gz.Close()
-
-// 		w.Header().Set("Content-Encoding", "gzip")
-// 		// передаём обработчику страницы переменную типа gzipWriter для вывода данных
-// 		next.ServeHTTP(gzipWriter{ResponseWriter: w, Writer: gz}, r)
-
-// 		// замыкание — используем ServeHTTP следующего хендлера
-
-// 		log.Println("Handler/Middleware: Bye! ")
-
-// 	})
-// }
