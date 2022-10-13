@@ -2,6 +2,7 @@ package compress
 
 import (
 	"compress/gzip"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -29,7 +30,11 @@ func (g gzipReader) Read(b []byte) (n int, err error) {
 }
 
 func (g gzipReader) Close() error {
-	g.rc.Close()
+	err := g.rc.Close()
+
+	if err != nil {
+		return fmt.Errorf("failed decompress data: %v", err)
+	}
 	g.gzr.Close()
 	return nil
 }
