@@ -3,6 +3,7 @@ package compress
 import (
 	"bytes"
 	"compress/gzip"
+	"io"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -72,16 +73,33 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 			r.Header.Set("Content-Encoding", tt.headerAcceptEncoding)
 			r.Header.Set("Accept-Encoding", tt.headerAcceptEncoding)
 
-			// uh.Create(w, r) // Do we need to call the original handler?
-
 			// Handler wrapped in middleware
 			h := g.GzipMiddleware(http.HandlerFunc(uh.Create)) // h - is a struct
 
 			// Call Middleware
 			h.ServeHTTP(w, r)
+			log.Println("compress_test: statuscode", w.Code)
 
-			assert.Equal(t, tt.expectedResponseBody, w.Body.Bytes())
+			// TODO: gzip-decode w.body
+			zr, err := gzip.NewReader(w.Body)
+			if err != nil {
+				log.Fatal(err)
+			}
 
+			// при чтении вернётся распакованный слайс байт
+			body, err := io.ReadAll(zr)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			log.Println("compress_test: w.Body =", string(body))
+
+			assert.Equal(t, tt.expectedResponseBody, body)
+
+			if err := zr.Close(); err != nil {
+				log.Fatal(err)
+			}
 		})
 	}
 }
