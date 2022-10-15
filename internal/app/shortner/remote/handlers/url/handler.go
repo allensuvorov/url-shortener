@@ -84,8 +84,10 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	// обрабатываем ошибку
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Fatal(err)
 		return
 	}
+	log.Println("Handler/Create - read r.Body, no err")
 
 	// convert to string
 	u := string(b)
