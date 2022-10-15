@@ -17,11 +17,6 @@ import (
 )
 
 func TestGzipHandler_GzipMiddleware(t *testing.T) {
-	/* Basic Logic
-	Make request with gzip-ed body
-	want - decoded URL passed to
-	need: handler, request, test data
-	*/
 
 	// Create Handler
 	config.BuildConfig()
@@ -96,7 +91,7 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 			log.Println("compress_test: w.Body =", string(body))
 
 			assert.Equal(t, tt.expectedResponseBody, body)
-
+			assert.Equal(t, tt.expectedResponseCEHeader, w.Header().Get("Content-Encoding"))
 			if err := zr.Close(); err != nil {
 				log.Fatal(err)
 			}
