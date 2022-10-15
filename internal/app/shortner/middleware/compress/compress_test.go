@@ -2,17 +2,29 @@ package compress
 
 import (
 	"bytes"
+	"compress/gzip"
+	"io"
+	"log"
 	"net/http"
 	"net/http/httptest"
-	"reflect"
 	"testing"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
 	handlers "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
-
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
+	"github.com/stretchr/testify/assert"
 )
+
+type gzipWriterForTest struct {
+	http.ResponseWriter
+	Writer io.Writer
+}
+
+func (w gzipWriterForTest) Write(b []byte) (int, error) {
+	// w.Writer будет отвечать за gzip-сжатие, поэтому пишем в него
+	return w.Writer.Write(b)
+}
 
 func TestGzipHandler_GzipMiddleware(t *testing.T) {
 	/* Basic Logic
@@ -28,34 +40,60 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 	uh := handlers.NewURLHandler(us)
 
 	tests := []struct {
-		name                   string
-		url                    string
-		headerAE               string // Accept-Encoding
-		headerCE               string // Content-Encoding
-		expectedRequestBody    string
-		expectedResponseHeader string
+		name                     string
+		url                      string
+		headerAcceptEncoding     string // Accept-Encoding
+		headerContentEncoding    string // Content-Encoding
+		expectedRequestBody      string
+		expectedResponseCEHeader string
 	}{
 		// TODO: Add test cases.
 		{
-			// name: "decoded",
-			// arg:
-
+			name:                     "decoded",
+			url:                      "http://www.booking.com/",
+			headerAcceptEncoding:     "gzip",
+			headerContentEncoding:    "gzip",
+			expectedRequestBody:      "http://www.booking.com/",
+			expectedResponseCEHeader: "gzip",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Create POST request
-			b := bytes.NewBufferString(tt.url)
-			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080", b)
-			w := httptest.NewRecorder()
 
-			// Creat Handler
-			uh.Create(w, r)
+			// TODO: gzip the URL before passing to request
+			var buf bytes.Buffer
 
-			g := GzipHandler{}
-			if got := g.GzipMiddleware(tt.args.next); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GzipHandler.GzipMiddleware() = %v, want %v", got, tt.want)
+			// создаём gzip.Writer поверх текущего w
+			gz := gzip.NewWriter(&buf)
+			defer gz.Close()
+			_, err := gz.Write([]byte(tt.url))
+			if err != nil {
+				log.Fatalf("failed write data to compress temporary buffer: %v", err)
 			}
+			// Create POST request
+			// b := bytes.NewBufferString(tt.url)
+			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080", &buf)
+			w := httptest.NewRecorder()
+			g := GzipHandler{}
+
+			// Add headers
+			r.Header.Set("Content-Encoding", tt.headerAcceptEncoding)
+			r.Header.Set("Accept-Encoding", tt.headerAcceptEncoding)
+
+			// Do we need to call the original handler?
+			// uh.Create(w, r)
+
+			// Handler wrapped in middleware
+			h := g.GzipMiddleware(http.HandlerFunc(uh.Create)) // h - is a struct
+
+			// Call Middleware
+			// Do we need to call the updated handler?
+			h.ServeHTTP(w, r)
+
+			assert.Equal(t, tt.expectedRequestBody, r.Body)
+			log.Println(r.Body)
+			assert.Equal(t, tt.expectedResponseCEHeader, w.Header())
+
 		})
 	}
 }
