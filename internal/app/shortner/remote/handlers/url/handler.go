@@ -30,7 +30,7 @@ func NewURLHandler(us URLService) URLHandler {
 
 func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request) {
 	// целевой объект
-	var v1 struct {
+	var dv struct { // decoded value
 		URL string
 	}
 
@@ -38,14 +38,14 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	// contentType := response.Header.Get("Content-Type")
 	// это может быть, например, "application/json; charset=UTF-8"
 
-	if err := json.NewDecoder(r.Body).Decode(&v1); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&dv); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println("Handler/API - request: object", v1)
-	log.Println("Handler/API - URL in the request is", v1.URL)
+	log.Println("Handler/API - request: object", dv)
+	log.Println("Handler/API - URL in the request is", dv.URL)
 
-	shortURL, err := uh.urlService.Create(v1.URL)
+	shortURL, err := uh.urlService.Create(dv.URL)
 
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
@@ -58,7 +58,7 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	// устанавливаем статус-код 201
 	w.WriteHeader(http.StatusCreated)
 
-	v2 := struct {
+	ev := struct { // encoded value
 		Result string `json:"result"`
 	}{
 		Result: shortURL,
@@ -66,9 +66,9 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	buf := bytes.NewBuffer([]byte{})
 	encoder := json.NewEncoder(buf)
 	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	encoder.Encode(v2)
+	encoder.Encode(ev)
 
-	log.Println("API handler - v2 is", v2.Result)
+	log.Println("API handler - v2 is", ev.Result)
 	log.Println("API handler - buf is", buf.String())
 
 	// пишем тело ответа
