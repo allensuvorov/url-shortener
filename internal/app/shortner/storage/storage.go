@@ -40,7 +40,7 @@ func (us *URLStorage) Create(h, u string) error {
 	// get file storage path from config
 	fsp := config.UC.FSP
 
-	// Save to file, if there is path in env var
+	// Save to file, if there is path in config
 	if *fsp != "" {
 		write(h, u, *fsp)
 	}
