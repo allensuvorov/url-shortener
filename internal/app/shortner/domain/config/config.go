@@ -43,7 +43,7 @@ func getConfigFromCLI() {
 func getSAfromEnv() {
 
 	// get sa from env if empty
-	if len(*sa) == 0 {
+	if *sa == "" {
 		s, ok := os.LookupEnv("SERVER_ADDRESS")
 		// if empty set default
 		if !ok {
@@ -57,7 +57,7 @@ func getSAfromEnv() {
 
 func getBUfromEnv() {
 	// get bu from env if empty
-	if len(*bu) == 0 {
+	if *bu == "" {
 		s, ok := os.LookupEnv("BASE_URL")
 		if !ok {
 			// log.Printf("Config/getBUfromEnv: %s not set\n; passing default", "BASE_URL")
@@ -70,17 +70,10 @@ func getBUfromEnv() {
 
 func getFSPfromEnv() {
 
-	// Set env for testing
-	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
-	// s, _ := os.LookupEnv("FILE_STORAGE_PATH")
-	// log.Print("Config/getSAfromEnv: set FSP env var for testing:", s)
-
-	if len(*fsp) == 0 {
+	if *fsp == "" {
 		s, ok := os.LookupEnv("FILE_STORAGE_PATH")
-		// log.Println("Config/getFSPfromEnv: fsp in env var is", s)
 
 		if !ok {
-			// log.Printf("Config/GetFSP: %s not set\n; passing default", "FILE_STORAGE_PATH")
 			s = dfsp
 		}
 		*fsp = s
