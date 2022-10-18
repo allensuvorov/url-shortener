@@ -15,7 +15,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_apiShortener(t *testing.T) {
+func Test_CreateForJSONClient(t *testing.T) {
 	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	us := service.NewURLService(usm)
@@ -48,7 +48,7 @@ func Test_apiShortener(t *testing.T) {
 			w := httptest.NewRecorder()
 
 			uh.CreateForJSONClient(w, r)
-			log.Println("Test_apiShortener, body is:", w.Body.String())
+			log.Println("Test_CreateForJSONClient, body is:", w.Body.String())
 			assert.Equal(t, tc.expectedStatusCode, w.Code)
 			assert.Equal(t, tc.expectedResponseBody, w.Body.Bytes())
 		})

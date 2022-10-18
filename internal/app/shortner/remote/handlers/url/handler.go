@@ -1,7 +1,6 @@
 package url
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
 	"log"
@@ -42,8 +41,8 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println("Handler/API - request: object", dv)
-	log.Println("Handler/API - URL in the request is", dv.URL)
+	log.Println("Handler/CreateForJSONClient - request: object", dv)
+	log.Println("Handler/CreateForJSONClient - URL in the request is", dv.URL)
 
 	shortURL, err := uh.urlService.Create(dv.URL)
 
@@ -56,13 +55,8 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	}{
 		Result: shortURL,
 	}
-	buf := bytes.NewBuffer([]byte{})
-	encoder := json.NewEncoder(buf)
-	encoder.SetEscapeHTML(false) // без этой опции символ '&' будет заменён на "\u0026"
-	encoder.Encode(ev)
 
-	log.Println("API handler - v2 is", ev.Result)
-	log.Println("API handler - buf is", buf.String())
+	log.Println("Handler/CreateForJSONClient: ev is", ev.Result)
 
 	// сначала устанавливаем заголовок Content-Type
 	// для передачи клиенту информации, кодированной в JSON
@@ -72,7 +66,7 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusCreated)
 
 	// пишем тело ответа
-	w.Write(buf.Bytes())
+	json.NewEncoder(w).Encode(ev)
 }
 
 // Create passes URL to service and returns response with Hash.
