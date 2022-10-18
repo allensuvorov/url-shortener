@@ -28,7 +28,7 @@ func NewURLHandler(us URLService) URLHandler {
 	}
 }
 
-func (uh URLHandler) API(w http.ResponseWriter, r *http.Request) {
+func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request) {
 	// целевой объект
 	var v1 struct {
 		URL string

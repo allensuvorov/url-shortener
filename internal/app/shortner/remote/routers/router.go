@@ -16,6 +16,6 @@ func NewRouter(url url.URLHandler) chi.Router {
 	r.Use(mw.GzipMiddleware)
 	r.Get("/{hash}", url.Get)
 	r.Post("/", url.Create)
-	r.Post("/api/shorten", url.API)
+	r.Post("/api/shorten", url.CreateForJSONClient)
 	return r
 }

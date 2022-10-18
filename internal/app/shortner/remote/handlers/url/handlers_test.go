@@ -47,7 +47,7 @@ func Test_apiShortener(t *testing.T) {
 			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080/api/shorten", b)
 			w := httptest.NewRecorder()
 
-			uh.API(w, r)
+			uh.CreateForJSONClient(w, r)
 			log.Println("Test_apiShortener, body is:", w.Body.String())
 			assert.Equal(t, tc.expectedStatusCode, w.Code)
 			assert.Equal(t, tc.expectedResponseBody, w.Body.Bytes())
