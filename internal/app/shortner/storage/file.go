@@ -54,6 +54,11 @@ func restore(fsp string) hashmap.URLHashMap {
 			um[k] = v
 		}
 	}
+
+	if err := file.Close(); err != nil {
+		log.Fatal(err)
+	}
+
 	log.Println("File/restore: all restored data in map:", um)
 	return um
 }
