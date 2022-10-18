@@ -51,13 +51,6 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
 
-	// сначала устанавливаем заголовок Content-Type
-	// для передачи клиенту информации, кодированной в JSON
-	w.Header().Set("content-type", "application/json")
-
-	// устанавливаем статус-код 201
-	w.WriteHeader(http.StatusCreated)
-
 	ev := struct { // encoded value
 		Result string `json:"result"`
 	}{
@@ -70,6 +63,13 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 
 	log.Println("API handler - v2 is", ev.Result)
 	log.Println("API handler - buf is", buf.String())
+
+	// сначала устанавливаем заголовок Content-Type
+	// для передачи клиенту информации, кодированной в JSON
+	w.Header().Set("content-type", "application/json")
+
+	// устанавливаем статус-код 201
+	w.WriteHeader(http.StatusCreated)
 
 	// пишем тело ответа
 	w.Write(buf.Bytes())
