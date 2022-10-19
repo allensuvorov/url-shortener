@@ -22,7 +22,7 @@ func (w gzipWriter) Write(b []byte) (int, error) {
 // gzipReader is a Readcloser. As is r.body
 type gzipReader struct {
 	rc  io.ReadCloser // here we will put original request.Body
-	gzr *gzip.Reader  // here we will put new reader -
+	gzr *gzip.Reader  // here we will put new reader
 }
 
 func (g gzipReader) Read(b []byte) (n int, err error) {
@@ -31,12 +31,10 @@ func (g gzipReader) Read(b []byte) (n int, err error) {
 
 func (g gzipReader) Close() error {
 	err := g.rc.Close()
-
 	if err != nil {
 		return fmt.Errorf("failed decompress data: %v", err)
 	}
-	g.gzr.Close()
-	return nil
+	return g.gzr.Close()
 }
 
 // GzipMiddleware принимает параметром Handler и возвращает тоже Handler.
