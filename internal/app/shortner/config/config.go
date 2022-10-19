@@ -6,11 +6,10 @@ import (
 	"os"
 )
 
-// default values
 var (
-	Dsa  = ":8080"
-	Dbu  = "http://localhost:8080"
-	Dfsp = ""
+	DefaultSA  = ":8080"
+	DefaultBU  = "http://localhost:8080"
+	DefaultFSP = ""
 )
 
 // declare config struct
@@ -29,7 +28,7 @@ func getSAfromEnv() {
 		return
 	}
 	// if empty set default
-	UC.SA = Dsa
+	UC.SA = DefaultSA
 	if s, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
 		UC.SA = s
 	}
@@ -40,7 +39,7 @@ func getBUfromEnv() {
 	if UC.BU != "" {
 		return
 	}
-	UC.BU = Dbu
+	UC.BU = DefaultBU
 	if s, ok := os.LookupEnv("BASE_URL"); ok {
 		UC.BU = s
 	}
@@ -51,7 +50,7 @@ func getFSPfromEnv() {
 	if UC.FSP != "" {
 		return
 	}
-	UC.FSP = Dfsp
+	UC.FSP = DefaultFSP
 	if s, ok := os.LookupEnv("FILE_STORAGE_PATH"); ok {
 		UC.FSP = s
 	}
@@ -60,10 +59,11 @@ func getFSPfromEnv() {
 func BuildConfig() {
 	// get config vars from CLI flags
 	flag.Parse()
-	log.Println("config/BuildConfig", UC)
+	log.Println("config/BuildConfig UC after flags", UC)
 
 	// get config from local var if was not set by flag
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
+	log.Println("config/BuildConfig UC after env vars", UC)
 }

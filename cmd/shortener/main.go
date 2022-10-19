@@ -14,9 +14,9 @@ import (
 
 func init() {
 	log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
-	flag.StringVar(&config.UC.SA, "a", config.Dsa, "SERVER_ADDRESS")
-	flag.StringVar(&config.UC.BU, "b", config.Dbu, "BASE_URL")
-	flag.StringVar(&config.UC.FSP, "f", config.Dfsp, "FILE_STORAGE_PATH")
+	flag.StringVar(&config.UC.SA, "a", config.DefaultSA, "SERVER_ADDRESS")
+	flag.StringVar(&config.UC.BU, "b", config.DefaultBU, "BASE_URL")
+	flag.StringVar(&config.UC.FSP, "f", config.DefaultFSP, "FILE_STORAGE_PATH")
 }
 
 func main() {
