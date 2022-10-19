@@ -2,14 +2,12 @@ package config
 
 import (
 	"flag"
+	"log"
 	"os"
 )
 
+// default values
 var (
-	sa  string
-	bu  string
-	fsp string
-	//default values
 	Dsa  = ":8080"
 	Dbu  = "http://localhost:8080"
 	Dfsp = ""
@@ -27,7 +25,7 @@ var UC = URLConfig{}
 
 func getSAfromEnv() {
 	// get sa from env if empty
-	if sa != "" {
+	if UC.SA != "" {
 		return
 	}
 	// if empty set default
@@ -39,7 +37,7 @@ func getSAfromEnv() {
 
 func getBUfromEnv() {
 	// get bu from env if empty
-	if bu != "" {
+	if UC.BU != "" {
 		return
 	}
 	UC.BU = Dbu
@@ -50,7 +48,7 @@ func getBUfromEnv() {
 
 func getFSPfromEnv() {
 	// get fsp from env if empty
-	if fsp != "" {
+	if UC.FSP != "" {
 		return
 	}
 	UC.FSP = Dfsp
@@ -61,13 +59,8 @@ func getFSPfromEnv() {
 
 func BuildConfig() {
 	// get config vars from CLI flags
-	// getConfigFromCLI()
-
-	// flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
-	// flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
-	// flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
-
 	flag.Parse()
+	log.Println("config/BuildConfig", UC)
 
 	// get config from local var if was not set by flag
 	getSAfromEnv()
