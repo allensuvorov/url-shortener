@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -10,6 +11,13 @@ import (
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
+
+func init() {
+	log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
+	flag.StringVar(&config.UC.SA, "a", config.Dsa, "SERVER_ADDRESS")
+	flag.StringVar(&config.UC.BU, "b", config.Dbu, "BASE_URL")
+	flag.StringVar(&config.UC.FSP, "f", config.Dfsp, "FILE_STORAGE_PATH")
+}
 
 func main() {
 	config.BuildConfig()

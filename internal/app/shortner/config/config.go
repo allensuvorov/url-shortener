@@ -2,25 +2,17 @@ package config
 
 import (
 	"flag"
-	"log"
 	"os"
 )
-
-func init() {
-	log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
-	flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
-	flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
-	flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
-}
 
 var (
 	sa  string
 	bu  string
 	fsp string
 	//default values
-	dsa  = ":8080"
-	dbu  = "http://localhost:8080"
-	dfsp = ""
+	Dsa  = ":8080"
+	Dbu  = "http://localhost:8080"
+	Dfsp = ""
 )
 
 // declare config struct
@@ -39,7 +31,7 @@ func getSAfromEnv() {
 		return
 	}
 	// if empty set default
-	UC.SA = dsa
+	UC.SA = Dsa
 	if s, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
 		UC.SA = s
 	}
@@ -50,7 +42,7 @@ func getBUfromEnv() {
 	if bu != "" {
 		return
 	}
-	UC.BU = dbu
+	UC.BU = Dbu
 	if s, ok := os.LookupEnv("BASE_URL"); ok {
 		UC.BU = s
 	}
@@ -61,7 +53,7 @@ func getFSPfromEnv() {
 	if fsp != "" {
 		return
 	}
-	UC.FSP = dfsp
+	UC.FSP = Dfsp
 	if s, ok := os.LookupEnv("FILE_STORAGE_PATH"); ok {
 		UC.FSP = s
 	}
