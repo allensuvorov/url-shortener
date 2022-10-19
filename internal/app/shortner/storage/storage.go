@@ -3,7 +3,7 @@ package storage
 import (
 	"log"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )

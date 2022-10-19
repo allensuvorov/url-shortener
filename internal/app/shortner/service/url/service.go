@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/url"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 

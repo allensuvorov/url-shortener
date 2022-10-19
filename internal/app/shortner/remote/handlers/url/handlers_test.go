@@ -8,7 +8,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"

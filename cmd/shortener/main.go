@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/routers"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
