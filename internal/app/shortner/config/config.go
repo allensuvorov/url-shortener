@@ -2,14 +2,12 @@ package config
 
 import (
 	"flag"
+	"log"
 	"os"
 )
 
 func init() {
-	// log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
-	// sa = flag.String("a", "", "SERVER_ADDRESS")
-	// bu = flag.String("b", "", "BASE_URL")
-	// fsp = flag.String("f", "", "FILE_STORAGE_PATH")
+	log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
 	flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
 	flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
 	flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
@@ -83,5 +81,4 @@ func BuildConfig() {
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
-	// log.Println("Config/BuildConfig: final URL config object:", *UC.SA, *UC.BU, *UC.FSP)
 }
