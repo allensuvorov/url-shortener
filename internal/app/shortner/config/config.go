@@ -12,56 +12,54 @@ var (
 	DefaultFSP = ""
 )
 
-// declare config struct
+const (
+	sa  = "SERVER_ADDRESS"
+	bu  = "BASE_URL"
+	fsp = "FILE_STORAGE_PATH"
+)
+
 type URLConfig struct {
-	SA  string //SERVER_ADDRESS
-	BU  string //BASE_URL
-	FSP string //FILE_STORAGE_PATH
+	SA  string
+	BU  string
+	FSP string
 }
 
-// new confit struct instance
 var UC = URLConfig{}
 
 func getSAfromEnv() {
-	// get sa from env if empty
 	if UC.SA != "" {
 		return
 	}
-	// if empty set default
 	UC.SA = DefaultSA
-	if s, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
+	if s, ok := os.LookupEnv(sa); ok {
 		UC.SA = s
 	}
 }
 
 func getBUfromEnv() {
-	// get bu from env if empty
 	if UC.BU != "" {
 		return
 	}
 	UC.BU = DefaultBU
-	if s, ok := os.LookupEnv("BASE_URL"); ok {
+	if s, ok := os.LookupEnv(bu); ok {
 		UC.BU = s
 	}
 }
 
 func getFSPfromEnv() {
-	// get fsp from env if empty
 	if UC.FSP != "" {
 		return
 	}
 	UC.FSP = DefaultFSP
-	if s, ok := os.LookupEnv("FILE_STORAGE_PATH"); ok {
+	if s, ok := os.LookupEnv(fsp); ok {
 		UC.FSP = s
 	}
 }
 
 func BuildConfig() {
-	// get config vars from CLI flags
 	flag.Parse()
 	log.Println("config/BuildConfig UC after flags", UC)
 
-	// get config from local var if was not set by flag
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
