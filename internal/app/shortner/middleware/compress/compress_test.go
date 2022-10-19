@@ -62,14 +62,13 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 			// Create POST request
 			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080", &buf)
 			w := httptest.NewRecorder()
-			g := GzipHandler{}
 
 			// Add headers
 			r.Header.Set("Content-Encoding", tt.headerAcceptEncoding)
 			r.Header.Set("Accept-Encoding", tt.headerAcceptEncoding)
 
 			// Handler wrapped in middleware
-			h := g.GzipMiddleware(http.HandlerFunc(uh.Create)) // h - is a struct
+			h := GzipMiddleware(http.HandlerFunc(uh.Create)) // h - is a struct
 
 			// Call Middleware
 			h.ServeHTTP(w, r)

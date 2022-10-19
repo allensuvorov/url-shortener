@@ -7,13 +7,11 @@ import (
 )
 
 func NewRouter(url url.URLHandler) chi.Router {
-	// create middleware handler
-	mw := compress.GzipHandler{}
 
 	// create new router
 	r := chi.NewRouter()
 
-	r.Use(mw.GzipMiddleware)
+	r.Use(compress.GzipMiddleware)
 	r.Get("/{hash}", url.Get)
 	r.Post("/", url.Create)
 	r.Post("/api/shorten", url.CreateForJSONClient)
