@@ -28,12 +28,18 @@ var UC = URLConfig{}
 
 func getSAfromEnv() {
 	if UC.SA != "" {
+		log.Println("config/getSAfromEnv: sa in flag is:", UC.SA)
 		return
 	}
 	UC.SA = DefaultSA
+
+	// TODO test for ENV, using os.Setenv(sa, ":6060")
+
 	if s, ok := os.LookupEnv(sa); ok {
+		log.Println("config/getSAfromEnv: sa in env is:", s)
 		UC.SA = s
 	}
+	log.Println("config/getSAfromEnv: finished")
 }
 
 func getBUfromEnv() {
