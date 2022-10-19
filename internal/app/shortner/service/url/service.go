@@ -65,8 +65,8 @@ func (us URLService) Create(u string) (string, error) {
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
 	bu := config.UC.BU
-	log.Println("Service: BASE_URL from local env is:", *bu)
-	shortURL := *bu + "/" + h
+	log.Println("Service: BASE_URL from local env is:", bu)
+	shortURL := bu + "/" + h
 	return shortURL, nil
 }
 

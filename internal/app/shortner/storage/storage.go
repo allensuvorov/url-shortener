@@ -21,8 +21,8 @@ func NewURLStorage() *URLStorage {
 	um := make(hashmap.URLHashMap) // url map
 
 	// restore if path in config not empty
-	if *fsp != "" {
-		um = restore(*fsp) // get map
+	if fsp != "" {
+		um = restore(fsp) // get map
 	}
 
 	return &URLStorage{
@@ -41,10 +41,10 @@ func (us *URLStorage) Create(h, u string) error {
 	fsp := config.UC.FSP
 
 	// Save to file, if there is path in config
-	if *fsp != "" {
-		write(h, u, *fsp)
+	if fsp != "" {
+		write(h, u, fsp)
 	}
-	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, *fsp)
+	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, fsp)
 	return nil
 }
 
