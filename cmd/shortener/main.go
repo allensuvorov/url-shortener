@@ -12,13 +12,11 @@ import (
 )
 
 func main() {
-	// log.Println("Main: now will try to Config/BuildConfig")
 	config.BuildConfig()
 	URLStorage := storage.NewURLStorage()
 	URLService := service.NewURLService(URLStorage)
 	URLHandler := handler.NewURLHandler(URLService)
 	r := routers.NewRouter(URLHandler)
-	// log.Println("Main: now will try to get sa from config")
 	sa := config.UC.SA // server address from config
 	log.Println("Serving on port", sa)
 	log.Fatal(http.ListenAndServe(sa, r))
