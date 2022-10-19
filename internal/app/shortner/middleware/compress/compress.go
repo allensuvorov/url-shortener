@@ -89,13 +89,11 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 			}
 			defer gzr.Close()
 			r.Body = gzr // struct that is ReadCloser
-
 		}
 
-		// check if sender can accept is gzip-encoded response
+		// check if sender can accept gzip-encoded response
 		if strings.Contains(r.Header.Get("Accept-Encoding"), "gzip") {
 			log.Println("Compress/Middleware: gzip can be accepted, header:", r.Header["Accept-Encoding"])
-			// TODO: create gziped response
 
 			// создаём gzip.Writer поверх текущего w
 			gz, err := gzip.NewWriterLevel(w, gzip.BestSpeed)
@@ -112,17 +110,11 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 				Writer:         gz,
 			}
 			log.Println("Compress/Middleware: gzip.Writer - end")
-
-		} else {
-
-			log.Println("Compress/Middleware: gzip not accepted, header:", r.Header["Accept-Encoding"])
-
 		}
+
 		// замыкание — используем ServeHTTP следующего хендлера
 		log.Println("Compress/Middleware: w and r ready to pass to next")
-
 		next.ServeHTTP(w, r)
-
 		log.Println("Compress/GzipMiddleware: Bye! ")
 	})
 }
