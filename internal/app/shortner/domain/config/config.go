@@ -5,43 +5,15 @@ import (
 	"os"
 )
 
-/*
 func init() {
 	// log.Println("Config/getConfigFromCLI, passed flag: a,b,f")
-	sa = flag.String("a", "", "SERVER_ADDRESS")
-	bu = flag.String("b", "", "BASE_URL")
-	fsp = flag.String("f", "", "FILE_STORAGE_PATH")
+	// sa = flag.String("a", "", "SERVER_ADDRESS")
+	// bu = flag.String("b", "", "BASE_URL")
+	// fsp = flag.String("f", "", "FILE_STORAGE_PATH")
+	flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
+	flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
+	flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
 }
-
-// declare config vars
-var (
-	sa  *string
-	bu  *string
-	fsp *string
-	//default values
-	dsa  = ":8080"
-	dbu  = "http://localhost:8080"
-	dfsp = ""
-)
-
-// declare config struct
-type URLConfig struct {
-	SA  *string //SERVER_ADDRESS
-	BU  *string //BASE_URL
-	FSP *string //FILE_STORAGE_PATH
-}
-
-
-// new confit struct instance
-var UC = URLConfig{}
-
-// func getConfigFromCLI() {
-
-	flag.Parse()
-	// log.Println("Config/getConfigFromCLI: CLI flag declared and parsed - completed")
-	// log.Println("Config/getConfigFromCLI: CLI flag:", *sa, *bu, *fsp)
-}
-*/
 
 var (
 	sa  string
@@ -101,9 +73,9 @@ func BuildConfig() {
 	// get config vars from CLI flags
 	// getConfigFromCLI()
 
-	flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
-	flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
-	flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
+	// flag.StringVar(&UC.SA, "a", dsa, "SERVER_ADDRESS")
+	// flag.StringVar(&UC.BU, "b", dbu, "BASE_URL")
+	// flag.StringVar(&UC.FSP, "f", dfsp, "FILE_STORAGE_PATH")
 
 	flag.Parse()
 
