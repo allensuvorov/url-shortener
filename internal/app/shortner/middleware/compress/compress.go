@@ -82,8 +82,12 @@ func (g GzipHandler) GzipMiddleware(next http.Handler) http.Handler {
 
 			// создаём *gzip.Reader, который будет читать тело запроса
 			// и распаковывать его
-			gz, _ := gzip.NewReader(r.Body) // *Reader - type Reader struct {Header}
-			gzr := gzipReader{              // new ReadCloser
+			gz, err := gzip.NewReader(r.Body) // *Reader - type Reader struct {Header}
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			gzr := gzipReader{ // new ReadCloser
 				rc:  r.Body, // a ReadCloser - gets the original request.Body
 				gzr: gz,     // *gzip.Reader of r.Body
 			}
