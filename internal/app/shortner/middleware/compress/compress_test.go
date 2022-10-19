@@ -32,7 +32,7 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 		expectedResponseBody     []byte
 		expectedResponseCEHeader string
 	}{
-		// TODO: Add test cases.
+		// TODO: Add more test cases.
 		{
 			name:                     "decoded",
 			url:                      "http://www.booking.com/",
