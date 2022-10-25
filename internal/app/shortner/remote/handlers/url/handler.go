@@ -29,7 +29,7 @@ func NewURLHandler(us URLService) URLHandler {
 
 func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request) {
 	// целевой объект
-	var dv struct { // decoded value
+	var decVal struct { // decoded value
 		URL string
 	}
 
@@ -37,26 +37,26 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	// contentType := response.Header.Get("Content-Type")
 	// это может быть, например, "application/json; charset=UTF-8"
 
-	if err := json.NewDecoder(r.Body).Decode(&dv); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&decVal); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	log.Println("Handler/CreateForJSONClient - request: object", dv)
-	log.Println("Handler/CreateForJSONClient - URL in the request is", dv.URL)
+	log.Println("Handler/CreateForJSONClient - request: object", decVal)
+	log.Println("Handler/CreateForJSONClient - URL in the request is", decVal.URL)
 
-	shortURL, err := uh.urlService.Create(dv.URL)
+	shortURL, err := uh.urlService.Create(decVal.URL)
 
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
 
-	ev := struct { // encoded value
+	encVal := struct { // encoded value
 		Result string `json:"result"`
 	}{
 		Result: shortURL,
 	}
 
-	log.Println("Handler/CreateForJSONClient: ev is", ev.Result)
+	log.Println("Handler/CreateForJSONClient: ev is", encVal.Result)
 
 	// сначала устанавливаем заголовок Content-Type
 	// для передачи клиенту информации, кодированной в JSON
@@ -66,7 +66,7 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	w.WriteHeader(http.StatusCreated)
 
 	// пишем тело ответа
-	json.NewEncoder(w).Encode(ev)
+	json.NewEncoder(w).Encode(encVal)
 }
 
 // Create passes URL to service and returns response with Hash.
