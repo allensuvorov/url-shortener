@@ -1,8 +1,22 @@
 package auth
 
-import "net/http"
+import (
+	"crypto/rand"
+	"net/http"
+)
 
-//TODO generate client ID
+// TODO generate client ID
+func generateRandom(size int) ([]byte, error) {
+	// генерируем случайную последовательность байт
+	b := make([]byte, size)
+	_, err := rand.Read(b)
+	if err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
 //TODO generate signature for the client ID
 //TODO read/write cookie
 
