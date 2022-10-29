@@ -22,12 +22,7 @@ type InMemory struct {
 func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	fsp := config.UC.FSP
-	ues := []entity.URLEntity{}
-	ces := []entity.ClientEntity{}
-	inm := InMemory{
-		UEs: ues,
-		CEs: ces,
-	}
+	inm := InMemory{}
 
 	// restore if path in config not empty
 	if fsp != "" {
