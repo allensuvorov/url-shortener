@@ -4,13 +4,17 @@ import (
 	"log"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	InMemory hashmap.URLHashMap
+	InMemory struct {
+		UE []entity.URLEntity
+		CE []entity.ClientEntity
+	}
 }
 
 // NewURLStorage creates URLStorage object
