@@ -34,6 +34,7 @@ func registerNewClient(size int) error {
 		return "", err
 	}
 
+	//TODO generate signature for the client ID
 	id := hex.EncodeToString(rand)
 
 	cookieID := &http.Cookie{
@@ -56,31 +57,34 @@ func registerNewClient(size int) error {
 		Name:  "signature",
 		Value: string(sg),
 	}
+	//TODO read/write cookie
 	return nil
 }
 
-//TODO generate signature for the client ID
-//TODO read/write cookie
+func clientExists(cookieID *http.Cookie, err error) bool {
+	// if no cookieID, OR cookieID not is storage OR wrong signature
+	if err == http.ErrNoCookie {
+		return false
+	}
+	cookieID.Value
+	storage
+}
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookieID, err := r.Cookie("id")
 
-		// If cookieID in storage, but wrong sgn
-
-		// if no cookieID, OR cookieID not is storage OR wrong signature
-		if err == http.ErrNoCookie {
-
-			id, err := registerNewClient(16)
+		if !clientExists(cookieID, err) {
+			err := registerNewClient(16)
 
 			if err != nil {
-				log.Printf("failed decompress data: %v", err)
+				log.Printf("failed to register new client: %v", err)
 			}
+		} else {
+
+			// if all good, then authed = true, id = id
 
 		}
-
-		// if all good, then authed = true
-		// then
 
 		next.ServeHTTP(w, r)
 		log.Println("AuthMiddleware: Bye! ")
