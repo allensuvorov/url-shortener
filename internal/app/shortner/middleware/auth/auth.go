@@ -1,8 +1,11 @@
 package auth
 
 import (
+	"crypto/hmac"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"log"
 	"net/http"
 )
@@ -19,43 +22,68 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-func generateID(size int) (string, error) {
+func registerNewClient(size int) error {
+
+	// TODO generate ID, key and signature
+	// TODO set ID and sgn to cookie
+	// TODO save ID and key serverside
+
 	rand, err := generateRandom(size)
 
 	if err != nil {
 		return "", err
 	}
 
-	encoded := hex.EncodeToString(rand)
-	return encoded, nil
+	id := hex.EncodeToString(rand)
+
+	cookieID := &http.Cookie{
+		Name:  "id",
+		Value: id,
+	}
+
+	// создаём случайный ключ
+	key, err := generateRandom(16)
+	if err != nil {
+		fmt.Printf("error: %v\n", err)
+		return
+	}
+
+	h := hmac.New(sha256.New, key)
+	h.Write([]byte(id))
+	sg := h.Sum(nil)
+
+	cookieSG := &http.Cookie{
+		Name:  "signature",
+		Value: string(sg),
+	}
+	return nil
 }
 
 //TODO generate signature for the client ID
 //TODO read/write cookie
 
 func AuthMiddleware(next http.Handler) http.Handler {
-	// собираем Handler приведением типа
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		cookie, err := r.Cookie("id")
+		cookieID, err := r.Cookie("id")
 
-		// no cookie
+		// If cookieID in storage, but wrong sgn
+
+		// if no cookieID, OR cookieID not is storage OR wrong signature
 		if err == http.ErrNoCookie {
-			// TODO generate ID with signature set it to cookie
-			id, err := generateID(16)
+
+			id, err := registerNewClient(16)
 
 			if err != nil {
 				log.Printf("failed decompress data: %v", err)
 			}
 
-			cookie = &http.Cookie{
-				Name:  "id",
-				Value: id,
-			}
 		}
 
-		// cookie - no reg field
-		// cookie, reg value, wrong key
-		// cookie, reg value, write key
+		// if all good, then authed = true
+		// then
+
+		next.ServeHTTP(w, r)
+		log.Println("AuthMiddleware: Bye! ")
 
 	})
 }
