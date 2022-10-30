@@ -82,7 +82,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			}
 		} else {
 
-			// if all good, then authed = true, id = id
+			// TODO if all good, then authed = true, id = id
+			// TODO log: ID - hash
 
 		}
 
