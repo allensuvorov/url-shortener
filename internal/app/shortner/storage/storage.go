@@ -10,19 +10,22 @@ import (
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	InMemory InMemory
+	InMemory hashmap.URLHashMap
 }
 
-type InMemory struct {
-	URLHashMap   hashmap.URLHashMap
-	UserActivity hashmap.UserActivity
-}
+// type InMemory struct {
+// 	URLHashMap   hashmap.URLHashMap
+// 	UserActivity hashmap.UserActivity
+// }
 
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap) // url map
+	// ua := make(hashmap.UserActivity)
+
+	// TODO restore from file both um and ua
 
 	// restore if path in config not empty
 	if fsp != "" {
@@ -30,10 +33,7 @@ func NewURLStorage() *URLStorage {
 	}
 
 	return &URLStorage{
-		InMemory: InMemory{
-			um,
-			hashmap.UserActivity{},
-		},
+		InMemory: um,
 	}
 }
 
