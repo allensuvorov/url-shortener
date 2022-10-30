@@ -10,7 +10,12 @@ import (
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	InMemory hashmap.URLHashMap
+	InMemory InMemory
+}
+
+type InMemory struct {
+	URLHashMap   hashmap.URLHashMap
+	UserActivity hashmap.UserActivity
 }
 
 // NewURLStorage creates URLStorage object
@@ -25,7 +30,10 @@ func NewURLStorage() *URLStorage {
 	}
 
 	return &URLStorage{
-		InMemory: um,
+		InMemory: InMemory{
+			um,
+			hashmap.UserActivity{},
+		},
 	}
 }
 
