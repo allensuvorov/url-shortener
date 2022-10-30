@@ -4,33 +4,28 @@ import (
 	"log"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
 // Object with storage methods to work with DB
 type URLStorage struct {
-	InMemory InMemory
-}
-
-type InMemory struct {
-	UEs []entity.URLEntity
-	CEs []entity.ClientEntity
+	InMemory hashmap.URLHashMap
 }
 
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	fsp := config.UC.FSP
-	inm := InMemory{}
+	um := make(hashmap.URLHashMap) // url map
 
 	// restore if path in config not empty
 	if fsp != "" {
-		inm = restore(fsp) // get map
+		um = restore(fsp) // get map
 	}
 
 	return &URLStorage{
-		InMemory: inm,
+		InMemory: um,
 	}
 }
 
