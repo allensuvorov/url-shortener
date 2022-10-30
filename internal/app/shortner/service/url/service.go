@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/url"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
@@ -37,7 +38,6 @@ func (us URLService) Create(u string) (string, error) {
 	_, err := url.ParseRequestURI(u)
 
 	if err != nil {
-		// http.Error(w, err.Error(), http.StatusBadRequest)
 		return "", err
 	}
 
@@ -48,22 +48,28 @@ func (us URLService) Create(u string) (string, error) {
 	if err == errors.ErrNotFound {
 
 		// generate Hash for the shortened URL
-		h = BuildHash(u)
+		h = buildHash(u)
 
 		// cut it to a short hash
 		h = getUniqShortHash(h, u, us)
 
-		log.Println("created new shortURL", h)
+		log.Println("Service/Create(): created new shortURL", h)
 
 		// add url to the storage
-		us.urlStorage.Create(h, u)
+		err = us.urlStorage.Create(h, u)
+		if err != nil {
+			return "", err
+		}
+		log.Println("Service/Create(): saved new shortURL in map", h)
 	}
-
-	shortURL := "http://localhost:8080/" + h
+	// Get Base URL
+	log.Println("Service/Create(): about go get BU from config")
+	bu := config.UC.BU
+	log.Println("Service: BASE_URL from local env is:", bu)
+	shortURL := bu + "/" + h
 	return shortURL, nil
 }
 
-// TODO Get
 func (us URLService) Get(h string) (string, error) {
 	// check if hash exists, if not - return 400
 	u, err := us.urlStorage.GetURLByHash(h)

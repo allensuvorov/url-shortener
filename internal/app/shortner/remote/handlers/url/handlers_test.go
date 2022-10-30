@@ -3,17 +3,60 @@ package url
 import (
 	"bytes"
 	"context"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
 )
 
+func Test_CreateForJSONClient(t *testing.T) {
+	config.BuildConfig()
+	usm := storage.NewURLStorage()
+	us := service.NewURLService(usm)
+	uh := NewURLHandler(us)
+
+	testCases := []struct {
+		name                 string
+		url                  string
+		expectedStatusCode   int
+		expectedResponseBody []byte
+	}{
+		{
+			name:                 "Invalid URL",
+			url:                  `{"url":"htt_1_p://google.com/"}`,
+			expectedStatusCode:   http.StatusInternalServerError,
+			expectedResponseBody: []byte("Failed to create short URL\n" + `{"result":""}` + "\n"),
+		},
+		{
+			name:                 "Created",
+			url:                  `{"url":"http://www.apple.com/store"}`,
+			expectedStatusCode:   http.StatusCreated,
+			expectedResponseBody: []byte(`{"result":"http://localhost:8080/a7d59904"}` + "\n"),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			b := bytes.NewBufferString(tc.url)
+			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080/api/shorten", b)
+			w := httptest.NewRecorder()
+
+			uh.CreateForJSONClient(w, r)
+			log.Println("Test_CreateForJSONClient, body is:", w.Body.String())
+			assert.Equal(t, tc.expectedStatusCode, w.Code)
+			assert.Equal(t, tc.expectedResponseBody, w.Body.Bytes())
+		})
+	}
+}
+
 func Test_shortener(t *testing.T) {
+	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	us := service.NewURLService(usm)
 	uh := NewURLHandler(us)
@@ -53,6 +96,7 @@ func Test_shortener(t *testing.T) {
 }
 
 func Test_expander(t *testing.T) {
+	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	usm.Create("a7d59904", "http://www.apple.com/store")
 	us := service.NewURLService(usm)
