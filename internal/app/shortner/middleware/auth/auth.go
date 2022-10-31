@@ -10,7 +10,9 @@ import (
 	"net/http"
 )
 
-// TODO generate client ID
+// TODO inc9: task 1: AuthMiddleware()
+// TODO inc9: task 2: file save/restore user history
+
 func generateRandom(size int) ([]byte, error) {
 	// генерируем случайную последовательность байт
 	b := make([]byte, size)
@@ -22,6 +24,7 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
+// TODO registerNewClient
 func registerNewClient(size int) error {
 
 	// TODO generate ID, key and signature
@@ -61,6 +64,7 @@ func registerNewClient(size int) error {
 	return nil
 }
 
+// TODO clientExists
 func clientExists(cookieID *http.Cookie, err error) bool {
 	// if no cookieID, OR cookieID not is storage OR wrong signature
 	if err == http.ErrNoCookie {
@@ -70,6 +74,7 @@ func clientExists(cookieID *http.Cookie, err error) bool {
 	storage
 }
 
+// TODO AuthMiddleware
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		cookieID, err := r.Cookie("id")
