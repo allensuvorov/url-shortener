@@ -16,10 +16,10 @@ var secretkey = []byte("secret key")
 // TODO inc9: task 1: AuthMiddleware()
 // TODO inc9: task 2: file save/restore user history
 
-func clientExists(r *http.Request) bool {
+func authenticate(r *http.Request) (uint32, bool) {
 	cookieIdSign, err := r.Cookie("IdSign")
 	if err == http.ErrNoCookie {
-		return false
+		return 0, false
 	}
 
 	data, err := hex.DecodeString(cookieIdSign.Value)
@@ -35,9 +35,9 @@ func clientExists(r *http.Request) bool {
 
 	if hmac.Equal(sign, data[4:]) {
 		log.Println("auth/clientExists - id:", id)
-		return true
+		return id, true
 	} else {
-		return false
+		return 0, false
 	}
 }
 
@@ -96,14 +96,14 @@ func registerNewClient(size int) error {
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		if !clientExists(r) {
+		if id, ok := authenticate(r); !ok {
 			err := registerNewClient(16)
 
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}
 		} else {
-
+			log.Println(id)
 			// TODO if all good, then authed = true, id = id
 			// TODO log: ID - hash
 
