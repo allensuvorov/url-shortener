@@ -4,6 +4,7 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"log"
@@ -15,42 +16,29 @@ var secretkey = []byte("secret key")
 // TODO inc9: task 1: AuthMiddleware()
 // TODO inc9: task 2: file save/restore user history
 
-// TODO clientExists
 func clientExists(r *http.Request) bool {
-	// if no cookie, OR wrong signature
-	cookieID, err := r.Cookie("id")
+	cookieIdSign, err := r.Cookie("IdSign")
 	if err == http.ErrNoCookie {
 		return false
 	}
 
-	cookieSG, err := r.Cookie("signature")
-	if err == http.ErrNoCookie {
-		return false
-	}
-
-	// check signature
-	id, err := hex.DecodeString(cookieID.Value)
+	data, err := hex.DecodeString(cookieIdSign.Value)
 	if err != nil {
 		panic(err)
 	}
 
-	sg, err := hex.DecodeString(cookieSG.Value)
-	if err != nil {
-		panic(err)
-	}
+	id := binary.BigEndian.Uint32(data[:4])
 
 	h := hmac.New(sha256.New, secretkey)
-	h.Write(id)
+	h.Write(data[:4])
 	sign := h.Sum(nil)
 
-	if hmac.Equal(sign, sg) {
+	if hmac.Equal(sign, data[4:]) {
+		log.Println("auth/clientExists - id:", id)
 		return true
 	} else {
 		return false
 	}
-
-	// return true
-
 }
 
 func generateRandom(size int) ([]byte, error) {
