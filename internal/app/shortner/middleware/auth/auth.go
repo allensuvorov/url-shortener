@@ -54,20 +54,22 @@ func generateRandom(size int) ([]byte, error) {
 // TODO registerNewClient
 func registerNewClient(size int) (uint32, error) {
 
-	// TODO generate ID
-	// TODO and signature
 	// TODO set ID and sgn to cookie
+	//
 
 	rand, err := generateRandom(size)
 	if err != nil {
 		return 0, err
 	}
 
+	id := binary.BigEndian.Uint32(rand)
+
 	h := hmac.New(sha256.New, secretkey)
 	h.Write([]byte(rand))
 	sign := h.Sum(nil)
 
 	//TODO generate signature for the client ID
+
 	idSign := append(rand, sign...)
 	stringIdSign := hex.EncodeToString(idSign)
 
@@ -76,8 +78,10 @@ func registerNewClient(size int) (uint32, error) {
 		Value: stringIdSign,
 	}
 
+	http.SetCookie
+
 	//TODO read/write cookie
-	return nil
+	return id, nil
 }
 
 // TODO AuthMiddleware
