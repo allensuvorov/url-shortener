@@ -51,12 +51,7 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-// TODO registerNewClient
-func registerNewClient(size int) (uint32, error) {
-
-	// TODO set ID and sgn to cookie
-	//
-
+func registerNewClient(w http.ResponseWriter, size int) (uint32, error) {
 	rand, err := generateRandom(size)
 	if err != nil {
 		return 0, err
@@ -67,9 +62,6 @@ func registerNewClient(size int) (uint32, error) {
 	h := hmac.New(sha256.New, secretkey)
 	h.Write([]byte(rand))
 	sign := h.Sum(nil)
-
-	//TODO generate signature for the client ID
-
 	idSign := append(rand, sign...)
 	stringIdSign := hex.EncodeToString(idSign)
 
@@ -78,9 +70,7 @@ func registerNewClient(size int) (uint32, error) {
 		Value: stringIdSign,
 	}
 
-	http.SetCookie
-
-	//TODO read/write cookie
+	http.SetCookie(w, cookieIdSign)
 	return id, nil
 }
 
@@ -89,7 +79,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if id, ok := authenticate(r); !ok {
-			id, err := registerNewClient(4)
+			id, err := registerNewClient(w, 4)
 
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
