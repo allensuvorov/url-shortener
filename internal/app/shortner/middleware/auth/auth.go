@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/hex"
-	"fmt"
 	"log"
 	"net/http"
 )
@@ -53,41 +52,30 @@ func generateRandom(size int) ([]byte, error) {
 }
 
 // TODO registerNewClient
-func registerNewClient(size int) error {
+func registerNewClient(size int) (uint32, error) {
 
-	// TODO generate ID, key and signature
+	// TODO generate ID
+	// TODO and signature
 	// TODO set ID and sgn to cookie
-	// TODO save ID and key serverside
 
 	rand, err := generateRandom(size)
-
 	if err != nil {
-		return "", err
+		return 0, err
 	}
+
+	h := hmac.New(sha256.New, secretkey)
+	h.Write([]byte(rand))
+	sign := h.Sum(nil)
 
 	//TODO generate signature for the client ID
-	id := hex.EncodeToString(rand)
+	idSign := append(rand, sign...)
+	stringIdSign := hex.EncodeToString(idSign)
 
-	cookieID := &http.Cookie{
-		Name:  "id",
-		Value: id,
+	cookieIdSign := &http.Cookie{
+		Name:  "idSign",
+		Value: stringIdSign,
 	}
 
-	// создаём случайный ключ
-	key, err := generateRandom(16)
-	if err != nil {
-		fmt.Printf("error: %v\n", err)
-		return
-	}
-
-	h := hmac.New(sha256.New, key)
-	h.Write([]byte(id))
-	sg := h.Sum(nil)
-
-	cookieSG := &http.Cookie{
-		Name:  "signature",
-		Value: string(sg),
-	}
 	//TODO read/write cookie
 	return nil
 }
@@ -97,7 +85,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if id, ok := authenticate(r); !ok {
-			err := registerNewClient(16)
+			id, err := registerNewClient(4)
 
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
