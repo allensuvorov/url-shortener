@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/go-chi/chi/v5"
 )
@@ -76,6 +77,10 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - Set-Cookie:", w.Header().Get("Set-Cookie"))
 	log.Println("Handler/Create - ID header:", r.Header.Get("id"))
 
+	ue := entity.DTO{
+		ClientID: r.Header.Get("id"),
+	}
+
 	// читаем Body
 	b, err := io.ReadAll(r.Body)
 
@@ -88,13 +93,12 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - read r.Body, no err")
 
 	// convert to string
-	u := string(b)
+	ue.URL = string(b)
 
 	// log body from request
-	log.Println("Create Handler - URL in the POST request is", u)
+	log.Println("Create Handler - URL in the POST request is", ue.URL)
 
-	shortURL, err := uh.urlService.Create(u)
-
+	ue.Hash, err = uh.urlService.Create(ue.URL)
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
@@ -103,7 +107,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	// пишем тело ответа
-	w.Write([]byte(shortURL))
+	w.Write([]byte(ue.Hash))
 }
 
 // Get passes Hash to service and returns response with URL.

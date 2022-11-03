@@ -1,7 +1,7 @@
 package entity
 
-type dto struct {
-	url      string
-	hash     string
-	clientID string
+type DTO struct {
+	URL      string
+	Hash     string
+	ClientID string
 }
