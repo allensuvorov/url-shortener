@@ -126,3 +126,18 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 
 	w.Write([]byte(u))
 }
+
+// TODO: add to handler for retreiving ID from cookie
+/*
+cookieIdSign, err := r.Cookie("IdSign")
+	if err == http.ErrNoCookie {
+		return false
+	}
+
+	data, err := hex.DecodeString(cookieIdSign.Value)
+	if err != nil {
+		panic(err)
+	}
+
+	id := binary.BigEndian.Uint32(data[:4])
+*/

@@ -30,14 +30,12 @@ func authenticate(r *http.Request) bool {
 		panic(err)
 	}
 
-	id := binary.BigEndian.Uint32(data[:4])
-
 	h := hmac.New(sha256.New, secretkey)
 	h.Write(data[:4])
 	sign := h.Sum(nil)
 
 	if hmac.Equal(sign, data[4:]) {
-		log.Println("auth/clientExists - id:", id)
+		log.Println("auth/clientExists - id:")
 		return true
 	} else {
 		return false
