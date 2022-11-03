@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"
@@ -98,7 +99,11 @@ func Test_shortener(t *testing.T) {
 func Test_expander(t *testing.T) {
 	config.BuildConfig()
 	usm := storage.NewURLStorage()
-	usm.Create("a7d59904", "http://www.apple.com/store")
+	ue := entity.DTO{
+		Hash: "a7d59904",
+		URL:  "http://www.apple.com/store",
+	}
+	usm.Create(ue)
 	us := service.NewURLService(usm)
 	uh := NewURLHandler(us)
 

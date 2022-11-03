@@ -13,8 +13,10 @@ var secretkey = []byte("secret key")
 var idLength int = 4
 
 // DONE inc9: task 1: AuthMiddleware()
-// TODO inc9: task 2: map - save user history
-// TODO inc9: task 3: file - save/restore user history
+// DONE inc9: task 2: map - save user history
+
+// TODO inc9: task 3: refactor layers for DTO
+// TODO inc9: task 4: file - save/restore user history
 
 func checkID(r *http.Request) (string, bool) {
 	cookieIdSign, err := r.Cookie("IdSign")

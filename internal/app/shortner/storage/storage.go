@@ -24,7 +24,7 @@ func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap) // url map
-	ua := make(hashmap.ClientActivity)
+	ca := make(hashmap.ClientActivity)
 
 	// TODO restore from file both um and ua
 
@@ -34,7 +34,7 @@ func NewURLStorage() *URLStorage {
 	}
 
 	return &URLStorage{
-		InMemory: InMemory{um, ua},
+		InMemory: InMemory{um, ca},
 	}
 }
 
@@ -78,8 +78,13 @@ func (us *URLStorage) GetURLByHash(h string) (string, error) {
 }
 
 func (us *URLStorage) LogClientActivity(ue entity.DTO) error {
-	ca := us.InMemory.ClientActivity[ue.ClientID]
-	ca[ue.Hash] = true
+	_, ok := us.InMemory.ClientActivity[ue.ClientID]
+	if ok {
+		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+	} else {
+		us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
+		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+	}
 
 	return nil
 }

@@ -45,7 +45,11 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	log.Println("Handler/CreateForJSONClient - request: object", decVal)
 	log.Println("Handler/CreateForJSONClient - URL in the request is", decVal.URL)
 
-	shortURL, err := uh.urlService.Create(decVal.URL)
+	ue := entity.DTO{
+		URL: decVal.URL,
+	}
+
+	shortURL, err := uh.urlService.Create(ue)
 
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
