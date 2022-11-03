@@ -13,7 +13,7 @@ import (
 type URLStorage interface {
 
 	// Create new entity (pair shortURL: longURL).
-	Create(h, u string) error
+	Create(ue entity.DTO) error
 
 	// GetByHash returns entity for the matching hash, checks if hash exists.
 	GetURLByHash(u string) (string, error)
@@ -58,21 +58,22 @@ func (us URLService) Create(ue entity.DTO) (string, error) {
 		log.Println("Service/Create(): created new shortURL", h)
 
 		// add url to the storage
-		err = us.urlStorage.Create(h, ue.URL)
+		err = us.urlStorage.Create(ue)
 		if err != nil {
 			return "", err
 		}
 		log.Println("Service/Create(): saved new shortURL in map", h)
 	}
 
-	ue.Hash = h
-	storage.LogClientHistory(ue)
-
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
 	bu := config.UC.BU
 	log.Println("Service: BASE_URL from local env is:", bu)
 	shortURL := bu + "/" + h
+
+	ue.Hash = h
+	storage.LogClientHistory(ue)
+
 	return shortURL, nil
 }
 
