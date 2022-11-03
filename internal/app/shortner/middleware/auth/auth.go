@@ -17,12 +17,12 @@ var secretkey = []byte("secret key")
 /*
    <MW> - makes sure ID is in cookie
   	 |
-  <hander> can get ID from cookie
+  <hander> can get ID from cookie, why put a duplicate in header
 */
-func authenticate(r *http.Request) (uint32, bool) {
+func authenticate(r *http.Request) bool {
 	cookieIdSign, err := r.Cookie("IdSign")
 	if err == http.ErrNoCookie {
-		return 0, false
+		return false
 	}
 
 	data, err := hex.DecodeString(cookieIdSign.Value)
@@ -38,9 +38,9 @@ func authenticate(r *http.Request) (uint32, bool) {
 
 	if hmac.Equal(sign, data[4:]) {
 		log.Println("auth/clientExists - id:", id)
-		return id, true
+		return true
 	} else {
-		return 0, false
+		return false
 	}
 }
 
@@ -82,7 +82,7 @@ func registerNewClient(w http.ResponseWriter, size int) (uint32, error) {
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-		if id, ok := authenticate(r); !ok {
+		if !authenticate(r) {
 			id, err := registerNewClient(w, 4)
 
 			if err != nil {
