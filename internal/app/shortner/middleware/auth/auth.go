@@ -14,7 +14,11 @@ var secretkey = []byte("secret key")
 
 // TODO inc9: task 1: AuthMiddleware()
 // TODO inc9: task 2: file save/restore user history
-
+/*
+   <MW> - makes sure ID is in cookie
+  	 |
+  <hander> can get ID from cookie
+*/
 func authenticate(r *http.Request) (uint32, bool) {
 	cookieIdSign, err := r.Cookie("IdSign")
 	if err == http.ErrNoCookie {
@@ -84,6 +88,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}
+			// how to pass id to handler?
+			r.Header.Set("id", string(id))
+
 		} else {
 			log.Println(id)
 			// TODO if all good, then authed = true, id = id
