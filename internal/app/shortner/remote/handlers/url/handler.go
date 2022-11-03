@@ -72,6 +72,9 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 // Create passes URL to service and returns response with Hash.
 func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - Start")
+	c := w.Header()
+	log.Println(c)
+
 	// читаем Body
 	b, err := io.ReadAll(r.Body)
 
