@@ -19,10 +19,15 @@ var idLength int = 4
   	 |
   <hander> can get ID from cookie, why put a duplicate in header
 */
-func authenticate(r *http.Request) bool {
+
+/* plan B
+pass id via request header
+*/
+
+func checkID(r *http.Request) (string, bool) {
 	cookieIdSign, err := r.Cookie("IdSign")
 	if err == http.ErrNoCookie {
-		return false
+		return "", false
 	}
 
 	data, err := hex.DecodeString(cookieIdSign.Value)
@@ -35,10 +40,12 @@ func authenticate(r *http.Request) bool {
 	sign := h.Sum(nil)
 
 	if hmac.Equal(sign, data[idLength:]) {
-		log.Println("auth/clientExists - id:")
-		return true
+		id := hex.EncodeToString(data[:idLength])
+		log.Println("auth/authenticate - clientExists - id:", id)
+
+		return id, true
 	} else {
-		return false
+		return "", false
 	}
 }
 
@@ -53,10 +60,10 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-func registerNewClient(w http.ResponseWriter, size int) error {
+func registerNewClient(w http.ResponseWriter, size int) (string, error) {
 	rand, err := generateRandom(size)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	h := hmac.New(sha256.New, secretkey)
@@ -72,20 +79,30 @@ func registerNewClient(w http.ResponseWriter, size int) error {
 	}
 
 	http.SetCookie(w, cookieIdSign)
-	return nil
+
+	id := hex.EncodeToString(rand)
+	log.Println("auth/registerNewClient - id:", id)
+
+	return id, nil
 }
 
 // TODO AuthMiddleware
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log.Println("AuthMiddleware: Hello! ")
+		var id string
+		var ok bool
+		var err error
 
-		if !authenticate(r) {
-			err := registerNewClient(w, idLength)
+		if id, ok = checkID(r); !ok {
+			id, err = registerNewClient(w, idLength)
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}
+
 		}
+
+		r.Header.Set("id", id)
 
 		next.ServeHTTP(w, r)
 		log.Println("AuthMiddleware: Bye! ")
