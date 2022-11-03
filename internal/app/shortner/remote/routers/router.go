@@ -12,7 +12,6 @@ func NewRouter(url url.URLHandler) chi.Router {
 	// create new router
 	r := chi.NewRouter()
 
-	// r.Use(compress.GzipMiddleware)
 	r.Use(auth.AuthMiddleware, compress.GzipMiddleware)
 	r.Get("/{hash}", url.Get)
 	r.Post("/", url.Create)

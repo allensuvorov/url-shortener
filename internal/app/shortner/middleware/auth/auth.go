@@ -12,17 +12,9 @@ import (
 var secretkey = []byte("secret key")
 var idLength int = 4
 
-// TODO inc9: task 1: AuthMiddleware()
-// TODO inc9: task 2: file save/restore user history
-/*
-   <MW> - makes sure ID is in cookie
-  	 |
-  <hander> can get ID from cookie, why put a duplicate in header
-*/
-
-/* plan B
-pass id via request header
-*/
+// DONE inc9: task 1: AuthMiddleware()
+// TODO inc9: task 2: map - save user history
+// TODO inc9: task 3: file - save/restore user history
 
 func checkID(r *http.Request) (string, bool) {
 	cookieIdSign, err := r.Cookie("IdSign")
