@@ -13,7 +13,7 @@ import (
 
 type URLService interface {
 	// Create takes URL and returns hash.
-	Create(u string) (string, error)
+	Create(ue entity.DTO) (string, error)
 	// Get takes hash and returns URL.
 	Get(h string) (string, error)
 }
@@ -98,7 +98,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	// log body from request
 	log.Println("Create Handler - URL in the POST request is", ue.URL)
 
-	ue.Hash, err = uh.urlService.Create(ue.URL)
+	ue.Hash, err = uh.urlService.Create(ue)
 	if err != nil {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}

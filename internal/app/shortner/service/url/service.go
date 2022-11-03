@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
@@ -19,6 +20,8 @@ type URLStorage interface {
 
 	// GetByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
+
+	LogClientHistory(ue entity.DTO) error
 }
 
 type URLService struct {
@@ -32,36 +35,39 @@ func NewURLService(us URLStorage) URLService {
 }
 
 // func CreateURL
-func (us URLService) Create(u string) (string, error) {
+func (us URLService) Create(ue entity.DTO) (string, error) {
 
 	// check if URL is valid
-	_, err := url.ParseRequestURI(u)
-
+	_, err := url.ParseRequestURI(ue.URL)
 	if err != nil {
 		return "", err
 	}
 
 	// get Hash from DB if the longURL already exists in storage
-	h, err := us.urlStorage.GetHashByURL(u)
+	h, err := us.urlStorage.GetHashByURL(ue.URL)
 
 	// Generate new Hash if URL does not exist in storage
 	if err == errors.ErrNotFound {
 
 		// generate Hash for the shortened URL
-		h = buildHash(u)
+		h = buildHash(ue.URL)
 
 		// cut it to a short hash
-		h = getUniqShortHash(h, u, us)
+		h = getUniqShortHash(h, ue.URL, us)
 
 		log.Println("Service/Create(): created new shortURL", h)
 
 		// add url to the storage
-		err = us.urlStorage.Create(h, u)
+		err = us.urlStorage.Create(h, ue.URL)
 		if err != nil {
 			return "", err
 		}
 		log.Println("Service/Create(): saved new shortURL in map", h)
 	}
+
+	ue.Hash = h
+	storage.LogClientHistory(ue)
+
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
 	bu := config.UC.BU
