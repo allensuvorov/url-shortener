@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
@@ -38,9 +39,9 @@ func NewURLStorage() *URLStorage {
 }
 
 // Create adds new URL record to storage
-func (us *URLStorage) Create(h, u string) error {
+func (us *URLStorage) Create(ue entity.DTO) error {
 	// Save to map
-	us.InMemory.URLHashMap[h] = u
+	us.InMemory.URLHashMap[ue.Hash] = ue.URL
 	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory.URLHashMap))
 	log.Println("Storage/Create(): added to map, updated map is", us.InMemory.URLHashMap)
 
@@ -49,9 +50,9 @@ func (us *URLStorage) Create(h, u string) error {
 
 	// Save to file, if there is path in config
 	if fsp != "" {
-		write(h, u, fsp)
+		write(ue.Hash, ue.URL, fsp)
 	}
-	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", h, u, fsp)
+	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", ue.Hash, ue.URL, fsp)
 	return nil
 }
 
