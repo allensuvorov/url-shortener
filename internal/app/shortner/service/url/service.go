@@ -21,7 +21,7 @@ type URLStorage interface {
 	// GetByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
 
-	LogClientHistory(ue entity.DTO) error
+	LogClientActivity(ue entity.DTO) error
 }
 
 type URLService struct {
@@ -72,7 +72,7 @@ func (us URLService) Create(ue entity.DTO) (string, error) {
 	shortURL := bu + "/" + h
 
 	ue.Hash = h
-	storage.LogClientHistory(ue)
+	us.urlStorage.LogClientActivity(ue)
 
 	return shortURL, nil
 }

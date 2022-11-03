@@ -15,8 +15,8 @@ type URLStorage struct {
 }
 
 type InMemory struct {
-	URLHashMap   hashmap.URLHashMap
-	UserActivity hashmap.UserActivity
+	URLHashMap     hashmap.URLHashMap
+	ClientActivity hashmap.ClientActivity
 }
 
 // NewURLStorage creates URLStorage object
@@ -24,7 +24,7 @@ func NewURLStorage() *URLStorage {
 	// Restore data at start up
 	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap) // url map
-	ua := make(hashmap.UserActivity)
+	ua := make(hashmap.ClientActivity)
 
 	// TODO restore from file both um and ua
 
@@ -75,4 +75,11 @@ func (us *URLStorage) GetURLByHash(h string) (string, error) {
 		return "", errors.ErrNotFound
 	}
 	return u, nil
+}
+
+func (us *URLStorage) LogClientActivity(ue entity.DTO) error {
+	ca := us.InMemory.ClientActivity[ue.ClientID]
+	ca[ue.Hash] = true
+
+	return nil
 }
