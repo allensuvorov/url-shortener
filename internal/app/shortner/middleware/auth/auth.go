@@ -4,13 +4,13 @@ import (
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
-	"encoding/binary"
 	"encoding/hex"
 	"log"
 	"net/http"
 )
 
 var secretkey = []byte("secret key")
+var idLength int = 4
 
 // TODO inc9: task 1: AuthMiddleware()
 // TODO inc9: task 2: file save/restore user history
@@ -31,10 +31,10 @@ func authenticate(r *http.Request) bool {
 	}
 
 	h := hmac.New(sha256.New, secretkey)
-	h.Write(data[:4])
+	h.Write(data[:idLength])
 	sign := h.Sum(nil)
 
-	if hmac.Equal(sign, data[4:]) {
+	if hmac.Equal(sign, data[idLength:]) {
 		log.Println("auth/clientExists - id:")
 		return true
 	} else {
@@ -53,17 +53,16 @@ func generateRandom(size int) ([]byte, error) {
 	return b, nil
 }
 
-func registerNewClient(w http.ResponseWriter, size int) (uint32, error) {
+func registerNewClient(w http.ResponseWriter, size int) error {
 	rand, err := generateRandom(size)
 	if err != nil {
-		return 0, err
+		return err
 	}
-
-	id := binary.BigEndian.Uint32(rand)
 
 	h := hmac.New(sha256.New, secretkey)
 	h.Write([]byte(rand))
 	sign := h.Sum(nil)
+
 	idSign := append(rand, sign...)
 	stringIdSign := hex.EncodeToString(idSign)
 
@@ -73,7 +72,7 @@ func registerNewClient(w http.ResponseWriter, size int) (uint32, error) {
 	}
 
 	http.SetCookie(w, cookieIdSign)
-	return id, nil
+	return nil
 }
 
 // TODO AuthMiddleware
@@ -81,19 +80,10 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		if !authenticate(r) {
-			id, err := registerNewClient(w, 4)
-
+			err := registerNewClient(w, idLength)
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}
-			// how to pass id to handler?
-			r.Header.Set("id", string(id))
-
-		} else {
-			log.Println(id)
-			// TODO if all good, then authed = true, id = id
-			// TODO log: ID - hash
-
 		}
 
 		next.ServeHTTP(w, r)
