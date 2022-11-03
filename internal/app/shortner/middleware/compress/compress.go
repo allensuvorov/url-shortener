@@ -45,13 +45,13 @@ func GzipMiddleware(next http.Handler) http.Handler {
 
 		// check if request is gzip-encoded
 		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
-			log.Println("Compress/Middleware: POST request Content-Encoding == gzip")
+			log.Println("Compress/GzipMiddleware: POST request Content-Encoding == gzip")
 
 			// создаём *gzip.Reader, который будет читать тело запроса
 			// и распаковывать его
 			gz, err := gzip.NewReader(r.Body) // *Reader - type Reader struct {Header}
 			if err != nil {
-				log.Fatal(err)
+				log.Fatal("Compress/GzipMiddleware: error - could not create gzip reader: ", err)
 			}
 
 			gzr := gzipReader{ // new ReadCloser

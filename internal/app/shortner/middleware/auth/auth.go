@@ -78,6 +78,7 @@ func registerNewClient(w http.ResponseWriter, size int) error {
 // TODO AuthMiddleware
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("AuthMiddleware: Hello! ")
 
 		if !authenticate(r) {
 			err := registerNewClient(w, idLength)
