@@ -86,3 +86,21 @@ func (us *URLStorage) GetURLByHash(h string) (string, error) {
 	}
 	return u, nil
 }
+
+func (us *URLStorage) GetClientActivity(id string) ([]entity.DTO, error) {
+	ca := us.InMemory.ClientActivity[id]
+	dtoList := []entity.DTO{}
+
+	for k := range ca {
+		u, err := us.GetURLByHash(k)
+		if err != nil {
+			return nil, err
+		}
+		ue := entity.DTO{
+			Hash: k,
+			URL:  u,
+		}
+		dtoList = append(dtoList, ue)
+	}
+	return dtoList, nil
+}

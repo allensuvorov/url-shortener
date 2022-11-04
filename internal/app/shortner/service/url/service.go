@@ -20,6 +20,8 @@ type URLStorage interface {
 
 	// GetByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
+
+	GetClientActivity(id string) []entity.DTO
 }
 
 type URLService struct {
