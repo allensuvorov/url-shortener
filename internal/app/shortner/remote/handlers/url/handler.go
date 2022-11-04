@@ -49,6 +49,8 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 		URL: decVal.URL,
 	}
 
+	ue.ClientID = r.Header.Get("id")
+
 	shortURL, err := uh.urlService.Create(ue)
 
 	if err != nil {
