@@ -24,9 +24,9 @@ func NewURLStorage() *URLStorage {
 
 	// Restore data at start up
 	fsp := config.UC.FSP
-	im := InMemory{}
-	// um := make(hashmap.URLHashMap) // url map
-	// ca := make(hashmap.ClientActivity)
+	um := make(hashmap.URLHashMap) // url map
+	ca := make(hashmap.ClientActivity)
+	im := InMemory{um, ca}
 
 	// TODO restore from file both um and ua
 
@@ -43,6 +43,8 @@ func NewURLStorage() *URLStorage {
 // Create adds new URL record to storage
 func (us *URLStorage) Create(ue entity.DTO) error {
 	// Save to map
+	log.Println("Storage/Create(): hello")
+
 	us.InMemory.URLHashMap[ue.Hash] = ue.URL
 	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory.URLHashMap))
 	log.Println("Storage/Create(): added to map, updated map is", us.InMemory.URLHashMap)

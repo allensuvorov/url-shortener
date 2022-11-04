@@ -12,17 +12,20 @@ import (
 var secretkey = []byte("secret key")
 var idLength int = 4
 
-// DONE inc9: task 1: AuthMiddleware()
-// DONE inc9: task 2: map - save user history
-
-// TODO inc9: task 3: refactor layers for DTO
-// TODO inc9: task 4: file - save/restore user history
+// TODO - DONE inc9: task 1: AuthMiddleware()
+// TODO - DONE inc9: task 2: map - save user history
+// TODO - DONE inc9: task 3: refactor layers for DTO
+// TODO - DONE inc9: task 4: file - save/restore user history
+// TODO inc9: task 5: handler to get user history
 
 func checkID(r *http.Request) (string, bool) {
-	cookieIdSign, err := r.Cookie("IdSign")
+	cookieIdSign, err := r.Cookie("idSign")
+
 	if err == http.ErrNoCookie {
+		log.Println("auth/checkID, no idSign in cookie:", cookieIdSign.Value)
 		return "", false
 	}
+	log.Println("auth/checkID, ID from cookie:", cookieIdSign.Value)
 
 	data, err := hex.DecodeString(cookieIdSign.Value)
 	if err != nil {
@@ -32,6 +35,8 @@ func checkID(r *http.Request) (string, bool) {
 	h := hmac.New(sha256.New, secretkey)
 	h.Write(data[:idLength])
 	sign := h.Sum(nil)
+
+	// log.Println("auth/checkID, ID:", hex.EncodeToString(data[:idLength]))
 
 	if hmac.Equal(sign, data[idLength:]) {
 		id := hex.EncodeToString(data[:idLength])
@@ -89,6 +94,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		var err error
 
 		if id, ok = checkID(r); !ok {
+			log.Println("auth/AuthMiddleware, ID:", id)
 			id, err = registerNewClient(w, idLength)
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
