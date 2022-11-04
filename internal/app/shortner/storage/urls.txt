@@ -1,0 +1,2 @@
+{"URL":"http://www.booking.com/","Hash":"4cd89a20","ClientID":"9a4afee5"}
+{"URL":"http://www.apple.com/store","Hash":"a7d59904","ClientID":""}

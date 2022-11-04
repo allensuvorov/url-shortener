@@ -41,9 +41,10 @@ func write(ue entity.DTO, fsp string) error {
 	return nil
 }
 
-func restore(fsp string) hashmap.URLHashMap {
+func restore(fsp string) InMemory {
 	log.Println("File/restore: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
+	ca := make(hashmap.ClientActivity)
 
 	// open file
 	file, err := os.OpenFile(fsp, os.O_RDONLY|os.O_CREATE, 0777)
@@ -54,15 +55,31 @@ func restore(fsp string) hashmap.URLHashMap {
 
 	// Go over the data
 	for dec.More() {
-		t := map[string]string{}
+		t := []entity.DTO{}
 		if err := dec.Decode(&t); err != nil {
 			log.Fatal(err)
 		}
 		log.Println("File/restore: restoring URL entry from file:", t)
 
-		// push data to url map
-		for k, v := range t {
-			um[k] = v
+		/*
+			_, ok := us.InMemory.ClientActivity[ue.ClientID]
+			if ok {
+				us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+			} else {
+				us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
+				us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+			}
+		*/
+
+		// push data to maps
+		for _, v := range t {
+			um[v.Hash] = v.URL
+
+			_, ok := ca[v.ClientID]
+			if !ok {
+				ca[v.ClientID] = make(map[string]bool)
+			}
+			ca[v.ClientID][v.Hash] = true
 		}
 	}
 
@@ -71,5 +88,5 @@ func restore(fsp string) hashmap.URLHashMap {
 	}
 
 	log.Println("File/restore: all restored data in map:", um)
-	return um
+	return InMemory{um, ca}
 }

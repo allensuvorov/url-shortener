@@ -21,20 +21,22 @@ type InMemory struct {
 
 // NewURLStorage creates URLStorage object
 func NewURLStorage() *URLStorage {
+
 	// Restore data at start up
 	fsp := config.UC.FSP
-	um := make(hashmap.URLHashMap) // url map
-	ca := make(hashmap.ClientActivity)
+	im := InMemory{}
+	// um := make(hashmap.URLHashMap) // url map
+	// ca := make(hashmap.ClientActivity)
 
 	// TODO restore from file both um and ua
 
 	// restore if path in config not empty
 	if fsp != "" {
-		um = restore(fsp) // get map
+		im = restore(fsp) // get map
 	}
 
 	return &URLStorage{
-		InMemory: InMemory{um, ca},
+		InMemory: im,
 	}
 }
 
@@ -46,12 +48,10 @@ func (us *URLStorage) Create(ue entity.DTO) error {
 	log.Println("Storage/Create(): added to map, updated map is", us.InMemory.URLHashMap)
 
 	_, ok := us.InMemory.ClientActivity[ue.ClientID]
-	if ok {
-		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
-	} else {
+	if !ok {
 		us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
-		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
 	}
+	us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
 
 	// get file storage path from config
 	fsp := config.UC.FSP

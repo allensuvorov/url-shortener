@@ -4,6 +4,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
@@ -20,6 +21,9 @@ func init() {
 }
 
 func main() {
+	// for testing:
+	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
+
 	config.BuildConfig()
 	URLStorage := storage.NewURLStorage()
 	URLService := service.NewURLService(URLStorage)
