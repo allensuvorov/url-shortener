@@ -6,10 +6,11 @@ import (
 	"log"
 	"os"
 
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
-func write(h, u, fsp string) error {
+func write(ue entity.DTO, fsp string) error {
 	log.Printf("Storage/File: saving to path - %s", fsp)
 
 	// Create and open file
@@ -30,9 +31,9 @@ func write(h, u, fsp string) error {
 	// 	history map[string]map[string]bool
 	// }
 
-	// err := enc.Encode(eu)
-
-	if err := enc.Encode(map[string]string{h: u}); err != nil { // add map to buff
+	err = enc.Encode(ue)
+	// err := enc.Encode(map[string]string{h: u});
+	if err != nil { // add map to buff
 		fmt.Println(err)
 		return nil
 	}
