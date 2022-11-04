@@ -16,6 +16,8 @@ type URLService interface {
 	Create(ue entity.DTO) (string, error)
 	// Get takes hash and returns URL.
 	Get(h string) (string, error)
+
+	GetClientActivity(id string) ([]entity.DTO, error)
 }
 
 type URLHandler struct {
@@ -139,4 +141,38 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
 	w.Write([]byte(u))
+}
+
+func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
+	clientID := r.Header.Get("id")
+	dtoList, err := uh.urlService.GetClientActivity(clientID)
+	if err != nil {
+		http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
+
+	}
+
+	encVal := []struct { // encoded value
+		Hash string `json:"short_url"`
+		URL  string `json:"original_url"`
+	}{}
+
+	for _, dto := range dtoList {
+		encVal = append(encVal, struct {
+			Hash string "json:\"short_url\""
+			URL  string "json:\"original_url\""
+		}{Hash: dto.Hash, URL: dto.URL})
+	}
+
+	log.Println("Handler/CreateForJSONClient: ev is", encVal)
+
+	// сначала устанавливаем заголовок Content-Type
+	// для передачи клиенту информации, кодированной в JSON
+	w.Header().Set("content-type", "application/json")
+
+	// устанавливаем статус-код 302
+	w.WriteHeader(http.StatusFound)
+
+	// пишем тело ответа
+	json.NewEncoder(w).Encode(encVal)
+
 }
