@@ -149,6 +149,11 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
 	}
+
+	if dtoList == nil {
+		w.WriteHeader(http.StatusNoContent)
+	}
+
 	log.Println("Handler/GetClientActivity: clientID is", clientID)
 	log.Println("Handler/GetClientActivity: dtoList is", dtoList)
 
@@ -170,8 +175,12 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 	// для передачи клиенту информации, кодированной в JSON
 	w.Header().Set("content-type", "application/json")
 
-	// устанавливаем статус-код 302
-	w.WriteHeader(http.StatusFound)
+	if dtoList == nil {
+		w.WriteHeader(http.StatusNoContent)
+	} else {
+		// устанавливаем статус-код 302
+		w.WriteHeader(http.StatusFound)
+	}
 
 	// пишем тело ответа
 	json.NewEncoder(w).Encode(encVal)
