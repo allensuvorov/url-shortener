@@ -22,7 +22,7 @@ func checkID(r *http.Request) (string, bool) {
 	cookieIDSign, err := r.Cookie("idSign")
 
 	if err == http.ErrNoCookie {
-		log.Println("auth/checkID, no idSign in cookie:", cookieIDSign.Value)
+		log.Println("auth/checkID, no idSign in cookie.")
 		return "", false
 	}
 	log.Println("auth/checkID, ID from cookie:", cookieIDSign.Value)
