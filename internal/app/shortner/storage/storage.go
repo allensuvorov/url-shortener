@@ -58,7 +58,7 @@ func (us *URLStorage) Create(ue entity.DTO) error {
 
 	// Save to file, if there is path in config
 	if fsp != "" {
-		write(ue.Hash, ue.URL, fsp)
+		write(ue, fsp)
 	}
 	log.Printf("Storage/Create(): created hash: %s, for URL: %s. File path %s:", ue.Hash, ue.URL, fsp)
 	return nil
