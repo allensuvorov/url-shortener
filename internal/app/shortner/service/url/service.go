@@ -87,6 +87,8 @@ func (us URLService) Get(h string) (string, error) {
 
 func (us URLService) GetClientActivity(id string) ([]entity.DTO, error) {
 	dtoList, err := us.urlStorage.GetClientActivity(id)
+	log.Println("service/GetClientActivity client ID is:", id)
+	log.Println("service/GetClientActivity dtoList is:", dtoList)
 	if err != nil {
 		return nil, err
 	}
