@@ -148,8 +148,9 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 	dtoList, err := uh.urlService.GetClientActivity(clientID)
 	if err != nil {
 		http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
-
 	}
+	log.Println("Handler/GetClientActivity: clientID is", clientID)
+	log.Println("Handler/GetClientActivity: dtoList is", dtoList)
 
 	encVal := []struct { // encoded value
 		Hash string `json:"short_url"`
@@ -163,7 +164,7 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 		}{Hash: dto.Hash, URL: dto.URL})
 	}
 
-	log.Println("Handler/CreateForJSONClient: ev is", encVal)
+	log.Println("Handler/GetClientActivity: ev is", encVal)
 
 	// сначала устанавливаем заголовок Content-Type
 	// для передачи клиенту информации, кодированной в JSON
