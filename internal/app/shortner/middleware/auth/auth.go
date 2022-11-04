@@ -19,15 +19,15 @@ var idLength int = 4
 // TODO inc9: task 5: handler to get user history
 
 func checkID(r *http.Request) (string, bool) {
-	cookieIdSign, err := r.Cookie("idSign")
+	cookieIDSign, err := r.Cookie("idSign")
 
 	if err == http.ErrNoCookie {
-		log.Println("auth/checkID, no idSign in cookie:", cookieIdSign.Value)
+		log.Println("auth/checkID, no idSign in cookie:", cookieIDSign.Value)
 		return "", false
 	}
-	log.Println("auth/checkID, ID from cookie:", cookieIdSign.Value)
+	log.Println("auth/checkID, ID from cookie:", cookieIDSign.Value)
 
-	data, err := hex.DecodeString(cookieIdSign.Value)
+	data, err := hex.DecodeString(cookieIDSign.Value)
 	if err != nil {
 		panic(err)
 	}
@@ -70,14 +70,14 @@ func registerNewClient(w http.ResponseWriter, size int) (string, error) {
 	sign := h.Sum(nil)
 
 	idSign := append(rand, sign...)
-	stringIdSign := hex.EncodeToString(idSign)
+	stringIDSign := hex.EncodeToString(idSign)
 
-	cookieIdSign := &http.Cookie{
+	cookieIDSign := &http.Cookie{
 		Name:  "idSign",
-		Value: stringIdSign,
+		Value: stringIDSign,
 	}
 
-	http.SetCookie(w, cookieIdSign)
+	http.SetCookie(w, cookieIDSign)
 
 	id := hex.EncodeToString(rand)
 	log.Println("auth/registerNewClient - id:", id)
