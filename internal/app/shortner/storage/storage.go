@@ -45,6 +45,14 @@ func (us *URLStorage) Create(ue entity.DTO) error {
 	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory.URLHashMap))
 	log.Println("Storage/Create(): added to map, updated map is", us.InMemory.URLHashMap)
 
+	_, ok := us.InMemory.ClientActivity[ue.ClientID]
+	if ok {
+		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+	} else {
+		us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
+		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+	}
+
 	// get file storage path from config
 	fsp := config.UC.FSP
 
@@ -75,16 +83,4 @@ func (us *URLStorage) GetURLByHash(h string) (string, error) {
 		return "", errors.ErrNotFound
 	}
 	return u, nil
-}
-
-func (us *URLStorage) LogClientActivity(ue entity.DTO) error {
-	_, ok := us.InMemory.ClientActivity[ue.ClientID]
-	if ok {
-		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
-	} else {
-		us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
-		us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
-	}
-
-	return nil
 }

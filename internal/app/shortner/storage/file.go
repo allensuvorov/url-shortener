@@ -21,7 +21,17 @@ func write(h, u, fsp string) error {
 	defer file.Close()
 
 	// Write to file
-	enc := json.NewEncoder(file)                                // will be encoding to file
+	enc := json.NewEncoder(file) // will be encoding to file
+
+	// h, u, id
+	// let's assume we don't have to record attemps of shortening existing urls
+	// type record struct {
+	// 	url map[string]string
+	// 	history map[string]map[string]bool
+	// }
+
+	// err := enc.Encode(eu)
+
 	if err := enc.Encode(map[string]string{h: u}); err != nil { // add map to buff
 		fmt.Println(err)
 		return nil
