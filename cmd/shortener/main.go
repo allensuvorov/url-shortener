@@ -22,7 +22,7 @@ func init() {
 
 func main() {
 	// for testing:
-	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/urls.txt")
+	os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/.urls.log")
 
 	config.BuildConfig()
 	URLStorage := storage.NewURLStorage()

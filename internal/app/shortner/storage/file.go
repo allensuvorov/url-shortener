@@ -55,38 +55,28 @@ func restore(fsp string) InMemory {
 
 	// Go over the data
 	for dec.More() {
-		t := []entity.DTO{}
+		t := entity.DTO{}
 		if err := dec.Decode(&t); err != nil {
 			log.Fatal(err)
 		}
 		log.Println("File/restore: restoring URL entry from file:", t)
 
-		/*
-			_, ok := us.InMemory.ClientActivity[ue.ClientID]
-			if ok {
-				us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
-			} else {
-				us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
-				us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
-			}
-		*/
-
 		// push data to maps
-		for _, v := range t {
-			um[v.Hash] = v.URL
+		// for _, v := range t {
+		um[t.Hash] = t.URL
 
-			_, ok := ca[v.ClientID]
-			if !ok {
-				ca[v.ClientID] = make(map[string]bool)
-			}
-			ca[v.ClientID][v.Hash] = true
+		_, ok := ca[t.ClientID]
+		if !ok {
+			ca[t.ClientID] = make(map[string]bool)
 		}
+		ca[t.ClientID][t.Hash] = true
+		// }
 	}
 
 	if err := file.Close(); err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("File/restore: all restored data in map:", um)
+	log.Println("File/restore: all restored data in map:", um, ca)
 	return InMemory{um, ca}
 }
