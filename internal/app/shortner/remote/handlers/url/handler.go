@@ -164,6 +164,7 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 		if dtoList == nil {
 			w.WriteHeader(http.StatusNoContent)
 			w.Write(nil)
+			return
 		}
 
 		// auth true, records exist
