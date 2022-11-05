@@ -94,12 +94,14 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		var err error
 
 		if id, ok = checkID(r); !ok {
+			r.Header.Set("auth", "false")
 			log.Println("auth/AuthMiddleware, ID:", id)
 			id, err = registerNewClient(w, idLength)
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}
-
+		} else {
+			r.Header.Set("auth", "true")
 		}
 
 		r.Header.Set("id", id)

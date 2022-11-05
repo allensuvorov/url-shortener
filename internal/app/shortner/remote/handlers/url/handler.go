@@ -144,45 +144,53 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
-	clientID := r.Header.Get("id")
-	dtoList, err := uh.urlService.GetClientActivity(clientID)
-	if err != nil {
-		http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
-	}
-
-	if dtoList == nil {
+	// auth false
+	if r.Header.Get("auth") == "false" {
 		w.WriteHeader(http.StatusNoContent)
+		w.Write(nil)
 	}
 
-	log.Println("Handler/GetClientActivity: clientID is", clientID)
-	log.Println("Handler/GetClientActivity: dtoList is", dtoList)
+	if r.Header.Get("auth") == "true" {
+		clientID := r.Header.Get("id")
+		dtoList, err := uh.urlService.GetClientActivity(clientID)
+		if err != nil {
+			http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
+		}
 
-	encVal := []struct { // encoded value
-		Hash string `json:"short_url"`
-		URL  string `json:"original_url"`
-	}{}
+		log.Println("Handler/GetClientActivity: clientID is", clientID)
+		log.Println("Handler/GetClientActivity: dtoList is", dtoList)
 
-	for _, dto := range dtoList {
-		encVal = append(encVal, struct {
-			Hash string "json:\"short_url\""
-			URL  string "json:\"original_url\""
-		}{Hash: dto.Hash, URL: dto.URL})
+		// auth true, but no records
+		if dtoList == nil {
+			w.WriteHeader(http.StatusNoContent)
+			w.Write(nil)
+		}
+
+		// auth true, records exist
+		if dtoList != nil {
+			encVal := []struct { // encoded value
+				Hash string `json:"short_url"`
+				URL  string `json:"original_url"`
+			}{}
+
+			for _, dto := range dtoList {
+				encVal = append(encVal, struct {
+					Hash string "json:\"short_url\""
+					URL  string "json:\"original_url\""
+				}{Hash: dto.Hash, URL: dto.URL})
+			}
+
+			log.Println("Handler/GetClientActivity: ev is", encVal)
+
+			// сначала устанавливаем заголовок Content-Type
+			// для передачи клиенту информации, кодированной в JSON
+			w.Header().Set("content-type", "application/json")
+
+			// устанавливаем статус-код 200
+			w.WriteHeader(http.StatusOK)
+
+			// пишем тело ответа
+			json.NewEncoder(w).Encode(encVal)
+		}
 	}
-
-	log.Println("Handler/GetClientActivity: ev is", encVal)
-
-	// сначала устанавливаем заголовок Content-Type
-	// для передачи клиенту информации, кодированной в JSON
-	w.Header().Set("content-type", "application/json")
-
-	if dtoList == nil {
-		w.WriteHeader(http.StatusNoContent)
-	} else {
-		// устанавливаем статус-код 302
-		w.WriteHeader(http.StatusFound)
-	}
-
-	// пишем тело ответа
-	json.NewEncoder(w).Encode(encVal)
-
 }
