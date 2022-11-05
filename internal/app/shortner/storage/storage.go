@@ -103,7 +103,7 @@ func (us *URLStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 			return nil, err
 		}
 		ue := entity.DTO{
-			Hash: bu + k,
+			Hash: bu + "/" + k,
 			URL:  u,
 		}
 		dtoList = append(dtoList, ue)
