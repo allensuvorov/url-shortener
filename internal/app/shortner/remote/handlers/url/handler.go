@@ -168,30 +168,30 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// auth true, records exist
-		if dtoList != nil {
-			encVal := []struct { // encoded value
-				Hash string `json:"short_url"`
-				URL  string `json:"original_url"`
-			}{}
 
-			for _, dto := range dtoList {
-				encVal = append(encVal, struct {
-					Hash string "json:\"short_url\""
-					URL  string "json:\"original_url\""
-				}{Hash: dto.Hash, URL: dto.URL})
-			}
+		encVal := []struct { // encoded value
+			Hash string `json:"short_url"`
+			URL  string `json:"original_url"`
+		}{}
 
-			log.Println("Handler/GetClientActivity: ev is", encVal)
-
-			// сначала устанавливаем заголовок Content-Type
-			// для передачи клиенту информации, кодированной в JSON
-			w.Header().Set("content-type", "application/json")
-
-			// устанавливаем статус-код 200
-			w.WriteHeader(http.StatusOK)
-
-			// пишем тело ответа
-			json.NewEncoder(w).Encode(encVal)
+		for _, dto := range dtoList {
+			encVal = append(encVal, struct {
+				Hash string "json:\"short_url\""
+				URL  string "json:\"original_url\""
+			}{Hash: dto.Hash, URL: dto.URL})
 		}
+
+		log.Println("Handler/GetClientActivity: ev is", encVal)
+
+		// сначала устанавливаем заголовок Content-Type
+		// для передачи клиенту информации, кодированной в JSON
+		w.Header().Set("content-type", "application/json")
+
+		// устанавливаем статус-код 200
+		w.WriteHeader(http.StatusOK)
+
+		// пишем тело ответа
+		json.NewEncoder(w).Encode(encVal)
+
 	}
 }
