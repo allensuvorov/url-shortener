@@ -1,12 +1,17 @@
 package storage
 
 import (
+	"context"
+	"database/sql"
 	"log"
+	"time"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	// _ "github.com/jackc/pgx/v5"
 )
 
 // Object with storage methods to work with DB
@@ -111,4 +116,20 @@ func (us *URLStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 	log.Println("storage/GetClientActivity dtoList is:", dtoList)
 
 	return dtoList, nil
+}
+
+func (us *URLStorage) PingDB() bool {
+	db, err := sql.Open("pgx",
+		config.UC.DSN)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+	if err = db.PingContext(ctx); err != nil {
+		return false
+	}
+
+	return true
 }

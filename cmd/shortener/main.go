@@ -17,6 +17,7 @@ func init() {
 	flag.StringVar(&config.UC.SA, "a", "", "SERVER_ADDRESS")
 	flag.StringVar(&config.UC.BU, "b", "", "BASE_URL")
 	flag.StringVar(&config.UC.FSP, "f", "", "FILE_STORAGE_PATH")
+	flag.StringVar(&config.UC.DSN, "d", "", "DATABASE_DSN")
 }
 
 func main() {

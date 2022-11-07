@@ -10,18 +10,23 @@ var (
 	DefaultSA  = ":8080"
 	DefaultBU  = "http://localhost:8080"
 	DefaultFSP = ""
+	//DefaultDSN = "jdbc:postgresql:sql//localhost:5432/"
+	DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres"
+	// postgres://postgres:123456@127.0.0.1:5432/dummy
 )
 
 const (
 	sa  = "SERVER_ADDRESS"
 	bu  = "BASE_URL"
 	fsp = "FILE_STORAGE_PATH"
+	dsn = "DATABASE_DSN"
 )
 
 type URLConfig struct {
 	SA  string
 	BU  string
 	FSP string
+	DSN string
 }
 
 var UC = URLConfig{}
@@ -62,6 +67,16 @@ func getFSPfromEnv() {
 	}
 }
 
+func getDSNfromEnv() {
+	if UC.DSN != "" {
+		return
+	}
+	UC.DSN = DefaultDSN
+	if s, ok := os.LookupEnv(dsn); ok {
+		UC.DSN = s
+	}
+}
+
 func BuildConfig() {
 	flag.Parse()
 	log.Println("config/BuildConfig UC after flags", UC)
@@ -69,5 +84,6 @@ func BuildConfig() {
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
+	getDSNfromEnv()
 	log.Println("config/BuildConfig UC after env vars", UC)
 }

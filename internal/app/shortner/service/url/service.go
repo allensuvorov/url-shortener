@@ -22,6 +22,8 @@ type URLStorage interface {
 	GetHashByURL(u string) (string, error)
 
 	GetClientActivity(id string) ([]entity.DTO, error)
+
+	PingDB() bool
 }
 
 type URLService struct {
@@ -93,4 +95,8 @@ func (us URLService) GetClientActivity(id string) ([]entity.DTO, error) {
 		return nil, err
 	}
 	return dtoList, nil
+}
+
+func (us URLService) PingDB() bool {
+	return us.urlStorage.PingDB()
 }

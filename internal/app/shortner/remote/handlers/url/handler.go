@@ -18,6 +18,8 @@ type URLService interface {
 	Get(h string) (string, error)
 
 	GetClientActivity(id string) ([]entity.DTO, error)
+
+	PingDB() bool
 }
 
 type URLHandler struct {
@@ -194,4 +196,12 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(encVal)
 
 	}
+}
+
+func (uh URLHandler) PingDB(w http.ResponseWriter, r *http.Request) {
+	if uh.urlService.PingDB() {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+	w.WriteHeader(http.StatusInternalServerError)
 }
