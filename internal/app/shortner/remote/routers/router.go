@@ -17,5 +17,6 @@ func NewRouter(url url.URLHandler) chi.Router {
 	r.Post("/", url.Create)
 	r.Post("/api/shorten", url.CreateForJSONClient)
 	r.Get("/api/user/urls", url.GetClientActivity)
+	r.Get("/ping", url.PingDB)
 	return r
 }
