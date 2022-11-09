@@ -1,9 +1,11 @@
 package storage
 
 import (
+	"context"
 	"database/sql"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+	"time"
 )
 
 type URLEntity struct {
@@ -22,6 +24,9 @@ func NewUrlDB() *urlDB {
 	if err != nil {
 		panic(err)
 	}
+	db.Exec("CREATE TABLE IF NOT EXISTS client(ID INT PRIMARY KEY, NAME TEXT);")
+	db.Exec(`CREATE TABLE IF NOT EXISTS url(ID INT PRIMARY KEY, URL TEXT, HASH TEXT, client INT FOREIGN KEY);`)
+
 	return &urlDB{
 		DB: db,
 	}
@@ -44,5 +49,12 @@ func (db urlDB) GetClientActivity(id string) ([]entity.DTO, error) {
 }
 
 func (db urlDB) PingDB() bool {
+
+	//defer db.Close()
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	if err := db.DB.PingContext(ctx); err != nil {
+		return false
+	}
 	return true
 }

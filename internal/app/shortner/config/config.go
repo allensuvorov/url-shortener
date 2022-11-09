@@ -13,7 +13,7 @@ var (
 	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres"
 	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres/url_shortner"
 	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres?searchpat=url_shortner"
-	DefaultDSN = "postgres://postgres:sql@localhost:5432/url_db"
+	DefaultDSN = ""
 )
 
 const (
