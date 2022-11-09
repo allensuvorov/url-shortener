@@ -41,7 +41,7 @@ func write(ue entity.DTO, fsp string) error {
 	return nil
 }
 
-func restore(fsp string) InMemory {
+func restore(fsp string) inMemory {
 	log.Println("File/restore: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
 	ca := make(hashmap.ClientActivity)
@@ -78,5 +78,5 @@ func restore(fsp string) InMemory {
 	}
 
 	log.Println("File/restore: all restored data in map:", um, ca)
-	return InMemory{um, ca}
+	return inMemory{um, ca}
 }

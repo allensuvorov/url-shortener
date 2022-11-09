@@ -25,7 +25,11 @@ func main() {
 	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/.urls.log")
 
 	config.BuildConfig()
-	URLStorage := storage.NewURLStorage()
+	if config.UC.DSN != "" {
+		URLStorage := storage.NewUrlDB()
+	} else {
+		URLStorage := storage.NewURLStorage()
+	}
 	URLService := service.NewURLService(URLStorage)
 	URLHandler := handler.NewURLHandler(URLService)
 	r := routers.NewRouter(URLHandler)

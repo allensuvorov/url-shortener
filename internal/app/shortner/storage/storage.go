@@ -11,39 +11,25 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 	_ "github.com/jackc/pgx/v5/stdlib"
-	// _ "github.com/jackc/pgx/v5"
 )
 
 // urlStorage object with storage methods to work with DB
 type urlStorage struct {
-	InMemory InMemory
+	inMemory inMemory
 }
 
-type InMemory struct {
+type inMemory struct {
 	URLHashMap     hashmap.URLHashMap
 	ClientActivity hashmap.ClientActivity
 }
 
-type URLdb struct {
-	DB *sql.DB
-}
-
 // NewURLStorage creates urlStorage object
 func NewURLStorage() *urlStorage {
-
-	//if config.UC.DSN != "" {
-	//	db, err := sql.Open("pgx",
-	//		config.UC.DSN)
-	//	if err != nil {
-	//		panic(err)
-	//	}
-	//}
-
 	// Restore data at start up
 	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap) // url map
 	ca := make(hashmap.ClientActivity)
-	im := InMemory{um, ca}
+	im := inMemory{um, ca}
 
 	// TODO restore from file both um and ua
 
@@ -53,7 +39,7 @@ func NewURLStorage() *urlStorage {
 	}
 
 	return &urlStorage{
-		InMemory: im,
+		inMemory: im,
 	}
 }
 
@@ -62,15 +48,15 @@ func (us *urlStorage) Create(ue entity.DTO) error {
 	// Save to map
 	log.Println("Storage/Create(): hello")
 
-	us.InMemory.URLHashMap[ue.Hash] = ue.URL
-	log.Println("Storage/Create(): added to map, updated map len is", len(us.InMemory.URLHashMap))
-	log.Println("Storage/Create(): added to map, updated map is", us.InMemory.URLHashMap)
+	us.inMemory.URLHashMap[ue.Hash] = ue.URL
+	log.Println("Storage/Create(): added to map, updated map len is", len(us.inMemory.URLHashMap))
+	log.Println("Storage/Create(): added to map, updated map is", us.inMemory.URLHashMap)
 
-	_, ok := us.InMemory.ClientActivity[ue.ClientID]
+	_, ok := us.inMemory.ClientActivity[ue.ClientID]
 	if !ok {
-		us.InMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
+		us.inMemory.ClientActivity[ue.ClientID] = make(map[string]bool)
 	}
-	us.InMemory.ClientActivity[ue.ClientID][ue.Hash] = true
+	us.inMemory.ClientActivity[ue.ClientID][ue.Hash] = true
 
 	// get file storage path from config
 	fsp := config.UC.FSP
@@ -85,7 +71,7 @@ func (us *urlStorage) Create(ue entity.DTO) error {
 
 func (us *urlStorage) GetHashByURL(u string) (string, error) {
 	log.Println("Storage/GetHashByURL(), looking for matching URL", u)
-	for k, v := range us.InMemory.URLHashMap {
+	for k, v := range us.inMemory.URLHashMap {
 		if v == u {
 			log.Println("Storage GetHashByURL, found record", k)
 			return k, nil
@@ -95,9 +81,9 @@ func (us *urlStorage) GetHashByURL(u string) (string, error) {
 }
 
 func (us *urlStorage) GetURLByHash(h string) (string, error) {
-	log.Println("Storage/GetURLByHash(), looking in map len", len(us.InMemory.URLHashMap))
+	log.Println("Storage/GetURLByHash(), looking in map len", len(us.inMemory.URLHashMap))
 	log.Println("Storage/GetURLByHash(), looking for matching Hash", h)
-	u, ok := us.InMemory.URLHashMap[h]
+	u, ok := us.inMemory.URLHashMap[h]
 	if !ok {
 		return "", errors.ErrNotFound
 	}
@@ -106,7 +92,7 @@ func (us *urlStorage) GetURLByHash(h string) (string, error) {
 
 func (us *urlStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 	log.Println("storage/GetClientActivity client id is:", id)
-	ca, ok := us.InMemory.ClientActivity[id]
+	ca, ok := us.inMemory.ClientActivity[id]
 	if !ok {
 		return nil, nil
 	}
@@ -136,7 +122,6 @@ func (us *urlStorage) PingDB() bool {
 	if err != nil {
 		panic(err)
 	}
-
 	defer db.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
