@@ -14,8 +14,8 @@ import (
 	// _ "github.com/jackc/pgx/v5"
 )
 
-// URLStorage object with storage methods to work with DB
-type URLStorage struct {
+// urlStorage object with storage methods to work with DB
+type urlStorage struct {
 	InMemory InMemory
 }
 
@@ -24,8 +24,20 @@ type InMemory struct {
 	ClientActivity hashmap.ClientActivity
 }
 
-// NewURLStorage creates URLStorage object
-func NewURLStorage() *URLStorage {
+type URLdb struct {
+	DB *sql.DB
+}
+
+// NewURLStorage creates urlStorage object
+func NewURLStorage() *urlStorage {
+
+	//if config.UC.DSN != "" {
+	//	db, err := sql.Open("pgx",
+	//		config.UC.DSN)
+	//	if err != nil {
+	//		panic(err)
+	//	}
+	//}
 
 	// Restore data at start up
 	fsp := config.UC.FSP
@@ -40,20 +52,13 @@ func NewURLStorage() *URLStorage {
 		im = restore(fsp) // get map
 	}
 
-	return &URLStorage{
+	return &urlStorage{
 		InMemory: im,
 	}
 }
 
 // Create adds new URL record to storage
-func (us *URLStorage) Create(ue entity.DTO) error {
-	// Save to PostgreSQL DB
-	dsn := config.UC.DSN
-	if dsn != "" {
-		// save to DB
-		//
-	}
-
+func (us *urlStorage) Create(ue entity.DTO) error {
 	// Save to map
 	log.Println("Storage/Create(): hello")
 
@@ -78,7 +83,7 @@ func (us *URLStorage) Create(ue entity.DTO) error {
 	return nil
 }
 
-func (us *URLStorage) GetHashByURL(u string) (string, error) {
+func (us *urlStorage) GetHashByURL(u string) (string, error) {
 	log.Println("Storage/GetHashByURL(), looking for matching URL", u)
 	for k, v := range us.InMemory.URLHashMap {
 		if v == u {
@@ -89,7 +94,7 @@ func (us *URLStorage) GetHashByURL(u string) (string, error) {
 	return "", errors.ErrNotFound
 }
 
-func (us *URLStorage) GetURLByHash(h string) (string, error) {
+func (us *urlStorage) GetURLByHash(h string) (string, error) {
 	log.Println("Storage/GetURLByHash(), looking in map len", len(us.InMemory.URLHashMap))
 	log.Println("Storage/GetURLByHash(), looking for matching Hash", h)
 	u, ok := us.InMemory.URLHashMap[h]
@@ -99,7 +104,7 @@ func (us *URLStorage) GetURLByHash(h string) (string, error) {
 	return u, nil
 }
 
-func (us *URLStorage) GetClientActivity(id string) ([]entity.DTO, error) {
+func (us *urlStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 	log.Println("storage/GetClientActivity client id is:", id)
 	ca, ok := us.InMemory.ClientActivity[id]
 	if !ok {
@@ -125,7 +130,7 @@ func (us *URLStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 	return dtoList, nil
 }
 
-func (us *URLStorage) PingDB() bool {
+func (us *urlStorage) PingDB() bool {
 	db, err := sql.Open("pgx",
 		config.UC.DSN)
 	if err != nil {
@@ -133,8 +138,6 @@ func (us *URLStorage) PingDB() bool {
 	}
 
 	defer db.Close()
-	//db.Exec("CREATE TABLE IF NOT EXIST test(ID INT PRIMARY KEY, NAME TEXT);")
-	db.Exec(`CREATE TABLE IF NOT EXISTS test(ID INT PRIMARY KEY, NAME TEXT);`)
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err = db.PingContext(ctx); err != nil {
