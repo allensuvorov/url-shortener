@@ -24,8 +24,7 @@ func NewUrlDB() *urlDB {
 	if err != nil {
 		panic(err)
 	}
-	db.Exec("CREATE TABLE IF NOT EXISTS client(ID INT PRIMARY KEY, NAME TEXT);")
-	db.Exec(`CREATE TABLE IF NOT EXISTS url(ID INT PRIMARY KEY, URL TEXT, HASH TEXT, client INT FOREIGN KEY);`)
+	db.Exec("CREATE TABLE IF NOT EXISTS url(ID INT PRIMARY KEY, URL TEXT, hash TEXT, client TEXT);")
 
 	return &urlDB{
 		DB: db,
