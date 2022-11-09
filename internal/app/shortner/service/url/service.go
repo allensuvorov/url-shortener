@@ -15,10 +15,10 @@ type URLStorage interface {
 	// Create new entity (pair shortURL: longURL).
 	Create(ue entity.DTO) error
 
-	// GetByHash returns entity for the matching hash, checks if hash exists.
+	// GetURLByHash returns entity for the matching hash, checks if hash exists.
 	GetURLByHash(u string) (string, error)
 
-	// GetByURL returns hash for the matching URL, checks if URL exists.
+	// GetHashByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
 
 	GetClientActivity(id string) ([]entity.DTO, error)

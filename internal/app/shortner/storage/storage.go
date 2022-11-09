@@ -14,7 +14,7 @@ import (
 	// _ "github.com/jackc/pgx/v5"
 )
 
-// Object with storage methods to work with DB
+// URLStorage object with storage methods to work with DB
 type URLStorage struct {
 	InMemory InMemory
 }
@@ -47,6 +47,13 @@ func NewURLStorage() *URLStorage {
 
 // Create adds new URL record to storage
 func (us *URLStorage) Create(ue entity.DTO) error {
+	// Save to PostgreSQL DB
+	dsn := config.UC.DSN
+	if dsn != "" {
+		// save to DB
+		//
+	}
+
 	// Save to map
 	log.Println("Storage/Create(): hello")
 
@@ -124,8 +131,11 @@ func (us *URLStorage) PingDB() bool {
 	if err != nil {
 		panic(err)
 	}
+
 	defer db.Close()
-	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	//db.Exec("CREATE TABLE IF NOT EXIST test(ID INT PRIMARY KEY, NAME TEXT);")
+	db.Exec(`CREATE TABLE IF NOT EXISTS test(ID INT PRIMARY KEY, NAME TEXT);`)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err = db.PingContext(ctx); err != nil {
 		return false
