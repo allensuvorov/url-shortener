@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"log"
 	"time"
 )
@@ -45,12 +46,6 @@ func (db urlDB) Create(ue entity.DTO) error {
 		($T, $T, $T);`,
 		ue.URL, ue.Hash, ue.ClientID,
 	)
-	/*
-		INSERT INTO url
-		(id, url, hash, client)
-		VALUES
-		(1, 'test_url', 'test_hash', 'test_client');
-	*/
 	return nil
 }
 
@@ -59,7 +54,21 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 }
 
 func (db urlDB) GetHashByURL(u string) (string, error) {
-	return "", nil
+	row, err := db.DB.Query(`SELECT hash FROM url WHERE url.url = 'test_url';`)
+
+	if err != nil {
+		log.Println("urlBD/GetHashByURL, record not found")
+		return "", errors.ErrNotFound
+	}
+
+	var hash string
+	err = row.Scan(&hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	log.Println("Storage GetHashByURL, found record", hash)
+	return hash, nil
 }
 
 func (db urlDB) GetClientActivity(id string) ([]entity.DTO, error) {

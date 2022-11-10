@@ -36,7 +36,6 @@ func NewURLService(us URLStorage) URLService {
 	}
 }
 
-// func CreateURL
 func (us URLService) Create(ue entity.DTO) (string, error) {
 
 	// check if URL is valid
