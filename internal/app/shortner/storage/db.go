@@ -20,7 +20,7 @@ type urlDB struct {
 	DB *sql.DB
 }
 
-func NewUrlDB() *urlDB {
+func NewURLDB() *urlDB {
 	db, err := sql.Open("pgx",
 		config.UC.DSN)
 	if err != nil {
@@ -105,6 +105,10 @@ func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
 	urlEntities := make([]entity.DTO, 0)
 
 	rows, err := db.DB.Query(`SELECT url, hash, client FROM urls WHERE client = $1;`, id)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	defer rows.Close()
 

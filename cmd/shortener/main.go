@@ -26,7 +26,7 @@ func main() {
 	config.BuildConfig()
 	var URLStorage service.URLStorage
 	if config.UC.DSN != "" {
-		URLStorage = storage.NewUrlDB()
+		URLStorage = storage.NewURLDB()
 	} else {
 		URLStorage = storage.NewURLStorage()
 	}
