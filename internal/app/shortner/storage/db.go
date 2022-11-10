@@ -111,6 +111,10 @@ func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
 	}
 
 	defer rows.Close()
+	
+	if rows.Err() != nil {
+		log.Fatal(err)
+	}
 
 	for rows.Next() {
 		var urlEntity entity.DTO
