@@ -159,8 +159,8 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Failed to get client activity", http.StatusInternalServerError)
 		}
 
-		log.Println("Handler/GetClientActivity: clientID is", clientID)
-		log.Println("Handler/GetClientActivity: dtoList is", dtoList)
+		log.Println("Handler/GetClientUrls: clientID is", clientID)
+		log.Println("Handler/GetClientUrls: dtoList is", dtoList)
 
 		// auth true, but no records
 		if dtoList == nil {
@@ -183,7 +183,7 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 			}{Hash: dto.Hash, URL: dto.URL})
 		}
 
-		log.Println("Handler/GetClientActivity: ev is", encVal)
+		log.Println("Handler/GetClientUrls: ev is", encVal)
 
 		// сначала устанавливаем заголовок Content-Type
 		// для передачи клиенту информации, кодированной в JSON

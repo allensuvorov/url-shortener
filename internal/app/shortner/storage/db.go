@@ -26,12 +26,13 @@ func NewUrlDB() *urlDB {
 	if err != nil {
 		panic(err)
 	}
-	db.Exec(`CREATE TABLE IF NOT EXISTS url(
+	db.Exec(`CREATE TABLE IF NOT EXISTS urls(
     ID SERIAL PRIMARY KEY, 
     URL TEXT, 
     hash TEXT, 
     client TEXT
                               );`)
+
 	log.Println("created new URL Database")
 	return &urlDB{
 		DB: db,
@@ -40,7 +41,7 @@ func NewUrlDB() *urlDB {
 
 func (db urlDB) Create(ue entity.DTO) error {
 	db.DB.Exec(
-		`INSERT INTO url
+		`INSERT INTO urls
 		(url, hash, client)
 		VALUES
 		($T, $T, $T);`,
@@ -50,7 +51,7 @@ func (db urlDB) Create(ue entity.DTO) error {
 }
 
 func (db urlDB) GetURLByHash(u string) (string, error) {
-	row, err := db.DB.Query(`SELECT url.url FROM url WHERE hash = 'test_hash';`)
+	row, err := db.DB.Query(`SELECT url FROM urls WHERE hash = $T;`, u)
 
 	if err != nil {
 		log.Println("urlBD/GetURLByHash, record not found")
@@ -58,7 +59,7 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 	}
 
 	var url string
-	err = row.Scan(&hash)
+	err = row.Scan(&url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -68,7 +69,7 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 }
 
 func (db urlDB) GetHashByURL(u string) (string, error) {
-	row, err := db.DB.Query(`SELECT hash FROM url WHERE url.url = 'test_url';`)
+	row, err := db.DB.Query(`SELECT hash FROM urls WHERE url = $T;`, u)
 
 	if err != nil {
 		log.Println("urlBD/GetHashByURL, record not found")
@@ -85,31 +86,28 @@ func (db urlDB) GetHashByURL(u string) (string, error) {
 	return hash, nil
 }
 
-func (db urlDB) GetClientActivity(id string) ([]entity.DTO, error) {
-	log.Println("urlDB/GetClientActivity client id is:", id)
+func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
+	log.Println("urlDB/GetClientUrls client id is:", id)
+	urlEntities := make([]entity.DTO, 0)
 
-	ca, ok := us.inMemory.ClientActivity[id]
-	if !ok {
-		return nil, nil
-	}
-	log.Println("storage/GetClientActivity client ClientActivity is:", ca)
-	dtoList := []entity.DTO{}
+	rows, err := db.DB.Query(`SELECT url, hash, client FROM urls WHERE client = id;`)
 
-	for k := range ca {
-		u, err := us.GetURLByHash(k)
-		bu := config.UC.BU
+	defer rows.Close()
+
+	for rows.Next() {
+		var urlEntity entity.DTO
+
+		err = rows.Scan(&urlEntity.URL, &urlEntity.Hash, &urlEntity.ClientID)
 		if err != nil {
 			return nil, err
 		}
-		ue := entity.DTO{
-			Hash: bu + "/" + k,
-			URL:  u,
-		}
-		dtoList = append(dtoList, ue)
-	}
-	log.Println("storage/GetClientActivity dtoList is:", dtoList)
 
-	return dtoList, nil
+		urlEntities = append(urlEntities, urlEntity)
+	}
+
+	log.Println("storage/GetClientUrls client urlEntities is:", urlEntities)
+
+	return urlEntities, nil
 }
 
 func (db urlDB) PingDB() bool {

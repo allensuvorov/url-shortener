@@ -86,13 +86,13 @@ func (us *urlStorage) GetURLByHash(h string) (string, error) {
 	return u, nil
 }
 
-func (us *urlStorage) GetClientActivity(id string) ([]entity.DTO, error) {
-	log.Println("storage/GetClientActivity client id is:", id)
+func (us *urlStorage) GetClientUrls(id string) ([]entity.DTO, error) {
+	log.Println("storage/GetClientUrls client id is:", id)
 	ca, ok := us.inMemory.ClientActivity[id]
 	if !ok {
 		return nil, nil
 	}
-	log.Println("storage/GetClientActivity client ClientActivity is:", ca)
+	log.Println("storage/GetClientUrls client ClientActivity is:", ca)
 	dtoList := []entity.DTO{}
 
 	for k := range ca {
@@ -107,7 +107,7 @@ func (us *urlStorage) GetClientActivity(id string) ([]entity.DTO, error) {
 		}
 		dtoList = append(dtoList, ue)
 	}
-	log.Println("storage/GetClientActivity dtoList is:", dtoList)
+	log.Println("storage/GetClientUrls dtoList is:", dtoList)
 
 	return dtoList, nil
 }

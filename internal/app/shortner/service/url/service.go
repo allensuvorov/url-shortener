@@ -21,7 +21,7 @@ type URLStorage interface {
 	// GetHashByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
 
-	GetClientActivity(id string) ([]entity.DTO, error)
+	GetClientUrls(id string) ([]entity.DTO, error)
 
 	PingDB() bool
 }
@@ -87,9 +87,9 @@ func (us URLService) Get(h string) (string, error) {
 }
 
 func (us URLService) GetClientActivity(id string) ([]entity.DTO, error) {
-	dtoList, err := us.urlStorage.GetClientActivity(id)
-	log.Println("service/GetClientActivity client ID is:", id)
-	log.Println("service/GetClientActivity dtoList is:", dtoList)
+	dtoList, err := us.urlStorage.GetClientUrls(id)
+	log.Println("service/GetClientUrls client ID is:", id)
+	log.Println("service/GetClientUrls dtoList is:", dtoList)
 	if err != nil {
 		return nil, err
 	}
