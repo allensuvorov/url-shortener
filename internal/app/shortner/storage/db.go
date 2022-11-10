@@ -40,26 +40,35 @@ func NewUrlDB() *urlDB {
 }
 
 func (db urlDB) Create(ue entity.DTO) error {
-	db.DB.Exec(
+	_, err := db.DB.Exec(
 		`INSERT INTO urls
 		(url, hash, client)
 		VALUES
-		($T, $T, $T);`,
+		($1, $2, $3);`,
 		ue.URL, ue.Hash, ue.ClientID,
 	)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return nil
 }
 
 func (db urlDB) GetURLByHash(u string) (string, error) {
-	row, err := db.DB.Query(`SELECT url FROM urls WHERE hash = $T;`, u)
+	row := db.DB.QueryRow(`SELECT url FROM urls WHERE hash = $1;`, u)
 
-	if err != nil {
-		log.Println("urlBD/GetURLByHash, record not found")
+	//if row.Err() != nil {
+	//	log.Println("urlBD/GetURLByHash, record not found")
+	//	return "", errors.ErrNotFound
+	//}
+
+	var url string
+	err := row.Scan(&url)
+
+	if err == sql.ErrNoRows {
+		log.Println("urlBD/GetHashByURL, record not found")
 		return "", errors.ErrNotFound
 	}
 
-	var url string
-	err = row.Scan(&url)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -69,20 +78,25 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 }
 
 func (db urlDB) GetHashByURL(u string) (string, error) {
-	row, err := db.DB.Query(`SELECT hash FROM urls WHERE url = $T;`, u)
+	row := db.DB.QueryRow(`SELECT hash FROM urls WHERE url = $1;`, u)
 
-	if err != nil {
+	//if row.Err() != nil {
+	//	log.Println("urlBD/GetHashByURL, record not found")
+	//	return "", errors.ErrNotFound
+	//}
+
+	var hash string
+	err := row.Scan(&hash)
+	if err == sql.ErrNoRows {
 		log.Println("urlBD/GetHashByURL, record not found")
 		return "", errors.ErrNotFound
 	}
 
-	var hash string
-	err = row.Scan(&hash)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("Storage GetHashByURL, found record", hash)
+	log.Println("urlBD/GetHashByURL, found record", hash)
 	return hash, nil
 }
 
@@ -90,7 +104,7 @@ func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
 	log.Println("urlDB/GetClientUrls client id is:", id)
 	urlEntities := make([]entity.DTO, 0)
 
-	rows, err := db.DB.Query(`SELECT url, hash, client FROM urls WHERE client = id;`)
+	rows, err := db.DB.Query(`SELECT url, hash, client FROM urls WHERE client = $1;`, id)
 
 	defer rows.Close()
 

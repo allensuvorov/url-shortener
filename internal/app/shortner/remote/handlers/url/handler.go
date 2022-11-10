@@ -106,7 +106,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	ue.URL = string(b)
 
 	// log body from request
-	log.Println("Create Handler - URL in the POST request is", ue.URL)
+	log.Println("Handler/Create - URL in the POST request is", ue.URL)
 
 	ue.Hash, err = uh.urlService.Create(ue)
 	if err != nil {
