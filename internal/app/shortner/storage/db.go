@@ -86,7 +86,30 @@ func (db urlDB) GetHashByURL(u string) (string, error) {
 }
 
 func (db urlDB) GetClientActivity(id string) ([]entity.DTO, error) {
-	return nil, nil
+	log.Println("urlDB/GetClientActivity client id is:", id)
+
+	ca, ok := us.inMemory.ClientActivity[id]
+	if !ok {
+		return nil, nil
+	}
+	log.Println("storage/GetClientActivity client ClientActivity is:", ca)
+	dtoList := []entity.DTO{}
+
+	for k := range ca {
+		u, err := us.GetURLByHash(k)
+		bu := config.UC.BU
+		if err != nil {
+			return nil, err
+		}
+		ue := entity.DTO{
+			Hash: bu + "/" + k,
+			URL:  u,
+		}
+		dtoList = append(dtoList, ue)
+	}
+	log.Println("storage/GetClientActivity dtoList is:", dtoList)
+
+	return dtoList, nil
 }
 
 func (db urlDB) PingDB() bool {
