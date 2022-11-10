@@ -50,7 +50,21 @@ func (db urlDB) Create(ue entity.DTO) error {
 }
 
 func (db urlDB) GetURLByHash(u string) (string, error) {
-	return "", nil
+	row, err := db.DB.Query(`SELECT url.url FROM url WHERE hash = 'test_hash';`)
+
+	if err != nil {
+		log.Println("urlBD/GetURLByHash, record not found")
+		return "", errors.ErrNotFound
+	}
+
+	var url string
+	err = row.Scan(&hash)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("Storage GetHashByURL, found record", url)
+	return url, nil
 }
 
 func (db urlDB) GetHashByURL(u string) (string, error) {
@@ -66,7 +80,7 @@ func (db urlDB) GetHashByURL(u string) (string, error) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	log.Println("Storage GetHashByURL, found record", hash)
 	return hash, nil
 }
