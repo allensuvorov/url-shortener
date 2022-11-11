@@ -83,7 +83,6 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 // Create passes URL to service and returns response with Hash.
 func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - Start")
-
 	log.Println("Handler/Create - Set-Cookie:", w.Header().Get("Set-Cookie"))
 	log.Println("Handler/Create - ID header:", r.Header.Get("id"))
 
@@ -204,4 +203,8 @@ func (uh URLHandler) PingDB(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusInternalServerError)
+}
+
+func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
+	
 }
