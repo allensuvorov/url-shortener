@@ -62,7 +62,6 @@ func restore(fsp string) inMemory {
 		log.Println("File/restore: restoring URL entry from file:", t)
 
 		// push data to maps
-		// for _, v := range t {
 		um[t.Hash] = t.URL
 
 		_, ok := ca[t.ClientID]
@@ -70,7 +69,6 @@ func restore(fsp string) inMemory {
 			ca[t.ClientID] = make(map[string]bool)
 		}
 		ca[t.ClientID][t.Hash] = true
-		// }
 	}
 
 	if err := file.Close(); err != nil {

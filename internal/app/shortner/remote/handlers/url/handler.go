@@ -206,5 +206,53 @@ func (uh URLHandler) PingDB(w http.ResponseWriter, r *http.Request) {
 }
 
 func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
-	
+	log.Println("Handler/BatchCreate - Hello")
+	log.Println("Handler/BatchCreate body:", r.Body)
+	var decVals []struct {
+		ID  string `json:"correlation_id"`
+		URL string `json:"original_url"`
+	}
+
+	// TODO: Read and handle content-type header from request
+	// contentType := response.Header.Get("Content-Type")
+	// это может быть, например, "application/json; charset=UTF-8"
+
+	if err := json.NewDecoder(r.Body).Decode(&decVals); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	log.Println("Handler/BatchCreate - request: object", decVals)
+
+	ue := entity.DTO{}
+
+	clientID := r.Header.Get("id")
+
+	var encVals []struct { // encoded value
+		ID   string `json:"correlation_id"`
+		Hash string `json:"short_url"`
+	}
+
+	for _, v := range decVals {
+		ue.URL = v.URL
+		ue.ClientID = clientID
+		shortURL, err := uh.urlService.Create(ue)
+		if err != nil {
+			http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
+		}
+
+		encVals = append(encVals, struct {
+			ID   string `json:"correlation_id"`
+			Hash string `json:"short_url"`
+		}{ID: v.ID, Hash: shortURL})
+	}
+
+	log.Println("Handler/BatchCreate: encVal is", encVals)
+
+	// сначала устанавливаем заголовок Content-Type
+	// для передачи клиенту информации, кодированной в JSON
+	w.Header().Set("content-type", "application/json")
+
+	w.WriteHeader(http.StatusCreated)
+
+	json.NewEncoder(w).Encode(encVals)
 }
