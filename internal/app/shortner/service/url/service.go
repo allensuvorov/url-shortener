@@ -47,6 +47,11 @@ func (us URLService) Create(ue entity.DTO) (string, error) {
 	// get Hash from DB if the longURL already exists in storage
 	h, err := us.urlStorage.GetHashByURL(ue.URL)
 
+	// Get Base URL
+	log.Println("Service/Create(): about go get BU from config")
+	bu := config.UC.BU
+	log.Println("Service: BASE_URL from local env is:", bu)
+
 	// Generate new Hash if URL does not exist in storage
 	if err == errors.ErrNotFound {
 
@@ -65,15 +70,10 @@ func (us URLService) Create(ue entity.DTO) (string, error) {
 			return "", err
 		}
 		log.Println("Service/Create(): saved new shortURL in map", h)
+		err = nil
 	}
-
-	// Get Base URL
-	log.Println("Service/Create(): about go get BU from config")
-	bu := config.UC.BU
-	log.Println("Service: BASE_URL from local env is:", bu)
 	shortURL := bu + "/" + h
-
-	return shortURL, nil
+	return shortURL, err
 }
 
 func (us URLService) Get(h string) (string, error) {
