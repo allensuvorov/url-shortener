@@ -2,6 +2,7 @@ package url
 
 import (
 	"encoding/json"
+	errors2 "errors"
 	"io"
 	"log"
 	"net/http"
@@ -57,7 +58,7 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 
 	shortURL, err := uh.urlService.Create(ue)
 
-	if err != nil {
+	if err != nil && !errors2.Is(err, errors.ErrRecordExists) {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
 
@@ -73,8 +74,12 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	// для передачи клиенту информации, кодированной в JSON
 	w.Header().Set("content-type", "application/json")
 
-	// устанавливаем статус-код 201
-	w.WriteHeader(http.StatusCreated)
+	if errors2.Is(err, errors.ErrRecordExists) {
+		w.WriteHeader(http.StatusConflict)
+	} else {
+		// устанавливаем статус-код 201
+		w.WriteHeader(http.StatusCreated)
+	}
 
 	// пишем тело ответа
 	json.NewEncoder(w).Encode(encVal)
@@ -108,12 +113,19 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - URL in the POST request is", ue.URL)
 
 	ue.Hash, err = uh.urlService.Create(ue)
-	if err != nil {
+	//if err != nil {
+	//	http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
+	//}
+	if err != nil && !errors2.Is(err, errors.ErrRecordExists) {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
 
-	// устанавливаем статус-код 201
-	w.WriteHeader(http.StatusCreated)
+	if errors2.Is(err, errors.ErrRecordExists) {
+		w.WriteHeader(http.StatusConflict)
+	} else {
+		// устанавливаем статус-код 201
+		w.WriteHeader(http.StatusCreated)
+	}
 
 	// пишем тело ответа
 	w.Write([]byte(ue.Hash))

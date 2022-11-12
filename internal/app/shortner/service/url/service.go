@@ -46,7 +46,9 @@ func (us URLService) Create(ue entity.DTO) (string, error) {
 
 	// get Hash from DB if the longURL already exists in storage
 	h, err := us.urlStorage.GetHashByURL(ue.URL)
-
+	if err == nil {
+		err = errors.ErrRecordExists
+	}
 	// Get Base URL
 	log.Println("Service/Create(): about go get BU from config")
 	bu := config.UC.BU
