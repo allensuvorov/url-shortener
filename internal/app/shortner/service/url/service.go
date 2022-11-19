@@ -13,7 +13,7 @@ import (
 type URLStorage interface {
 
 	// Create new entity (pair shortURL: longURL).
-	Create(ue entity.DTO) error
+	Create(ue entity.URLEntity) error
 
 	// GetURLByHash returns entity for the matching hash, checks if hash exists.
 	GetURLByHash(u string) (string, error)
@@ -21,7 +21,7 @@ type URLStorage interface {
 	// GetHashByURL returns hash for the matching URL, checks if URL exists.
 	GetHashByURL(u string) (string, error)
 
-	GetClientUrls(id string) ([]entity.DTO, error)
+	GetClientUrls(id string) ([]entity.URLEntity, error)
 
 	PingDB() bool
 }
@@ -36,7 +36,7 @@ func NewURLService(us URLStorage) URLService {
 	}
 }
 
-func (us URLService) Create(ue entity.DTO) (string, error) {
+func (us URLService) Create(ue entity.URLEntity) (string, error) {
 
 	// check if URL is valid
 	_, err := url.ParseRequestURI(ue.URL)
@@ -88,7 +88,7 @@ func (us URLService) Get(h string) (string, error) {
 	return u, nil
 }
 
-func (us URLService) GetClientActivity(id string) ([]entity.DTO, error) {
+func (us URLService) GetClientActivity(id string) ([]entity.URLEntity, error) {
 	dtoList, err := us.urlStorage.GetClientUrls(id)
 	log.Println("service/GetClientUrls client ID is:", id)
 	log.Println("service/GetClientUrls dtoList is:", dtoList)

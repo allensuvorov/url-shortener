@@ -14,11 +14,11 @@ import (
 
 type URLService interface {
 	// Create takes URL and returns hash.
-	Create(ue entity.DTO) (string, error)
+	Create(ue entity.URLEntity) (string, error)
 	// Get takes hash and returns URL.
 	Get(h string) (string, error)
 
-	GetClientActivity(id string) ([]entity.DTO, error)
+	GetClientActivity(id string) ([]entity.URLEntity, error)
 
 	PingDB() bool
 }
@@ -50,7 +50,7 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 	log.Println("Handler/CreateForJSONClient - request: object", decVal)
 	log.Println("Handler/CreateForJSONClient - URL in the request is", decVal.URL)
 
-	ue := entity.DTO{
+	ue := entity.URLEntity{
 		URL: decVal.URL,
 	}
 
@@ -91,7 +91,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - Set-Cookie:", w.Header().Get("Set-Cookie"))
 	log.Println("Handler/Create - ID header:", r.Header.Get("id"))
 
-	ue := entity.DTO{
+	ue := entity.URLEntity{
 		ClientID: r.Header.Get("id"),
 	}
 
@@ -235,7 +235,7 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Handler/BatchCreate - request: object", decVals)
 
-	ue := entity.DTO{}
+	ue := entity.URLEntity{}
 
 	clientID := r.Header.Get("id")
 

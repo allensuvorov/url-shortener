@@ -39,7 +39,7 @@ func NewURLDB() *urlDB {
 	}
 }
 
-func (db urlDB) Create(ue entity.DTO) error {
+func (db urlDB) Create(ue entity.URLEntity) error {
 	_, err := db.DB.Exec(
 		`INSERT INTO urls
 		(url, hash, client)
@@ -100,9 +100,9 @@ func (db urlDB) GetHashByURL(u string) (string, error) {
 	return hash, nil
 }
 
-func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
+func (db urlDB) GetClientUrls(id string) ([]entity.URLEntity, error) {
 	log.Println("urlDB/GetClientUrls client id is:", id)
-	urlEntities := make([]entity.DTO, 0)
+	urlEntities := make([]entity.URLEntity, 0)
 
 	rows, err := db.DB.Query(`SELECT url, hash, client FROM urls WHERE client = $1;`, id)
 
@@ -111,13 +111,13 @@ func (db urlDB) GetClientUrls(id string) ([]entity.DTO, error) {
 	}
 
 	defer rows.Close()
-	
+
 	if rows.Err() != nil {
 		log.Fatal(err)
 	}
 
 	for rows.Next() {
-		var urlEntity entity.DTO
+		var urlEntity entity.URLEntity
 
 		err = rows.Scan(&urlEntity.URL, &urlEntity.Hash, &urlEntity.ClientID)
 		if err != nil {

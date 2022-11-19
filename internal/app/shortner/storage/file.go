@@ -10,7 +10,7 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
-func write(ue entity.DTO, fsp string) error {
+func write(ue entity.URLEntity, fsp string) error {
 	log.Printf("Storage/File: saving to path - %s", fsp)
 
 	// Create and open file
@@ -55,7 +55,7 @@ func restore(fsp string) inMemory {
 
 	// Go over the data
 	for dec.More() {
-		t := entity.DTO{}
+		t := entity.URLEntity{}
 		if err := dec.Decode(&t); err != nil {
 			log.Fatal(err)
 		}

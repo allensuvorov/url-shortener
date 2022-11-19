@@ -40,7 +40,7 @@ func NewURLStorage() *urlStorage {
 }
 
 // Create adds new URL record to storage
-func (us *urlStorage) Create(ue entity.DTO) error {
+func (us *urlStorage) Create(ue entity.URLEntity) error {
 	// Save to map
 	log.Println("Storage/Create(): hello")
 
@@ -86,14 +86,14 @@ func (us *urlStorage) GetURLByHash(h string) (string, error) {
 	return u, nil
 }
 
-func (us *urlStorage) GetClientUrls(id string) ([]entity.DTO, error) {
+func (us *urlStorage) GetClientUrls(id string) ([]entity.URLEntity, error) {
 	log.Println("storage/GetClientUrls client id is:", id)
 	ca, ok := us.inMemory.ClientActivity[id]
 	if !ok {
 		return nil, nil
 	}
 	log.Println("storage/GetClientUrls client ClientActivity is:", ca)
-	dtoList := []entity.DTO{}
+	dtoList := []entity.URLEntity{}
 
 	for k := range ca {
 		u, err := us.GetURLByHash(k)
@@ -101,7 +101,7 @@ func (us *urlStorage) GetClientUrls(id string) ([]entity.DTO, error) {
 		if err != nil {
 			return nil, err
 		}
-		ue := entity.DTO{
+		ue := entity.URLEntity{
 			Hash: bu + "/" + k,
 			URL:  u,
 		}

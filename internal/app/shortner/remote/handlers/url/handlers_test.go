@@ -99,7 +99,7 @@ func Test_shortener(t *testing.T) {
 func Test_expander(t *testing.T) {
 	config.BuildConfig()
 	usm := storage.NewURLStorage()
-	ue := entity.DTO{
+	ue := entity.URLEntity{
 		Hash: "a7d59904",
 		URL:  "http://www.apple.com/store",
 	}
