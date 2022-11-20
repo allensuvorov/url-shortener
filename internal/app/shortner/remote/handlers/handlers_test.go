@@ -3,17 +3,18 @@ package handlers
 import (
 	"bytes"
 	"context"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 func Test_CreateForJSONClient(t *testing.T) {

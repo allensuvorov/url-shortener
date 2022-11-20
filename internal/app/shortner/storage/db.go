@@ -3,11 +3,12 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"log"
+	"time"
+
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
-	"log"
-	"time"
 )
 
 type URLEntity struct {

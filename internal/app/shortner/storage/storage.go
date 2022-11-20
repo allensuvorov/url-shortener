@@ -1,12 +1,14 @@
 package storage
 
 import (
+	"log"
+
+	_ "github.com/jackc/pgx/v5/stdlib"
+
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
-	_ "github.com/jackc/pgx/v5/stdlib"
-	"log"
 )
 
 // urlStorage object with storage methods to work with DB
