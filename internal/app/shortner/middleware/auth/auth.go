@@ -17,7 +17,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		if id, ok = crypto.CheckID(r); !ok {
 			r.Header.Set("auth", "false")
 			log.Println("auth/AuthMiddleware, ID:", id)
-			id, err = crypto.RegisterNewClient(w, crypto.IdLength)
+			id, err = crypto.RegisterNewClient(w, crypto.IDLength)
 			if err != nil {
 				log.Printf("failed to register new client: %v", err)
 			}

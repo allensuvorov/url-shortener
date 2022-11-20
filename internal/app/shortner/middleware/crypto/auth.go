@@ -10,7 +10,7 @@ import (
 )
 
 var secretkey = []byte("secret key")
-var IdLength int = 4
+var IDLength int = 4
 
 func CheckID(r *http.Request) (string, bool) {
 	cookieIDSign, err := r.Cookie("idSign")
@@ -27,13 +27,13 @@ func CheckID(r *http.Request) (string, bool) {
 	}
 
 	h := hmac.New(sha256.New, secretkey)
-	h.Write(data[:IdLength])
+	h.Write(data[:IDLength])
 	sign := h.Sum(nil)
 
-	// log.Println("auth/CheckID, ID:", hex.EncodeToString(data[:IdLength]))
+	// log.Println("auth/CheckID, ID:", hex.EncodeToString(data[:IDLength]))
 
-	if hmac.Equal(sign, data[IdLength:]) {
-		id := hex.EncodeToString(data[:IdLength])
+	if hmac.Equal(sign, data[IDLength:]) {
+		id := hex.EncodeToString(data[:IDLength])
 		log.Println("auth/authenticate - clientExists - id:", id)
 
 		return id, true
