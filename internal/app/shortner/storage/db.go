@@ -11,12 +11,6 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
-type URLEntity struct {
-	URL      string
-	Hash     string
-	ClientID string
-}
-
 type urlDB struct {
 	DB *sql.DB
 }
@@ -57,11 +51,6 @@ func (db urlDB) Create(ue entity.URLEntity) error {
 func (db urlDB) GetURLByHash(u string) (string, error) {
 	row := db.DB.QueryRow(`SELECT url FROM urls WHERE hash = $1;`, u)
 
-	//if row.Err() != nil {
-	//	log.Println("urlBD/GetURLByHash, record not found")
-	//	return "", errors.ErrNotFound
-	//}
-
 	var url string
 	err := row.Scan(&url)
 
@@ -80,11 +69,6 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 
 func (db urlDB) GetHashByURL(u string) (string, error) {
 	row := db.DB.QueryRow(`SELECT hash FROM urls WHERE url = $1;`, u)
-
-	//if row.Err() != nil {
-	//	log.Println("urlBD/GetHashByURL, record not found")
-	//	return "", errors.ErrNotFound
-	//}
 
 	var hash string
 	err := row.Scan(&hash)

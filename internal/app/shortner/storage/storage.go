@@ -11,7 +11,6 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/hashmap"
 )
 
-// urlStorage object with storage methods to work with DB
 type urlStorage struct {
 	inMemory inMemory
 }
@@ -21,19 +20,14 @@ type inMemory struct {
 	ClientActivity hashmap.ClientActivity
 }
 
-// NewURLStorage creates urlStorage object
 func NewURLStorage() *urlStorage {
-	// Restore data at start up
 	fsp := config.UC.FSP
-	um := make(hashmap.URLHashMap) // url map
+	um := make(hashmap.URLHashMap)
 	ca := make(hashmap.ClientActivity)
 	im := inMemory{um, ca}
 
-	// TODO restore from file both um and ua
-
-	// restore if path in config not empty
 	if fsp != "" {
-		im = restore(fsp) // get map
+		im = restore(fsp)
 	}
 
 	return &urlStorage{
@@ -41,7 +35,6 @@ func NewURLStorage() *urlStorage {
 	}
 }
 
-// Create adds new URL record to storage
 func (us *urlStorage) Create(ue entity.URLEntity) error {
 	// Save to map
 	log.Println("Storage/Create(): hello")
@@ -56,10 +49,8 @@ func (us *urlStorage) Create(ue entity.URLEntity) error {
 	}
 	us.inMemory.ClientActivity[ue.ClientID][ue.Hash] = true
 
-	// get file storage path from config
 	fsp := config.UC.FSP
 
-	// Save to file, if there is path in config
 	if fsp != "" {
 		write(ue, fsp)
 	}
@@ -115,17 +106,5 @@ func (us *urlStorage) GetClientUrls(id string) ([]entity.URLEntity, error) {
 }
 
 func (us *urlStorage) PingDB() bool {
-	//db, err := sql.Open("pgx",
-	//	config.UC.DSN)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//defer db.Close()
-	//ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	//defer cancel()
-	//if err = db.PingContext(ctx); err != nil {
-	//	return false
-	//}
-
 	return true
 }
