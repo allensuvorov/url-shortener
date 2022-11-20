@@ -13,19 +13,16 @@ import (
 func write(ue entity.URLEntity, fsp string) error {
 	log.Printf("Storage/File: saving to path - %s", fsp)
 
-	// Create and open file
 	file, err := os.OpenFile(fsp, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
-	// Close file at the end
 	defer file.Close()
 
-	// Write to file
-	enc := json.NewEncoder(file) // will be encoding to file
+	enc := json.NewEncoder(file)
 
 	err = enc.Encode(ue)
-	if err != nil { // add map to buff
+	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
@@ -38,14 +35,12 @@ func restore(fsp string) inMemory {
 	um := make(hashmap.URLHashMap) // url map
 	ca := make(hashmap.ClientActivity)
 
-	// open file
 	file, err := os.OpenFile(fsp, os.O_RDONLY|os.O_CREATE, 0777)
 	if err != nil {
 		log.Fatal(err)
 	}
 	dec := json.NewDecoder(file)
 
-	// Go over the data
 	for dec.More() {
 		t := entity.URLEntity{}
 		if err := dec.Decode(&t); err != nil {
@@ -53,7 +48,6 @@ func restore(fsp string) inMemory {
 		}
 		log.Println("File/restore: restoring URL entry from file:", t)
 
-		// push data to maps
 		um[t.Hash] = t.URL
 
 		_, ok := ca[t.ClientID]
