@@ -35,9 +35,7 @@ func getSAfromEnv() {
 		return
 	}
 	UC.SA = DefaultSA
-
-	// TODO test for ENV, using os.Setenv(sa, ":6060")
-
+	
 	if s, ok := os.LookupEnv(sa); ok {
 		log.Println("config/getSAfromEnv: sa in env is:", s)
 		UC.SA = s
