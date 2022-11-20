@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
-	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/routers"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
@@ -32,7 +32,7 @@ func main() {
 		URLStorage = storage.NewURLStorage()
 	}
 	URLService := service.NewURLService(URLStorage)
-	URLHandler := handler.NewURLHandler(URLService)
+	URLHandler := handlers.NewURLHandler(URLService)
 	r := routers.NewRouter(URLHandler)
 	sa := config.UC.SA // server address from config
 	log.Println("Serving on port", sa)

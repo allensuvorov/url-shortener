@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
-	handlers "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/assert"
