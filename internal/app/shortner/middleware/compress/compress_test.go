@@ -3,6 +3,7 @@ package compress
 import (
 	"bytes"
 	"compress/gzip"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
 	"io"
 	"log"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers"
-	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/assert"
 )

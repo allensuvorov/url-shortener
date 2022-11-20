@@ -8,7 +8,7 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/routers"
-	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 

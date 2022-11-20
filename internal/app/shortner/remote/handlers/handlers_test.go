@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"context"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/entity"
-	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/assert"
