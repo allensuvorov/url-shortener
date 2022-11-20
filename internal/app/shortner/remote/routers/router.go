@@ -10,7 +10,6 @@ import (
 
 func NewRouter(url handlers.URLHandler) chi.Router {
 
-	// create new router
 	r := chi.NewRouter()
 
 	r.Use(auth.AuthMiddleware, compress.GzipMiddleware)
