@@ -10,9 +10,6 @@ var (
 	DefaultSA  = ":8080"
 	DefaultBU  = "http://localhost:8080"
 	DefaultFSP = ""
-	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres"
-	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres/url_shortner"
-	//DefaultDSN = "postgres://postgres:sql@localhost:5432/postgres?searchpat=url_shortner"
 	DefaultDSN = ""
 )
 

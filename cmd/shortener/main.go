@@ -2,13 +2,14 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net/http"
+
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
 	handler "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/routers"
 	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
-	"log"
-	"net/http"
 )
 
 func init() {
