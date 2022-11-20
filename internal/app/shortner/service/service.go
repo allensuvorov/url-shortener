@@ -58,7 +58,7 @@ func (us URLService) Create(ue entity.URLEntity) (string, error) {
 	if err == errors.ErrNotFound {
 
 		// generate Hash for the shortened URL
-		h = buildHash(ue.URL)
+		h = generateHash(ue.URL)
 
 		// cut it to a short hash
 		h = getUniqShortHash(h, ue.URL, us)

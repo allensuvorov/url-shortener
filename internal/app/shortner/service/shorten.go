@@ -7,32 +7,25 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/domain/errors"
 )
 
-// sha256 to generate the hash value
-func buildHash(s string) string {
+func generateHash(s string) string {
 	h := sha256.New()
-	h.Write([]byte(s)) // what's that?
-
+	h.Write([]byte(s))
 	hash := fmt.Sprintf("%x", h.Sum(nil))
-
 	return hash
 }
 
-// check if short URL (hash) is already in the DB for a different long url, expand hash slice till unique
 func getUniqShortHash(h string, u string, us URLService) string {
-	var sh string // short hash
+	var shortHash string
 	for i := 8; i < len(h); i++ {
-		sh = h[0:i]
+		shortHash = h[0:i]
+		u1, err := us.urlStorage.GetURLByHash(shortHash)
 
-		u1, err := us.urlStorage.GetURLByHash(sh)
-
-		// if sh is uniq (not in storage), return sh
 		if err == errors.ErrNotFound {
-			return sh
+			return shortHash
 		}
-		// check if the URL is the same as in storage
 		if u1 == u {
-			return sh
+			return shortHash
 		}
 	}
-	return sh
+	return shortHash
 }
