@@ -118,8 +118,6 @@ func (db urlDB) GetClientUrls(id string) ([]entity.URLEntity, error) {
 }
 
 func (db urlDB) PingDB() bool {
-
-	//defer db.Close()
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := db.DB.PingContext(ctx); err != nil {
