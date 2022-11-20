@@ -30,8 +30,6 @@ func CheckID(r *http.Request) (string, bool) {
 	h.Write(data[:IDLength])
 	sign := h.Sum(nil)
 
-	// log.Println("auth/CheckID, ID:", hex.EncodeToString(data[:IDLength]))
-
 	if hmac.Equal(sign, data[IDLength:]) {
 		id := hex.EncodeToString(data[:IDLength])
 		log.Println("auth/authenticate - clientExists - id:", id)
@@ -43,7 +41,6 @@ func CheckID(r *http.Request) (string, bool) {
 }
 
 func generateRandom(size int) ([]byte, error) {
-	// генерируем случайную последовательность байт
 	b := make([]byte, size)
 	_, err := rand.Read(b)
 	if err != nil {
