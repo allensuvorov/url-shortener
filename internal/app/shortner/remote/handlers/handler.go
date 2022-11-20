@@ -14,9 +14,8 @@ import (
 )
 
 type URLService interface {
-	// Create takes URL and returns hash.
 	Create(ue entity.URLEntity) (string, error)
-	// Get takes hash and returns URL.
+
 	Get(h string) (string, error)
 
 	GetClientActivity(id string) ([]entity.URLEntity, error)
@@ -71,22 +70,17 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 
 	log.Println("Handler/CreateForJSONClient: ev is", encVal.Result)
 
-	// сначала устанавливаем заголовок Content-Type
-	// для передачи клиенту информации, кодированной в JSON
 	w.Header().Set("content-type", "application/json")
 
 	if errors2.Is(err, errors.ErrRecordExists) {
 		w.WriteHeader(http.StatusConflict)
 	} else {
-		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 	}
 
-	// пишем тело ответа
 	json.NewEncoder(w).Encode(encVal)
 }
 
-// Create passes URL to service and returns response with Hash.
 func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handler/Create - Start")
 	log.Println("Handler/Create - Set-Cookie:", w.Header().Get("Set-Cookie"))
@@ -96,10 +90,7 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 		ClientID: r.Header.Get("id"),
 	}
 
-	// читаем Body
 	b, err := io.ReadAll(r.Body)
-
-	// обрабатываем ошибку
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		log.Fatal(err)
@@ -107,16 +98,11 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Println("Handler/Create - read r.Body, no err")
 
-	// convert to string
 	ue.URL = string(b)
-
-	// log body from request
 	log.Println("Handler/Create - URL in the POST request is", ue.URL)
 
 	ue.Hash, err = uh.urlService.Create(ue)
-	//if err != nil {
-	//	http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
-	//}
+
 	if err != nil && !errors2.Is(err, errors.ErrRecordExists) {
 		http.Error(w, "Failed to create short URL", http.StatusInternalServerError)
 	}
@@ -124,23 +110,17 @@ func (uh URLHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if errors2.Is(err, errors.ErrRecordExists) {
 		w.WriteHeader(http.StatusConflict)
 	} else {
-		// устанавливаем статус-код 201
 		w.WriteHeader(http.StatusCreated)
 	}
 
-	// пишем тело ответа
 	w.Write([]byte(ue.Hash))
 }
 
-// Get passes Hash to service and returns response with URL.
 func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
-	// get hash
 	h := chi.URLParam(r, "hash")
 
-	// log path and hash
 	log.Println("Handler Get", h, r.URL.Path)
 
-	// Get from storage
 	u, err := uh.urlService.Get(h)
 
 	if err == errors.ErrNotFound {
@@ -148,17 +128,14 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// set header Location
 	w.Header().Set("Location", u)
 
-	// устанавливаем статус-код 307
 	w.WriteHeader(http.StatusTemporaryRedirect)
 
 	w.Write([]byte(u))
 }
 
 func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
-	// auth false
 	if r.Header.Get("auth") == "false" {
 		w.WriteHeader(http.StatusNoContent)
 		w.Write(nil)
@@ -174,14 +151,11 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 		log.Println("Handler/GetClientUrls: clientID is", clientID)
 		log.Println("Handler/GetClientUrls: dtoList is", dtoList)
 
-		// auth true, but no records
 		if dtoList == nil {
 			w.WriteHeader(http.StatusNoContent)
 			w.Write(nil)
 			return
 		}
-
-		// auth true, records exist
 
 		encVal := []struct { // encoded value
 			Hash string `json:"short_url"`
@@ -197,14 +171,10 @@ func (uh URLHandler) GetClientActivity(w http.ResponseWriter, r *http.Request) {
 
 		log.Println("Handler/GetClientUrls: ev is", encVal)
 
-		// сначала устанавливаем заголовок Content-Type
-		// для передачи клиенту информации, кодированной в JSON
 		w.Header().Set("content-type", "application/json")
 
-		// устанавливаем статус-код 200
 		w.WriteHeader(http.StatusOK)
 
-		// пишем тело ответа
 		json.NewEncoder(w).Encode(encVal)
 
 	}
@@ -240,7 +210,7 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 
 	clientID := r.Header.Get("id")
 
-	var encVals []struct { // encoded value
+	var encVals []struct {
 		ID   string `json:"correlation_id"`
 		Hash string `json:"short_url"`
 	}
@@ -261,8 +231,6 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Handler/BatchCreate: encVal is", encVals)
 
-	// сначала устанавливаем заголовок Content-Type
-	// для передачи клиенту информации, кодированной в JSON
 	w.Header().Set("content-type", "application/json")
 
 	w.WriteHeader(http.StatusCreated)
