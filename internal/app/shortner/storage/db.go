@@ -25,7 +25,8 @@ func NewURLDB() *urlDB {
     ID SERIAL PRIMARY KEY, 
     URL TEXT, 
     hash TEXT, 
-    client TEXT
+    client TEXT,
+    deleted BOOL
                               );`)
 	if err != nil {
 		log.Fatal(err)
