@@ -21,12 +21,15 @@ func NewURLDB() *urlDB {
 	if err != nil {
 		panic(err)
 	}
-	db.Exec(`CREATE TABLE IF NOT EXISTS urls(
+	_, err = db.Exec(`CREATE TABLE IF NOT EXISTS urls(
     ID SERIAL PRIMARY KEY, 
     URL TEXT, 
     hash TEXT, 
     client TEXT
                               );`)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Println("created new URL Database")
 	return &urlDB{
