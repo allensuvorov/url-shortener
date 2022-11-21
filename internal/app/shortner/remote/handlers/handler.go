@@ -257,7 +257,7 @@ func (uh URLHandler) BatchDelete(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Handlers/BatchDelete - decoded request: object", decVals)
 
-	//service.BatchDelete(decVals)
+	//service.BatchDelete(decVals, r.Header.Get("id"))
 
 	w.WriteHeader(http.StatusAccepted)
 
