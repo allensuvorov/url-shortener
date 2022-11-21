@@ -129,6 +129,11 @@ func (uh URLHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err == errors.ErrRecordDeleted {
+		http.Error(w, errors.ErrRecordDeleted.Error(), http.StatusGone)
+		return
+	}
+
 	w.Header().Set("Location", u)
 
 	w.WriteHeader(http.StatusTemporaryRedirect)

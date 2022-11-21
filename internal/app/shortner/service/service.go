@@ -69,7 +69,10 @@ func (us URLService) Create(ue entity.URLEntity) (string, error) {
 func (us URLService) Get(h string) (string, error) {
 	u, err := us.urlStorage.GetURLByHash(h)
 
-	if err == errors.ErrNotFound {
+	//if err == errors.ErrNotFound {
+	//	return "", err
+	//}
+	if err != nil {
 		return "", err
 	}
 	return u, nil

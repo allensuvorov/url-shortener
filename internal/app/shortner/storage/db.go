@@ -52,15 +52,40 @@ func (db urlDB) Create(ue entity.URLEntity) error {
 	return nil
 }
 
+// TODO: remove
+// func (db urlDB) GetURLByHash(u string) (string, error) {
+//	row := db.DB.QueryRow(`SELECT url FROM urls WHERE hash = $1;`, u)
+//
+//	var url string
+//	err := row.Scan(&url)
+//
+//	if err == sql.ErrNoRows {
+//		log.Println("urlBD/GetHashByURL, record not found")
+//		return "", errors.ErrNotFound
+//	}
+//
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//
+//	log.Println("Storage GetHashByURL, found record", url)
+//	return url, nil
+//}
+
 func (db urlDB) GetURLByHash(u string) (string, error) {
-	row := db.DB.QueryRow(`SELECT url FROM urls WHERE hash = $1;`, u)
+	row := db.DB.QueryRow(`SELECT url, deleted FROM urls WHERE hash = $1;`, u)
 
 	var url string
-	err := row.Scan(&url)
+	var deleted bool
+	err := row.Scan(&url, &deleted)
 
 	if err == sql.ErrNoRows {
 		log.Println("urlBD/GetHashByURL, record not found")
 		return "", errors.ErrNotFound
+	}
+
+	if deleted {
+		return "", errors.ErrRecordDeleted
 	}
 
 	if err != nil {
@@ -128,4 +153,9 @@ func (db urlDB) PingDB() bool {
 		return false
 	}
 	return true
+}
+
+func (db urlDB) BatchDelete(hashList []string, clientID string) {
+	//is hash in the DB?
+	//is client the owner?
 }
