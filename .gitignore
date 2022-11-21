@@ -11,6 +11,9 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# Storage files
+.urls.log
+
 # Binaries
 cmd/shortener/main
 cmd/shortener/shortener

@@ -10,18 +10,21 @@ var (
 	DefaultSA  = ":8080"
 	DefaultBU  = "http://localhost:8080"
 	DefaultFSP = ""
+	DefaultDSN = ""
 )
 
 const (
 	sa  = "SERVER_ADDRESS"
 	bu  = "BASE_URL"
 	fsp = "FILE_STORAGE_PATH"
+	dsn = "DATABASE_DSN"
 )
 
 type URLConfig struct {
 	SA  string
 	BU  string
 	FSP string
+	DSN string
 }
 
 var UC = URLConfig{}
@@ -32,8 +35,6 @@ func getSAfromEnv() {
 		return
 	}
 	UC.SA = DefaultSA
-
-	// TODO test for ENV, using os.Setenv(sa, ":6060")
 
 	if s, ok := os.LookupEnv(sa); ok {
 		log.Println("config/getSAfromEnv: sa in env is:", s)
@@ -62,6 +63,16 @@ func getFSPfromEnv() {
 	}
 }
 
+func getDSNfromEnv() {
+	if UC.DSN != "" {
+		return
+	}
+	UC.DSN = DefaultDSN
+	if s, ok := os.LookupEnv(dsn); ok {
+		UC.DSN = s
+	}
+}
+
 func BuildConfig() {
 	flag.Parse()
 	log.Println("config/BuildConfig UC after flags", UC)
@@ -69,5 +80,6 @@ func BuildConfig() {
 	getSAfromEnv()
 	getBUfromEnv()
 	getFSPfromEnv()
+	getDSNfromEnv()
 	log.Println("config/BuildConfig UC after env vars", UC)
 }

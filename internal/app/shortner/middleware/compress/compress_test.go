@@ -9,16 +9,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
-	handlers "github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers/url"
-	service "github.com/allensuvorov/urlshortner/internal/app/shortner/service/url"
-	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/config"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/remote/handlers"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/service"
+	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 )
 
 func TestGzipHandler_GzipMiddleware(t *testing.T) {
 
-	// Create Handler
 	config.BuildConfig()
 	usm := storage.NewURLStorage()
 	us := service.NewURLService(usm)
@@ -27,8 +27,8 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 	tests := []struct {
 		name                     string
 		url                      string
-		headerAcceptEncoding     string // Accept-Encoding
-		headerContentEncoding    string // Content-Encoding
+		headerAcceptEncoding     string
+		headerContentEncoding    string
 		expectedResponseBody     []byte
 		expectedResponseCEHeader string
 	}{
@@ -59,18 +59,14 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 				log.Fatalf("failed compress data: %v", err)
 			}
 
-			// Create POST request
 			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080", &buf)
 			w := httptest.NewRecorder()
 
-			// Add headers
 			r.Header.Set("Content-Encoding", tt.headerAcceptEncoding)
 			r.Header.Set("Accept-Encoding", tt.headerAcceptEncoding)
 
-			// Handler wrapped in middleware
-			h := GzipMiddleware(http.HandlerFunc(uh.Create)) // h - is a struct
+			h := GzipMiddleware(http.HandlerFunc(uh.Create))
 
-			// Call Middleware
 			h.ServeHTTP(w, r)
 			log.Println("compress_test: statuscode", w.Code)
 
@@ -80,7 +76,6 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 				log.Fatal(err)
 			}
 
-			// при чтении вернётся распакованный слайс байт
 			body, err := io.ReadAll(zr)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
