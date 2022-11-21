@@ -240,8 +240,8 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(encVals)
 }
 
-func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
-	log.Println("Handlers/DeleteURLs - Hello")
+func (uh URLHandler) BatchDelete(w http.ResponseWriter, r *http.Request) {
+	log.Println("Handlers/BatchDelete - Hello")
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
@@ -255,9 +255,11 @@ func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Println("Handlers/DeleteURLs - decoded request: object", decVals)
+	log.Println("Handlers/BatchDelete - decoded request: object", decVals)
+
+	//service.BatchDelete(decVals)
 
 	w.WriteHeader(http.StatusAccepted)
 
-	log.Println("Handlers/DeleteURLs - Buy")
+	log.Println("Handlers/BatchDelete - Buy")
 }
