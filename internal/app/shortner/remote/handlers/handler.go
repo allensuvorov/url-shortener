@@ -39,9 +39,10 @@ func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request)
 		URL string
 	}
 
-	// TODO: Read and handle content-type header from request
-	// contentType := response.Header.Get("Content-Type")
-	// это может быть, например, "application/json; charset=UTF-8"
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
+		return
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&decVal); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -196,9 +197,10 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 		URL string `json:"original_url"`
 	}
 
-	// TODO: Read and handle content-type header from request
-	// contentType := response.Header.Get("Content-Type")
-	// это может быть, например, "application/json; charset=UTF-8"
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
+		return
+	}
 
 	if err := json.NewDecoder(r.Body).Decode(&decVals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -236,4 +238,27 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 
 	json.NewEncoder(w).Encode(encVals)
+}
+
+func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
+	log.Println("Handlers/DeleteURLs - Hello")
+	
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var decVals []string
+
+	if err := json.NewDecoder(r.Body).Decode(&decVals); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	log.Println("Handlers/DeleteURLs - decoded request: object", decVals)
+
+	w.WriteHeader(http.StatusAccepted)
+
+	log.Println("Handlers/DeleteURLs - Buy")
+	return
 }
