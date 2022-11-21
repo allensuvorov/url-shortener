@@ -199,12 +199,10 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
-		return
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&decVals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	}
 	log.Println("Handler/BatchCreate - request: object", decVals)
 
@@ -245,14 +243,12 @@ func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
 
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
-		return
 	}
 
 	var decVals []string
 
 	if err := json.NewDecoder(r.Body).Decode(&decVals); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-		return
 	}
 
 	log.Println("Handlers/DeleteURLs - decoded request: object", decVals)
@@ -260,5 +256,4 @@ func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusAccepted)
 
 	log.Println("Handlers/DeleteURLs - Buy")
-	return
 }
