@@ -242,7 +242,7 @@ func (uh URLHandler) BatchCreate(w http.ResponseWriter, r *http.Request) {
 
 func (uh URLHandler) DeleteURLs(w http.ResponseWriter, r *http.Request) {
 	log.Println("Handlers/DeleteURLs - Hello")
-	
+
 	if r.Header.Get("Content-Type") != "application/json" {
 		http.Error(w, errors.ErrWrongContentType.Error(), http.StatusBadRequest)
 		return
