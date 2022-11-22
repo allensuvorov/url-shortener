@@ -95,6 +95,7 @@ func (us URLService) PingDB() bool {
 }
 
 func (us URLService) BatchDelete(hashList []string, clientID string) error {
-	return us.BatchDelete(hashList, clientID)
-
+	log.Println("service/BatchDelete - Hello")
+	log.Println("service/BatchDelete - Bye")
+	return us.urlStorage.BatchDelete(hashList, clientID)
 }

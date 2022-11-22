@@ -156,6 +156,8 @@ func (db urlDB) PingDB() bool {
 }
 
 func (db urlDB) BatchDelete(hashList []string, clientID string) error {
+	log.Println("urlDB/BatchDelete - Hello")
+
 	// TODO: review batch update,
 	// TODO: and fan-in
 
@@ -174,6 +176,6 @@ func (db urlDB) BatchDelete(hashList []string, clientID string) error {
 			log.Fatal(err)
 		}
 	}
-
+	log.Println("urlDB/BatchDelete - Bye")
 	return nil
 }
