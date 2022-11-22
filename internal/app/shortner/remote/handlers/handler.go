@@ -21,6 +21,8 @@ type URLService interface {
 	GetClientActivity(id string) ([]entity.URLEntity, error)
 
 	PingDB() bool
+
+	BatchDelete(hashList []string, clientID string) error
 }
 
 type URLHandler struct {
@@ -262,7 +264,10 @@ func (uh URLHandler) BatchDelete(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("Handlers/BatchDelete - decoded request: object", decVals)
 
-	//service.BatchDelete(decVals, r.Header.Get("id"))
+	err := uh.urlService.BatchDelete(decVals, r.Header.Get("id"))
+	if err != nil {
+		log.Println(err)
+	}
 
 	w.WriteHeader(http.StatusAccepted)
 
