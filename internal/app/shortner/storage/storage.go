@@ -109,6 +109,6 @@ func (us *urlStorage) PingDB() bool {
 	return true
 }
 
-func (db *urlStorage) BatchDelete(hashList []string, clientID string) error {
+func (us *urlStorage) BatchDelete(hashList []string, clientID string) error {
 	return nil
 }
