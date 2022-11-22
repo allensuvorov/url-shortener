@@ -155,7 +155,25 @@ func (db urlDB) PingDB() bool {
 	return true
 }
 
-func (db urlDB) BatchDelete(hashList []string, clientID string) {
-	//is hash in the DB?
-	//is client the owner?
+func (db urlDB) BatchDelete(hashList []string, clientID string) error {
+	// TODO: review batch update,
+	// TODO: and fan-in
+
+	for _, h := range hashList {
+		row := db.DB.QueryRow(`SELECT url, client FROM urls WHERE hash = $1;`, h)
+		var url string
+		var client string
+
+		err := row.Scan(&url, &client)
+		if err == sql.ErrNoRows || client != clientID {
+			continue
+		}
+
+		_, err = db.DB.Exec(`UPDATE urls SET deleted = TRUE WHERE hash = $1;`, h)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	return nil
 }
