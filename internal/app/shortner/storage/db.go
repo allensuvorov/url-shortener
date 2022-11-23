@@ -52,26 +52,6 @@ func (db urlDB) Create(ue entity.URLEntity) error {
 	return nil
 }
 
-// TODO: remove
-// func (db urlDB) GetURLByHash(u string) (string, error) {
-//	row := db.DB.QueryRow(`SELECT url FROM urls WHERE hash = $1;`, u)
-//
-//	var url string
-//	err := row.Scan(&url)
-//
-//	if err == sql.ErrNoRows {
-//		log.Println("urlBD/GetHashByURL, record not found")
-//		return "", errors.ErrNotFound
-//	}
-//
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	log.Println("Storage GetHashByURL, found record", url)
-//	return url, nil
-//}
-
 func (db urlDB) GetURLByHash(u string) (string, error) {
 	row := db.DB.QueryRow(`SELECT url, deleted FROM urls WHERE hash = $1;`, u)
 

@@ -34,6 +34,7 @@ func restore(fsp string) inMemory {
 	log.Println("File/restore: restoring data from file")
 	um := make(hashmap.URLHashMap) // url map
 	ca := make(hashmap.ClientActivity)
+	dd := make(hashmap.Deleted)
 
 	file, err := os.OpenFile(fsp, os.O_RDONLY|os.O_CREATE, 0777)
 	if err != nil {
@@ -49,7 +50,7 @@ func restore(fsp string) inMemory {
 		log.Println("File/restore: restoring URL entry from file:", t)
 
 		um[t.Hash] = t.URL
-
+		dd[t.Hash] = t.Deleted
 		_, ok := ca[t.ClientID]
 		if !ok {
 			ca[t.ClientID] = make(map[string]bool)
@@ -62,5 +63,5 @@ func restore(fsp string) inMemory {
 	}
 
 	log.Println("File/restore: all restored data in map:", um, ca)
-	return inMemory{um, ca}
+	return inMemory{um, ca, dd}
 }
