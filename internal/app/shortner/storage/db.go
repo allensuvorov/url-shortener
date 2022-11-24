@@ -39,7 +39,7 @@ func NewURLDB() *urlDB {
 	}
 }
 
-func (db urlDB) Create(ue entity.URLEntity) error {
+func (db *urlDB) Create(ue entity.URLEntity) error {
 	_, err := db.DB.Exec(
 		`INSERT INTO urls
 		(url, hash, client)
@@ -53,7 +53,7 @@ func (db urlDB) Create(ue entity.URLEntity) error {
 	return nil
 }
 
-func (db urlDB) GetURLByHash(u string) (string, error) {
+func (db *urlDB) GetURLByHash(u string) (string, error) {
 	row := db.DB.QueryRow(`SELECT url, deleted FROM urls WHERE hash = $1;`, u)
 
 	var url string
@@ -77,7 +77,7 @@ func (db urlDB) GetURLByHash(u string) (string, error) {
 	return url, nil
 }
 
-func (db urlDB) GetHashByURL(u string) (string, error) {
+func (db *urlDB) GetHashByURL(u string) (string, error) {
 	row := db.DB.QueryRow(`SELECT hash FROM urls WHERE url = $1;`, u)
 
 	var hash string
@@ -95,7 +95,7 @@ func (db urlDB) GetHashByURL(u string) (string, error) {
 	return hash, nil
 }
 
-func (db urlDB) GetClientUrls(id string) ([]entity.URLEntity, error) {
+func (db *urlDB) GetClientUrls(id string) ([]entity.URLEntity, error) {
 	log.Println("urlDB/GetClientUrls client id is:", id)
 	urlEntities := make([]entity.URLEntity, 0)
 
@@ -127,7 +127,7 @@ func (db urlDB) GetClientUrls(id string) ([]entity.URLEntity, error) {
 	return urlEntities, nil
 }
 
-func (db urlDB) PingDB() bool {
+func (db *urlDB) PingDB() bool {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	if err := db.DB.PingContext(ctx); err != nil {
@@ -154,7 +154,7 @@ func (db urlDB) PingDB() bool {
 //	return nil
 //}
 
-func (db urlDB) BatchDelete(hashList []string, clientID string) error {
+func (db *urlDB) BatchDelete(hashList []string, clientID string) error {
 	log.Println("urlDB/BatchDelete - Hello")
 
 	startTimer := time.Now()
@@ -191,3 +191,6 @@ func (db urlDB) BatchDelete(hashList []string, clientID string) error {
 
 	return tx.Commit()
 }
+
+//TODO: func (db *urlDB) Flush() error
+//TODO:
