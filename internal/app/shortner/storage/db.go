@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"time"
 
@@ -154,6 +155,10 @@ func (db urlDB) PingDB() bool {
 //}
 
 func (db urlDB) BatchDelete(hashList []string, clientID string) error {
+	log.Println("urlDB/BatchDelete - Hello")
+
+	startTimer := time.Now()
+
 	// шаг 1 — объявляем транзакцию
 	tx, err := db.DB.Begin()
 	if err != nil {
@@ -180,5 +185,9 @@ func (db urlDB) BatchDelete(hashList []string, clientID string) error {
 		}
 	}
 	// шаг 4 — сохраняем изменения
+	duration := time.Since(startTimer)
+	fmt.Printf("urlDB/BatchDelete - Время выполнения %d\n", duration.Milliseconds())
+	log.Println("urlDB/BatchDelete - Bye")
+
 	return tx.Commit()
 }
