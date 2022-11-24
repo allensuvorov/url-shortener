@@ -14,8 +14,9 @@ import (
 )
 
 type urlDB struct {
-	DB     *sql.DB
-	buffer []string
+	DB       *sql.DB
+	buffer   []string
+	clientID string
 }
 
 func NewURLDB() *urlDB {
@@ -157,45 +158,45 @@ func (db *urlDB) PingDB() bool {
 //	return nil
 //}
 
-func (db *urlDB) BatchDelete(hashList *[]string, clientID string) error {
-	log.Println("urlDB/BatchDelete - Hello")
+//func (db *urlDB) BatchDelete(hashList *[]string, clientID string) error {
+//	log.Println("urlDB/BatchDelete - Hello")
+//
+//	startTimer := time.Now()
+//
+//	// шаг 1 — объявляем транзакцию
+//	tx, err := db.DB.Begin()
+//	if err != nil {
+//		return err
+//	}
+//	// шаг 1.1 — если возникает ошибка, откатываем изменения
+//	defer tx.Rollback()
+//
+//	//шаг 2 — готовим инструкцию
+//	stmt, err := tx.Prepare(
+//		`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`,
+//	)
+//	if err != nil {
+//		return err
+//	}
+//
+//	// шаг 2.1 — не забываем закрыть инструкцию, когда она больше не нужна
+//	defer stmt.Close()
+//
+//	for _, h := range *hashList {
+//		// шаг 3 — указываем, что каждая короткая ссылка будет добавлена в транзакцию
+//		if _, err = stmt.Exec(h, clientID); err != nil {
+//			return err
+//		}
+//	}
+//	// шаг 4 — сохраняем изменения
+//	duration := time.Since(startTimer)
+//	fmt.Printf("urlDB/BatchDelete - Время выполнения %d\n", duration.Milliseconds())
+//	log.Println("urlDB/BatchDelete - Bye")
+//
+//	return tx.Commit()
+//}
 
-	startTimer := time.Now()
-
-	// шаг 1 — объявляем транзакцию
-	tx, err := db.DB.Begin()
-	if err != nil {
-		return err
-	}
-	// шаг 1.1 — если возникает ошибка, откатываем изменения
-	defer tx.Rollback()
-
-	//шаг 2 — готовим инструкцию
-	stmt, err := tx.Prepare(
-		`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`,
-	)
-	if err != nil {
-		return err
-	}
-
-	// шаг 2.1 — не забываем закрыть инструкцию, когда она больше не нужна
-	defer stmt.Close()
-
-	for _, h := range *hashList {
-		// шаг 3 — указываем, что каждая короткая ссылка будет добавлена в транзакцию
-		if _, err = stmt.Exec(h, clientID); err != nil {
-			return err
-		}
-	}
-	// шаг 4 — сохраняем изменения
-	duration := time.Since(startTimer)
-	fmt.Printf("urlDB/BatchDelete - Время выполнения %d\n", duration.Milliseconds())
-	log.Println("urlDB/BatchDelete - Bye")
-
-	return tx.Commit()
-}
-
-func (db *urlDB) flushBufferToDB(clientID string) error {
+func (db *urlDB) flushBufferToDB() error {
 	log.Println("urlDB/flushBufferToDB - Hello")
 	startTimer := time.Now()
 
@@ -219,7 +220,7 @@ func (db *urlDB) flushBufferToDB(clientID string) error {
 	defer stmt.Close()
 
 	for _, h := range db.buffer {
-		if _, err = stmt.Exec(h, clientID); err != nil {
+		if _, err = stmt.Exec(h, db.clientID); err != nil {
 			return err
 		}
 	}
@@ -230,11 +231,11 @@ func (db *urlDB) flushBufferToDB(clientID string) error {
 	return tx.Commit()
 }
 
-func (db *urlDB) addHashToBuffer(h string, clientID string) error {
+func (db *urlDB) addHashToBuffer(h string) error {
 	db.buffer = append(db.buffer, h)
 
 	if cap(db.buffer) == len(db.buffer) {
-		err := db.flushBufferToDB(clientID)
+		err := db.flushBufferToDB()
 		if err != nil {
 			return errors2.New("cannot add records to the database")
 		}
@@ -242,13 +243,14 @@ func (db *urlDB) addHashToBuffer(h string, clientID string) error {
 	return nil
 }
 
-func (db *urlDB) UrlFromListToDB(hashLIst *[]string, clientID string) error {
+func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
+	db.clientID = clientID
 	for _, h := range *hashLIst {
-		err := db.addHashToBuffer(h, clientID)
+		err := db.addHashToBuffer(h)
 		if err != nil {
 			log.Println(err)
 		}
 	}
-	db.flushBufferToDB(clientID)
+	db.flushBufferToDB()
 	return nil
 }
