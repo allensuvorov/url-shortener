@@ -145,7 +145,7 @@ func (db urlDB) BatchDelete(hashList []string, clientID string) error {
 
 		_, err := db.DB.Exec(`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`, h, clientID)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 
