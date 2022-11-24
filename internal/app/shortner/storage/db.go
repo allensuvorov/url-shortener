@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
+	errors2 "errors"
 	"fmt"
 	"log"
 	"time"
@@ -13,7 +14,8 @@ import (
 )
 
 type urlDB struct {
-	DB *sql.DB
+	DB     *sql.DB
+	buffer []string
 }
 
 func NewURLDB() *urlDB {
@@ -35,7 +37,8 @@ func NewURLDB() *urlDB {
 
 	log.Println("created new URL Database")
 	return &urlDB{
-		DB: db,
+		DB:     db,
+		buffer: make([]string, 0, 1000),
 	}
 }
 
@@ -154,7 +157,7 @@ func (db *urlDB) PingDB() bool {
 //	return nil
 //}
 
-func (db *urlDB) BatchDelete(hashList []string, clientID string) error {
+func (db *urlDB) BatchDelete(hashList *[]string, clientID string) error {
 	log.Println("urlDB/BatchDelete - Hello")
 
 	startTimer := time.Now()
@@ -178,7 +181,7 @@ func (db *urlDB) BatchDelete(hashList []string, clientID string) error {
 	// шаг 2.1 — не забываем закрыть инструкцию, когда она больше не нужна
 	defer stmt.Close()
 
-	for _, h := range hashList {
+	for _, h := range *hashList {
 		// шаг 3 — указываем, что каждая короткая ссылка будет добавлена в транзакцию
 		if _, err = stmt.Exec(h, clientID); err != nil {
 			return err
@@ -192,5 +195,60 @@ func (db *urlDB) BatchDelete(hashList []string, clientID string) error {
 	return tx.Commit()
 }
 
-//TODO: func (db *urlDB) Flush() error
-//TODO:
+func (db *urlDB) flushBufferToDB(clientID string) error {
+	log.Println("urlDB/flushBufferToDB - Hello")
+	startTimer := time.Now()
+
+	if db.DB == nil {
+		return errors2.New("You haven`t opened the database connection")
+	}
+
+	tx, err := db.DB.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare(
+		`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	for _, h := range db.buffer {
+		if _, err = stmt.Exec(h, clientID); err != nil {
+			return err
+		}
+	}
+	duration := time.Since(startTimer)
+	fmt.Printf("urlDB/flushBufferToDB - Execution Time ms %d\n", duration.Milliseconds())
+	log.Println("urlDB/flushBufferToDB - Bye")
+
+	return tx.Commit()
+}
+
+func (db *urlDB) addHashToBuffer(h string, clientID string) error {
+	db.buffer = append(db.buffer, h)
+
+	if cap(db.buffer) == len(db.buffer) {
+		err := db.flushBufferToDB(clientID)
+		if err != nil {
+			return errors2.New("cannot add records to the database")
+		}
+	}
+	return nil
+}
+
+func (db *urlDB) UrlFromListToDB(hashLIst *[]string, clientID string) error {
+	for _, h := range *hashLIst {
+		err := db.addHashToBuffer(h, clientID)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	db.flushBufferToDB(clientID)
+	return nil
+}

@@ -114,12 +114,12 @@ func (us *urlStorage) PingDB() bool {
 	return true
 }
 
-func (us *urlStorage) BatchDelete(hashList []string, clientID string) error {
+func (us *urlStorage) BatchDelete(hashList *[]string, clientID string) error {
 	log.Println("Storage/BatchDelete - Hello")
 
 	// TODO: in file - update field: Deleted
 
-	for _, h := range hashList {
+	for _, h := range *hashList {
 		_, ok := us.inMemory.ClientActivity[clientID][h]
 		if ok {
 			us.inMemory.Deleted[h] = true
