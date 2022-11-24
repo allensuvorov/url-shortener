@@ -142,20 +142,13 @@ func (db urlDB) BatchDelete(hashList []string, clientID string) error {
 	// TODO: and fan-in
 
 	for _, h := range hashList {
-		row := db.DB.QueryRow(`SELECT url, client FROM urls WHERE hash = $1;`, h)
-		var url string
-		var client string
 
-		err := row.Scan(&url, &client)
-		if err == sql.ErrNoRows || client != clientID {
-			continue
-		}
-
-		_, err = db.DB.Exec(`UPDATE urls SET deleted = TRUE WHERE hash = $1;`, h)
+		_, err := db.DB.Exec(`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`, h, clientID)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
+
 	log.Println("urlDB/BatchDelete - Bye")
 	return nil
 }

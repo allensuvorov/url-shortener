@@ -9,6 +9,7 @@ import (
 	"github.com/allensuvorov/urlshortner/internal/app/shortner/storage"
 	"log"
 	"net/http"
+	"os"
 )
 
 func init() {
@@ -22,7 +23,7 @@ func init() {
 func main() {
 	// for testing:
 	// os.Setenv("FILE_STORAGE_PATH", "/Users/allen/go/src/yandex/projects/urlshortner/internal/app/shortner/storage/.urls.log")
-	//os.Setenv("DATABASE_DSN", "postgres://postgres:sql@localhost:5432/url_db")
+	os.Setenv("DATABASE_DSN", "postgres://postgres:sql@localhost:5432/url_db")
 	config.BuildConfig()
 	var URLStorage service.URLStorage
 	if config.UC.DSN != "" {
