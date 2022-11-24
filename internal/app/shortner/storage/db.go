@@ -201,7 +201,7 @@ func (db *urlDB) flushBufferToDB() error {
 	startTimer := time.Now()
 
 	if db.DB == nil {
-		return errors2.New("You haven`t opened the database connection")
+		return errors2.New("you haven`t opened the database connection")
 	}
 
 	tx, err := db.DB.Begin()
