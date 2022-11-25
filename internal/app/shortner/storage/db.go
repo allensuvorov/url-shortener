@@ -140,62 +140,6 @@ func (db *urlDB) PingDB() bool {
 	return true
 }
 
-//func (db urlDB) BatchDelete(hashList []string, clientID string) error {
-//	log.Println("urlDB/BatchDelete - Hello")
-//
-//	// TODO: review batch update,
-//	// TODO: and fan-in
-//
-//	for _, h := range hashList {
-//
-//		_, err := db.DB.Exec(`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`, h, clientID)
-//		if err != nil {
-//			return err
-//		}
-//	}
-//
-//	log.Println("urlDB/BatchDelete - Bye")
-//	return nil
-//}
-
-//func (db *urlDB) BatchDelete(hashList *[]string, clientID string) error {
-//	log.Println("urlDB/BatchDelete - Hello")
-//
-//	startTimer := time.Now()
-//
-//	// шаг 1 — объявляем транзакцию
-//	tx, err := db.DB.Begin()
-//	if err != nil {
-//		return err
-//	}
-//	// шаг 1.1 — если возникает ошибка, откатываем изменения
-//	defer tx.Rollback()
-//
-//	//шаг 2 — готовим инструкцию
-//	stmt, err := tx.Prepare(
-//		`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`,
-//	)
-//	if err != nil {
-//		return err
-//	}
-//
-//	// шаг 2.1 — не забываем закрыть инструкцию, когда она больше не нужна
-//	defer stmt.Close()
-//
-//	for _, h := range *hashList {
-//		// шаг 3 — указываем, что каждая короткая ссылка будет добавлена в транзакцию
-//		if _, err = stmt.Exec(h, clientID); err != nil {
-//			return err
-//		}
-//	}
-//	// шаг 4 — сохраняем изменения
-//	duration := time.Since(startTimer)
-//	fmt.Printf("urlDB/BatchDelete - Время выполнения %d\n", duration.Milliseconds())
-//	log.Println("urlDB/BatchDelete - Bye")
-//
-//	return tx.Commit()
-//}
-
 func (db *urlDB) flushBufferToDB() error {
 	log.Println("urlDB/flushBufferToDB - Hello")
 	startTimer := time.Now()
