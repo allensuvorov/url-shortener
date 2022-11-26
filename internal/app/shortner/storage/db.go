@@ -40,7 +40,8 @@ func NewURLDB() *urlDB {
 
 	log.Println("created new URL Database")
 	return &urlDB{
-		DB: db,
+		DB:       db,
+		BufferCh: make(chan urlDeleteRequest, 1000),
 		//buffer: make([]string, 0, 1000),
 	}
 }
@@ -208,15 +209,17 @@ type urlDeleteRequest struct {
 
 // TODO: run this function in goroutine
 func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
-	if _, ok := <-db.BufferCh; !ok {
-		db.BufferCh = make(chan urlDeleteRequest, 1000)
-	}
+	log.Println("urlDB/BatchDelete - Hello")
+
+	//if _, ok := <-db.BufferCh; !ok {
+	//	db.BufferCh = make(chan urlDeleteRequest, 1000)
+	//}
 
 	// que up the hashlists in goroutines - to go over the lists and send to buffer
-	go func(hashLIst *[]string, clientID string) {
+	go func(hashList *[]string, clientID string) {
 		wg := &sync.WaitGroup{}
 
-		for _, h := range *hashLIst {
+		for _, h := range *hashList {
 			wg.Add(1)
 			udr := urlDeleteRequest{h, clientID}
 
@@ -231,8 +234,14 @@ func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
 			}(udr)
 		}
 		wg.Wait()
+		close(db.BufferCh)
 	}(hashLIst, clientID)
-	db.flushBufferToDB()
+	go func() {
+		db.flushBufferToDB()
+	}()
+
+	log.Println("urlDB/BatchDelete - Bye")
+
 	return nil
 }
 
