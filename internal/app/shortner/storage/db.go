@@ -211,8 +211,10 @@ type urlDeleteRequest struct {
 func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
 	log.Println("urlDB/BatchDelete - Hello")
 
-	//if _, ok := <-db.BufferCh; !ok {
-	//	db.BufferCh = make(chan urlDeleteRequest, 1000)
+	//if db.BufferCh != nil {
+	//	if _, ok := <-db.BufferCh; !ok {
+	//		db.BufferCh = make(chan urlDeleteRequest, 1000)
+	//	}
 	//}
 
 	// que up the hashlists in goroutines - to go over the lists and send to buffer
@@ -234,7 +236,7 @@ func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
 			}(udr)
 		}
 		wg.Wait()
-		close(db.BufferCh)
+		//close(db.BufferCh)
 	}(hashLIst, clientID)
 	go func() {
 		db.flushBufferToDB()
@@ -268,9 +270,20 @@ func (db *urlDB) flushBufferToDB() error {
 
 	defer stmt.Close()
 
-	for v := range db.BufferCh {
-		if _, err = stmt.Exec(v.hash, v.clientID); err != nil {
-			return err
+	//for v := range db.BufferCh {
+	//	if _, err = stmt.Exec(v.hash, v.clientID); err != nil {
+	//		return err
+	//	}
+	//}
+loop:
+	for {
+		select {
+		case v := <-db.BufferCh:
+			if _, err = stmt.Exec(v.hash, v.clientID); err != nil {
+				return err
+			}
+		default:
+			break loop
 		}
 	}
 	duration := time.Since(startTimer)
