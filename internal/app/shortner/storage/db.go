@@ -143,81 +143,14 @@ func (db *urlDB) PingDB() bool {
 	return true
 }
 
-//func (db *urlDB) flushBufferToDB() error {
-//	log.Println("urlDB/flushBufferToDB - Hello")
-//	startTimer := time.Now()
-//
-//	if db.DB == nil {
-//		return errors2.New("you haven`t opened the database connection")
-//	}
-//
-//	tx, err := db.DB.Begin()
-//	if err != nil {
-//		return err
-//	}
-//	defer tx.Rollback()
-//
-//	stmt, err := tx.Prepare(
-//		`UPDATE urls SET deleted = TRUE WHERE hash = $1 AND client = $2;`,
-//	)
-//	if err != nil {
-//		return err
-//	}
-//
-//	defer stmt.Close()
-//
-//	for _, h := range db.buffer {
-//		if _, err = stmt.Exec(h, db.clientID); err != nil {
-//			return err
-//		}
-//	}
-//	duration := time.Since(startTimer)
-//	fmt.Printf("urlDB/flushBufferToDB - Execution Time ms %d\n", duration.Milliseconds())
-//	log.Println("urlDB/flushBufferToDB - Bye")
-//
-//	return tx.Commit()
-//}
-
-//func (db *urlDB) addHashToBuffer(h string) error {
-//	db.buffer = append(db.buffer, h)
-//
-//	if cap(db.buffer) == len(db.buffer) {
-//		err := db.flushBufferToDB()
-//		if err != nil {
-//			return errors2.New("cannot add records to the database")
-//		}
-//	}
-//	return nil
-//}
-
-//func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
-//	db.clientID = clientID
-//	for _, h := range *hashLIst {
-//		err := db.addHashToBuffer(h)
-//		if err != nil {
-//			log.Println(err)
-//		}
-//	}
-//	db.flushBufferToDB()
-//	return nil
-//}
-
 type urlDeleteRequest struct {
 	hash     string
 	clientID string
 }
 
-// TODO: run this function in goroutine
 func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
 	log.Println("urlDB/BatchDelete - Hello")
 
-	//if db.BufferCh != nil {
-	//	if _, ok := <-db.BufferCh; !ok {
-	//		db.BufferCh = make(chan urlDeleteRequest, 1000)
-	//	}
-	//}
-
-	// que up the hashlists in goroutines - to go over the lists and send to buffer
 	go func(hashList *[]string, clientID string) {
 		wg := &sync.WaitGroup{}
 
@@ -236,7 +169,6 @@ func (db *urlDB) BatchDelete(hashLIst *[]string, clientID string) error {
 			}(udr)
 		}
 		wg.Wait()
-		//close(db.BufferCh)
 	}(hashLIst, clientID)
 	go func() {
 		db.flushBufferToDB()
@@ -270,11 +202,6 @@ func (db *urlDB) flushBufferToDB() error {
 
 	defer stmt.Close()
 
-	//for v := range db.BufferCh {
-	//	if _, err = stmt.Exec(v.hash, v.clientID); err != nil {
-	//		return err
-	//	}
-	//}
 loop:
 	for {
 		select {
