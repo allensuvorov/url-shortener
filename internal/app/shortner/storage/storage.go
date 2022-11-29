@@ -18,13 +18,15 @@ type urlStorage struct {
 type inMemory struct {
 	URLHashMap     hashmap.URLHashMap
 	ClientActivity hashmap.ClientActivity
+	Deleted        hashmap.Deleted
 }
 
 func NewURLStorage() *urlStorage {
 	fsp := config.UC.FSP
 	um := make(hashmap.URLHashMap)
 	ca := make(hashmap.ClientActivity)
-	im := inMemory{um, ca}
+	dd := make(hashmap.Deleted)
+	im := inMemory{um, ca, dd}
 
 	if fsp != "" {
 		im = restore(fsp)
@@ -76,6 +78,9 @@ func (us *urlStorage) GetURLByHash(h string) (string, error) {
 	if !ok {
 		return "", errors.ErrNotFound
 	}
+	if us.inMemory.Deleted[h] {
+		return "", errors.ErrRecordDeleted
+	}
 	return u, nil
 }
 
@@ -107,4 +112,22 @@ func (us *urlStorage) GetClientUrls(id string) ([]entity.URLEntity, error) {
 
 func (us *urlStorage) PingDB() bool {
 	return true
+}
+
+func (us *urlStorage) BatchDelete(hashList *[]string, clientID string) error {
+	log.Println("Storage/BatchDelete - Hello")
+
+	// TODO: in file - update field: Deleted
+
+	for _, h := range *hashList {
+		_, ok := us.inMemory.ClientActivity[clientID][h]
+		if ok {
+			us.inMemory.Deleted[h] = true
+		}
+	}
+	log.Println("Storage/BatchDelete - inMemory.URLHashMap:", us.inMemory.URLHashMap)
+	log.Println("Storage/BatchDelete - inMemory.ClientActivity:", us.inMemory.ClientActivity)
+	log.Println("Storage/BatchDelete - inMemory.Deleted:", us.inMemory.Deleted)
+	log.Println("Storage/BatchDelete - Bye")
+	return nil
 }

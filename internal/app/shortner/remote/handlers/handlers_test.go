@@ -47,6 +47,7 @@ func Test_CreateForJSONClient(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			b := bytes.NewBufferString(tc.url)
 			r := httptest.NewRequest(http.MethodPost, "http://localhost:8080/api/shorten", b)
+			r.Header.Set("Content-Type", "application/json")
 			w := httptest.NewRecorder()
 
 			uh.CreateForJSONClient(w, r)

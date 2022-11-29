@@ -19,6 +19,8 @@ type URLStorage interface {
 	GetClientUrls(id string) ([]entity.URLEntity, error)
 
 	PingDB() bool
+
+	BatchDelete(hashList *[]string, clientID string) error
 }
 
 type URLService struct {
@@ -69,7 +71,10 @@ func (us URLService) Create(ue entity.URLEntity) (string, error) {
 func (us URLService) Get(h string) (string, error) {
 	u, err := us.urlStorage.GetURLByHash(h)
 
-	if err == errors.ErrNotFound {
+	//if err == errors.ErrNotFound {
+	//	return "", err
+	//}
+	if err != nil {
 		return "", err
 	}
 	return u, nil
@@ -87,4 +92,10 @@ func (us URLService) GetClientActivity(id string) ([]entity.URLEntity, error) {
 
 func (us URLService) PingDB() bool {
 	return us.urlStorage.PingDB()
+}
+
+func (us URLService) BatchDelete(hashList *[]string, clientID string) error {
+	log.Println("service/BatchDelete - Hello")
+	log.Println("service/BatchDelete - Bye")
+	return us.urlStorage.BatchDelete(hashList, clientID)
 }

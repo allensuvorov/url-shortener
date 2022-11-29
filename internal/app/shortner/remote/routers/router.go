@@ -19,5 +19,6 @@ func NewRouter(url handlers.URLHandler) chi.Router {
 	r.Get("/api/user/urls", url.GetClientActivity)
 	r.Get("/ping", url.PingDB)
 	r.Post("/api/shorten/batch", url.BatchCreate)
+	r.Delete("/api/user/urls", url.BatchDelete)
 	return r
 }
