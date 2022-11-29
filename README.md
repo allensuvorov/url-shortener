@@ -1,7 +1,7 @@
 # Golang Project0: URL shortner, a CRUD app with Concurrency and PostreSQL 
 
 The app implements the following functionality:
-- [Increment 14: Bulk Soft Delete with Transactions and Goroutines](https://github.com/allensuvorov/urlshortner/blob/main/README.md#Increment-14)
+- [Increment 14: Bulk Soft Delete with Transactions and Goroutines](https://github.com/allensuvorov/shortner2022#increment-14-bulk-soft-delete-with-transactions-sql-statements-and-goroutines)
 - Increment 13: Index and Duplicates handling
 - Increment 12: Bulk create with JSON
 - Increment 11: PostgreSQL, priority storage
