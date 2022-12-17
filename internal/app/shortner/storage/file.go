@@ -2,7 +2,6 @@ package storage
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 
@@ -23,7 +22,7 @@ func write(ue entity.URLEntity, fsp string) error {
 
 	err = enc.Encode(ue)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return nil
 	}
 
