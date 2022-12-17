@@ -38,7 +38,6 @@ func NewURLStorage() *urlStorage {
 }
 
 func (us *urlStorage) Create(ue entity.URLEntity) error {
-	// Save to map
 	log.Println("Storage/Create(): hello")
 
 	us.inMemory.URLHashMap[ue.Hash] = ue.URL
@@ -116,8 +115,6 @@ func (us *urlStorage) PingDB() bool {
 
 func (us *urlStorage) BatchDelete(hashList *[]string, clientID string) error {
 	log.Println("Storage/BatchDelete - Hello")
-
-	// TODO: in file - update field: Deleted
 
 	for _, h := range *hashList {
 		_, ok := us.inMemory.ClientActivity[clientID][h]

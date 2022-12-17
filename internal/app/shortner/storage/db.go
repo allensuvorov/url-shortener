@@ -15,10 +15,8 @@ import (
 )
 
 type urlDB struct {
-	DB *sql.DB
-	//buffer   []string
+	DB       *sql.DB
 	BufferCh chan urlDeleteRequest
-	//clientID string
 }
 
 func NewURLDB() *urlDB {
@@ -42,7 +40,6 @@ func NewURLDB() *urlDB {
 	return &urlDB{
 		DB:       db,
 		BufferCh: make(chan urlDeleteRequest, 1000),
-		//buffer: make([]string, 0, 1000),
 	}
 }
 

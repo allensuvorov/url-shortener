@@ -36,7 +36,6 @@ func NewURLHandler(us URLService) URLHandler {
 }
 
 func (uh URLHandler) CreateForJSONClient(w http.ResponseWriter, r *http.Request) {
-	// целевой объект
 	var decVal struct { // decoded value
 		URL string
 	}

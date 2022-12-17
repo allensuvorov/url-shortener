@@ -47,7 +47,7 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 
 			// Need to gzip-encode the URL before passing to request
 			var buf bytes.Buffer       // Will write to buf
-			gz := gzip.NewWriter(&buf) // создаём gzip.Writer
+			gz := gzip.NewWriter(&buf) // Create gzip.Writer
 
 			_, err := gz.Write([]byte(tt.url))
 			if err != nil {
@@ -70,7 +70,6 @@ func TestGzipHandler_GzipMiddleware(t *testing.T) {
 			h.ServeHTTP(w, r)
 			log.Println("compress_test: statuscode", w.Code)
 
-			// TODO: gzip-decode w.body
 			zr, err := gzip.NewReader(w.Body)
 			if err != nil {
 				log.Fatal(err)

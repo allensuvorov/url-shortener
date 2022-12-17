@@ -31,7 +31,7 @@ func write(ue entity.URLEntity, fsp string) error {
 
 func restore(fsp string) inMemory {
 	log.Println("File/restore: restoring data from file")
-	um := make(hashmap.URLHashMap) // url map
+	um := make(hashmap.URLHashMap)
 	ca := make(hashmap.ClientActivity)
 	dd := make(hashmap.Deleted)
 

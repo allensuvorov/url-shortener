@@ -118,7 +118,7 @@ func Test_expander(t *testing.T) {
 		{
 			name:                     "Not found",
 			hash:                     "abcdefg",
-			expectedStatusCode:       http.StatusBadRequest, // можно и NotFound вернуть
+			expectedStatusCode:       http.StatusBadRequest,
 			expectedRedirectLocation: "",
 		},
 		{
@@ -132,9 +132,7 @@ func Test_expander(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			r := httptest.NewRequest("GET", "http://localhost:8080/"+tc.hash, nil)
-			// создаем тестовый контекст
 			ctx := chi.NewRouteContext()
-			// передаем параметры в тестовый конекст
 			ctx.URLParams.Add("hash", tc.hash)
 			rctx := context.WithValue(r.Context(), chi.RouteCtxKey, ctx)
 			r = r.WithContext(rctx)
