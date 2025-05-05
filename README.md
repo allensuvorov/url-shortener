@@ -1,32 +1,35 @@
-# Golang Project0: URL shortner, a CRUD app with Concurrency and PostreSQL 
+# URL Shortener
 
-The app implements the following functionality:
-- [Increment 14: Bulk Soft Delete with Transactions and Goroutines](https://github.com/allensuvorov/shortner2022#increment-14-bulk-soft-delete-with-transactions-sql-statements-and-goroutines)
-- Increment 13: Index and Duplicates handling
-- Increment 12: Bulk create with JSON
-- Increment 11: PostgreSQL, priority storage
-- Increment 10: PostgreSQL, ping
-- Increment 09: Authentification with Hash and Crypto via Middleware
-- Increment 08: Compression with Gzip via Middleware
-- Increment 07: App Config with Flags
-- Increment 06: File, saving and restoring data
-- Increment 05: Environment variables
-- Increment 04: Encoding, API for JSON client, Unit-Tests for handlers
-- Increment 03: HTTP libraries and frameworks - Chi router
-- Increment 02: Unit-Tests, Table-driven
-- Increment 01: Shortner - Server with POST and GET endpoints 
+![Go](https://img.shields.io/badge/Go-1.18+-00ADD8?logo=go)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-4169E1?logo=postgresql)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-### Increment 14: Bulk Soft Delete with Transactions, SQL Statements and Goroutines
-In the database table with short URLS, create an additional field with a flag, indicating that this URL should be considered deleted. Then add an asynchronous handler DELETE /api/user/urls, which accepts a list of short URL identifiers to be deleted in the format:
-````
-[ "a", "b", "c", "d", ...]
-````
-If the request is accepted successfully, the handler should return HTTP status 202 Accepted.The actual result of deletion may occur later - there is no need to notify the client of the operation's success or failure in any way.
+A high-performance URL shortening service with authentication, built with Go and PostgreSQL.
 
-Only the user who created the URL can successfully delete the URL. When requesting a deleted URL using the handler GET /{id}, a 410 Gone status should be returned.
+## Features
 
-Advice:
-- Use batch update to effectively set the Deleted flag in the database.
-- Use the fan-In pattern to maximize buffer load of update objects.
+- 🚀 **RESTful API** with JSON support
+- 🔐 JWT Authentication
+- 🗄️ PostgreSQL storage with soft deletes
+- 📦 Bulk URL operations
+- ⚡ Gzip compression middleware
+- 🧪 Comprehensive unit tests
+- ⚙️ Dual configuration (env vars + CLI flags)
 
-*Details on other increments to be provided upon request.*
+## Quick Start
+
+### Prerequisites
+- Go 1.18+
+- PostgreSQL 13+
+
+### Installation
+```bash
+git clone https://github.com/allensuvorov/url-shortener.git
+cd url-shortener
+
+# Set up environment
+export DATABASE_DSN="postgres://user:password@localhost:5432/dbname?sslmode=disable"
+export SERVER_ADDRESS=":8080"
+
+# Run
+go run cmd/shortener/main.go
